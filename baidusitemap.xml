@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
+
+
+    
   <url>
     <loc>http://zengzeyu.com/2017/06/12/hello-world/</loc>
-    
     <lastmod>2017-06-12T13:37:49.064Z</lastmod>
-    
-  </url>
-  
+    <data>
+        <display>
+        <title>Hello World</title>
+        <pubTime>2017-06-12T13:37:49.064Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
 </urlset>
