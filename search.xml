@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[Hexo教程]]></title>
-    <url>%2F2017%2F06%2F25%2FHexo%E6%95%99%E7%A8%8B%2F</url>
-    <content type="text"></content>
-      <categories>
-        <category>Hexo教程</category>
-      </categories>
+    <title><![CDATA[开篇2017]]></title>
+    <url>%2F2017%2F06%2F26%2F%E5%BC%80%E7%AF%872017%2F</url>
+    <content type="text"><![CDATA[欢迎来到曾泽宇的个人博客，此博客将用作记录自己的一些技术上的问题和解决方法，借助这一个平台，希望给自己一个记录，让自己多年以后回过头来看看自己也曾经少年过，哈哈！]]></content>
       <tags>
-        <tag>Testing</tag>
-        <tag>试验</tag>
+        <tag>MarkDown Writting</tag>
+        <tag>Personal</tag>
       </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[Hello World]]></title>
-    <url>%2F2017%2F06%2F12%2Fhello-world%2F</url>
-    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
   </entry>
 </search>
