@@ -398,45 +398,15 @@
       
         
           
-            <p>去年6月份就弄好博客了，懒癌发作一直没弄，到10月份又开始弄硕士毕业论文，更没有时间，所以，一直到现在才开始搞。因为工作转行的关系，加上一直想上计算机科班出身的教程，所以自己没事瞎弄写相关的最基础的数据结构类代码。<br>好了废话不多说，开始进入正题。这是我撸的<a href="http://acm.hdu.edu.cn/showproblem.php?pid=1002" target="_blank" rel="external">杭电ACM1002</a>，下面把自己思路写下来。<br>下面是刚拿到题时，没经过深思熟虑就写下了。</p>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;vector&gt;
-
-using namespace std;
-
-int main(int argc, char *argv[])
-{
-    int caseNum;
-    scanf(&quot;%d&quot;, &amp;caseNum);
-
-    long long A, B;
-    A = 0; B = 0;
-    vector&lt;vector&lt;long long&gt;&gt; lineNum;
-    lineNum.resize(caseNum);
-    for (int i = 0; i &lt; caseNum; i++ )
-    {
-        lineNum[i].resize(2);
-        scanf(&quot;%lld%lld&quot;, &amp;A, &amp;B);
-        lineNum[i][0] = A; lineNum[i][1] = B;
-    }
-    for (int i = 0; i &lt; caseNum-1; i++)
-    {
-        cout &lt;&lt; &quot;Case &quot; &lt;&lt; i+1 &lt;&lt;&quot;:\n&quot;;
-        cout &lt;&lt; lineNum[i][0] &lt;&lt; &quot; + &quot; &lt;&lt; lineNum[i][1] &lt;&lt; &quot; = &quot;
-        &lt;&lt;lineNum[i][0]+lineNum[i][1] &lt;&lt; &quot;\n&quot; &lt;&lt;endl;
-    }
-    cout &lt;&lt; &quot;Case &quot; &lt;&lt; caseNum &lt;&lt;&quot;:\n&quot;;
-    cout &lt;&lt; lineNum[caseNum-1][0] &lt;&lt; &quot; + &quot; &lt;&lt; lineNum[caseNum-1][1]
-    &lt;&lt; &quot; = &quot;&lt;&lt; lineNum[caseNum-1][0]+lineNum[caseNum-1][1] &lt;&lt;endl;
-    return 0;
-}
-</code></pre><p>根据题意，此处没考虑到：</p>
-<blockquote>
-<p>Notice that the integers are very large, that means you should not process them by using 32-bit integer. You may assume the length of each integer will not exceed 1000</p>
-</blockquote>
-<p>虽说，考虑到数有可能很大，使用了<em>long long</em>类型，但是数的位数有可能超过1000，所以没有一个现有的数据类型可以直接供加法运算。因此，对于很大位数的加法运算，需自己进行设计。<br>​    </p>
-
-          
+          去年6月份就弄好博客了，懒癌发作一直没弄，到10月份又开始弄硕士毕业论文，更没有时间，所以，一直到现在才开始搞。因为工作转行的关系，加上一直想上计算机科班出身的教程，所以自己没事瞎弄写相关的最基础的数据结构类代码。好了废话不多说，开始进入正题。这是我撸的杭电ACM1002，下面把自己思路写下来。下面
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/05/杭电ACM1002/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -557,9 +527,16 @@ int main(int argc, char *argv[])
       
         
           
-            <p>欢迎来到<a href="http://zengzeyu.com">曾泽宇的个人博客</a>，此博客将用作记录自己的一些技术上的问题和解决方法，借助这一个平台，希望给自己一个记录，让自己多年以后回过头来看看自己也曾经少年过，哈哈！</p>
+          欢迎来到曾泽宇的个人博客，此博客将用作记录自己的一些技术上的问题和解决方法，借助这一个平台，希望给自己一个记录，让自己多年以后回过头来看看自己也曾经少年过，哈哈！
 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/26/开篇2017/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
