@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[Towards 3D Object Recognidtion via Classification of Arbitrary Object Tracks]]></title>
     <url>%2F2018%2F01%2F12%2FTowards%203D%20Object%20Recognidtion%20via%20Classification%20of%20Arbitrary%20Object%20Tracks%2F</url>
-    <content type="text"><![CDATA[===== (斯坦福人工智能实验室 论文) ###Introduction障碍物识别包含：分割、追踪、分类等方面，并且对新的障碍物也能有效识别。 ###Related work当前障碍物识别基本分为两大领域：1.静止环境下的多级障碍物识别，一条路径中的障碍物识别。2.通过训练后的特定种类的障碍物识别跟踪。 过分割：一个物体被分割为两个物体，这种情况在点云中很常见，不应该被视为错误，而应该进行进一步处理。 ###The Stanford Track Collection介绍了该点云数据集的应用。 ####Details使用线性卡尔曼滤波来计算聚类的中心点。数据关联问题由测量中心到期望位置点解决。 ###Classification Methods ####Boosting FrameworkBoosting Framework: 将weak classification组合成一个简单的高精度的分类器。本论文使用两个了boosting classifiers，1）sgement classifier:预测一组分割描述对象，也就是一组描述障碍物的外观的向量某个时间中的;2)holistic classifier:预测一组跟踪的全局描述对象，也就是描述速度，加速度和其他跟踪信息的向量。 （后面看不懂了～）]]></content>
+    <content type="text"><![CDATA[(斯坦福人工智能实验室 论文) ###Introduction障碍物识别包含：分割、追踪、分类等方面，并且对新的障碍物也能有效识别。 ###Related work当前障碍物识别基本分为两大领域：1.静止环境下的多级障碍物识别，一条路径中的障碍物识别。2.通过训练后的特定种类的障碍物识别跟踪。 过分割：一个物体被分割为两个物体，这种情况在点云中很常见，不应该被视为错误，而应该进行进一步处理。 ###The Stanford Track Collection介绍了该点云数据集的应用。 ####Details使用线性卡尔曼滤波来计算聚类的中心点。数据关联问题由测量中心到期望位置点解决。 ###Classification Methods ####Boosting FrameworkBoosting Framework: 将weak classification组合成一个简单的高精度的分类器。本论文使用两个了boosting classifiers，1）sgement classifier:预测一组分割描述对象，也就是一组描述障碍物的外观的向量某个时间中的;2)holistic classifier:预测一组跟踪的全局描述对象，也就是描述速度，加速度和其他跟踪信息的向量。 （后面看不懂了～）]]></content>
       <tags>
         <tag>论文</tag>
         <tag>自动驾驶</tag>
