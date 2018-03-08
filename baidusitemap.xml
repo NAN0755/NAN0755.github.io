@@ -5,13 +5,15 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/08/ROS_Node%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%89%93%E6%96%AD%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B/</loc>
-    <lastmod>2018-03-08T14:42:26.051Z</lastmod>
+    <lastmod>2018-03-08T23:59:07.739Z</lastmod>
     <data>
         <display>
-        <title>ROS - Node 之间通信打断操作实例</title>
+        <title>ROS Node 之间通信打断操作实例</title>
         <pubTime>2018-03-08T15:47:44.000Z</pubTime>
         
         <tag>ROS</tag>
+         
+        <tag>PCL</tag>
          
          
            
