@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="ROS," />
 
 
 
@@ -97,15 +97,19 @@
 
 
 
-<meta name="description" content="Try everything fancy!">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zeyu&#39;s Blog">
-<meta property="og:url" content="http://zengzeyu.com/archives/2018/01/index.html">
+<meta name="description" content="##前言 公司开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：  读取文件夹下PCD文件，按照文件名进行排序； 通过Qt开发UI界面，界面包括操作按钮： continue: 循环播放PCD文件并发布 next，pre： 后一帧或前一帧PCD文件 save index： 保存当前帧PCD文件名到.txt文件   当continue操作正在进行时，点击其余按钮，实现打断停止功能##分">
+<meta name="keywords" content="ROS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ROS - Node 之间通信打断操作实例">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/08/ROS_Node之间通信打断操作实例/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
-<meta property="og:description" content="Try everything fancy!">
+<meta property="og:description" content="##前言 公司开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：  读取文件夹下PCD文件，按照文件名进行排序； 通过Qt开发UI界面，界面包括操作按钮： continue: 循环播放PCD文件并发布 next，pre： 后一帧或前一帧PCD文件 save index： 保存当前帧PCD文件名到.txt文件   当continue操作正在进行时，点击其余按钮，实现打断停止功能##分">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/10028058-a2ce62e46149adfb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-03-08T14:42:26.051Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zeyu&#39;s Blog">
-<meta name="twitter:description" content="Try everything fancy!">
+<meta name="twitter:title" content="ROS - Node 之间通信打断操作实例">
+<meta name="twitter:description" content="##前言 公司开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：  读取文件夹下PCD文件，按照文件名进行排序； 通过Qt开发UI界面，界面包括操作按钮： continue: 循环播放PCD文件并发布 next，pre： 后一帧或前一帧PCD文件 save index： 保存当前帧PCD文件名到.txt文件   当continue操作正在进行时，点击其余按钮，实现打断停止功能##分">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/10028058-a2ce62e46149adfb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -133,13 +137,13 @@
 
 
 
-  <link rel="canonical" href="http://zengzeyu.com/archives/2018/01/"/>
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/08/ROS_Node之间通信打断操作实例/"/>
 
 
 
 
 
-  <title>归档 | Zeyu's Blog</title>
+  <title>ROS - Node 之间通信打断操作实例 | Zeyu's Blog</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -175,7 +179,7 @@
     
   
 
-  <div class="container sidebar-position-left  page-archive  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -307,66 +311,208 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 5 篇日志。 继续努力。
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/08/ROS_Node之间通信打断操作实例/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/MyBlogAvatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
     </span>
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ROS - Node 之间通信打断操作实例</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-08T23:47:44+08:00">
+                2018-03-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ROS/" itemprop="url" rel="index">
+                    <span itemprop="name">ROS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/08/ROS_Node之间通信打断操作实例/" class="leancloud_visitors" data-flag-title="ROS - Node 之间通信打断操作实例">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
 
       
       
-      
 
+      
+        <p>##前言</p>
+<p>公司开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：</p>
+<ol>
+<li>读取文件夹下PCD文件，按照文件名进行排序；</li>
+<li>通过Qt开发UI界面，界面包括操作按钮：<ul>
+<li><code>continue</code>: 循环播放PCD文件并发布</li>
+<li><code>next</code>，<code>pre</code>： 后一帧或前一帧PCD文件</li>
+<li><code>save index</code>： 保存当前帧PCD文件名到<code>.txt</code>文件</li>
+</ul>
+</li>
+<li>当<code>continue</code>操作正在进行时，点击其余按钮，实现打断停止功能<br>##分析</li>
+<li>将UI界面和实际后台操作分开进行多线程操作，否则在进行<code>continue</code>过程中时，无法通过外部改变判断条件进行打断；</li>
+<li>ROS的一个<code>Node</code>默认为是一个进程，所以采用<code>double Node</code>实现多线程；</li>
+<li>ROS的单个Node可以同时实现<code>subscribe</code>和<code>publish</code>多个消息。本文假设UI界面为<code>Node 1</code>，包括：读取PCD文件，对点击操作进行反应并发送按钮消息到后端；后台实现为<code>Node 2</code>，包括：按钮消息的实现代码。<br>##1. UI界面<br><img src="http://upload-images.jianshu.io/upload_images/10028058-a2ce62e46149adfb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-07 10:23:37.jpg"></li>
+</ol>
+<p>##2. <code>Node 2</code>关键代码<br>由于ROS<code>Node</code>之间特殊的通信机制，如果将条件判断机制放在<code>Node 2</code>的子函数中，那么<code>Node 2</code>在接收<code>Node 1</code>的消息时，如果<code>continue</code>操作正在进行，则必须当<code>continue</code>执行完毕之后再收到<code>Node 1</code>的消息。所以，必须将判断条件房子ROS的<code>Master</code>部分，通过<code>Master</code>对<code>Node 1</code>当前消息进行反应，可实时打断<code>Node 2</code>正在进行的<code>continue</code>操作，马上进行当前消息的操作。<br>以下是<code>Node 2</code>中的<code>main</code>函数的ROS循环部分代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">enum recv_sign &#123; none_sign = 0, stop_sign = 1, continue_sign = 2, load_sign = 3 &#125;;</div><div class="line"></div><div class="line">while(ros::ok())</div><div class="line">    &#123;</div><div class="line">        if( g_con_signal == continue_sign )</div><div class="line">        &#123;</div><div class="line">            if ( g_cur_index &lt; g_pcd_filelist.size() - 1 )</div><div class="line">            &#123;</div><div class="line">                publishPCD();</div><div class="line">                g_cur_index++;</div><div class="line">            &#125;</div><div class="line">            else</div><div class="line">                g_cur_index = 0;</div><div class="line">        &#125;</div><div class="line">        else if ( g_con_signal == stop_sign )</div><div class="line">        &#123;</div><div class="line">            if ( g_pcd_info == &quot;pre_pcd_signal&quot; )</div><div class="line">            &#123;</div><div class="line">                if ( g_cur_index &gt; 0 )</div><div class="line">                &#123;</div><div class="line">                    g_cur_index--;</div><div class="line">                    publishPCD();</div><div class="line">                &#125;</div><div class="line">                else</div><div class="line">                    std::cerr &lt;&lt; &quot;Reach 1st file!!&quot; &lt;&lt; std::endl;</div><div class="line">            &#125;</div><div class="line">            else if ( g_pcd_info == &quot;next_pcd_signal&quot; )</div><div class="line">            &#123;</div><div class="line">                if ( g_cur_index &lt; g_pcd_filelist.size() - 1 )</div><div class="line">                    g_cur_index ++;</div><div class="line">                else</div><div class="line">                    g_cur_index = 0;</div><div class="line"></div><div class="line">                publishPCD();</div><div class="line">            &#125;</div><div class="line">            else if ( g_pcd_info == &quot;save_index&quot; )</div><div class="line">            &#123;</div><div class="line">                g_outfile &lt;&lt; g_pcd_filelist[g_cur_index] &lt;&lt; std::endl;</div><div class="line">            &#125;</div><div class="line">            g_con_signal = none_sign;</div><div class="line">        &#125;</div><div class="line">        else if ( g_con_signal == load_sign )</div><div class="line">        &#123;</div><div class="line">            g_file_root_path = g_pcd_info;</div><div class="line">            std::cout &lt;&lt; g_file_root_path &lt;&lt; std::endl;</div><div class="line">            read_filelists( g_file_root_path + &quot;/&quot;, g_pcd_filelist, &quot;.pcd&quot; );</div><div class="line">            for (int i = 0; i &lt; g_pcd_filelist.size(); ++i)</div><div class="line">            &#123;</div><div class="line">                std::cout &lt;&lt; g_pcd_filelist[i] &lt;&lt; std::endl;</div><div class="line">            &#125;</div><div class="line">            g_con_signal = none_sign;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ros::spinOnce();</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>代码说明：</p>
+<ul>
+<li><code>Node 1</code>同时发送2个<code>std_msgs::String</code>：<code>g_con_signal</code>用于控制是否执行循环条件；<code>g_pcd_info</code>用于在不执行<code>continue</code>操作时进行细分操作划分，包括：<code>save index</code>操作的文件路径和<code>load</code>PCD文件时文件路径。</li>
+<li><code>g_con_signal</code>可以取4个值：<code>enum recv_sign { none_sign = 0, stop_sign = 1, continue_sign = 2, load_sign = 3 };</code>，分别对应不同操作，其中<code>none_sign</code>用于执行除<code>continue</code>操作之外的跳出当前循环，达到只需执行一次的目的，防止陷入死循环（无线循环）。</li>
+<li><code>ros::spinOnce()</code>用于刷新ROS执行条件，每次进入<code>while(ros::ok())</code>循环时，就会内部条件进行判断。</li>
+</ul>
+<p><strong>后续：</strong><br><code>Node 2</code>当前帧文件名返回给<code>Node 1</code>用于显示于UI界面功能尚待加入。</p>
+<p>以上。</p>
+
+      
+    </div>
+
+    <div>
       
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2018">2018</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ROS/" rel="tag"># ROS</a>
+          
         </div>
       
+
+      
+      
       
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/26/开篇2017/" rel="next" title="开篇2017">
+                <i class="fa fa-chevron-left"></i> 开篇2017
+              </a>
+            
+          </div>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          <span class="post-nav-divider"></span>
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/01/05/杭电ACM1002/" itemprop="url">
-              
-                <span itemprop="name">杭电ACM 1002</span>
-              
-            </a>
-        
-      </h2>
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/08/Caffe源代码学习之AlexNet_Caffenet_py/" rel="prev" title="Caffe源代码学习 — AlexNet(Caffenet.py)">
+                Caffe源代码学习 — AlexNet(Caffenet.py) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-05T14:57:27+08:00"
-              content="2018-01-05" >
-          01-05
-        </time>
-      </div>
-
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
-  </section>
-
-  
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -374,6 +520,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -409,7 +559,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -431,7 +581,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -605,11 +755,9 @@
 
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
 
 
   
