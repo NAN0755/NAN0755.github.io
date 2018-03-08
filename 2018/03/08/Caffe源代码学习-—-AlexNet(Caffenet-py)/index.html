@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="HD ACM," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -97,17 +97,16 @@
 
 
 
-<meta name="description" content="去年6月份就弄好博客了，懒癌发作一直没弄，到10月份又开始弄硕士毕业论文，更没有时间，所以，一直到现在才开始搞。因为工作转行的关系，加上一直想上计算机科班出身的教程，所以自己没事瞎弄写相关的最基础的数据结构类代码。 好了废话不多说，开始进入正题。这是我撸的杭电ACM1002，下面把自己思路写下来。下面是刚拿到题时，没经过深思熟虑就写下了。 #include &amp;lt;iostream&amp;gt; #in">
-<meta name="keywords" content="HD ACM">
+<meta name="description" content="导言源码位置：caffe/examples/pycaffe/caffenet.py该文件源代码是经典模型AlexNet的Caffe实现，有兴趣的小伙伴去拜读一下论文: ImageNet Classification with Deep Convolutional Neural Networks.pdf). 源码解读1. 导入模块123from __future__ import print_fun">
 <meta property="og:type" content="article">
-<meta property="og:title" content="杭电ACM 1002">
-<meta property="og:url" content="http://zengzeyu.com/2018/01/05/杭电ACM1002/index.html">
+<meta property="og:title" content="Zeyu&#39;s Blog">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/08/Caffe源代码学习-—-AlexNet(Caffenet-py)/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
-<meta property="og:description" content="去年6月份就弄好博客了，懒癌发作一直没弄，到10月份又开始弄硕士毕业论文，更没有时间，所以，一直到现在才开始搞。因为工作转行的关系，加上一直想上计算机科班出身的教程，所以自己没事瞎弄写相关的最基础的数据结构类代码。 好了废话不多说，开始进入正题。这是我撸的杭电ACM1002，下面把自己思路写下来。下面是刚拿到题时，没经过深思熟虑就写下了。 #include &amp;lt;iostream&amp;gt; #in">
-<meta property="og:updated_time" content="2018-01-09T12:46:16.611Z">
+<meta property="og:description" content="导言源码位置：caffe/examples/pycaffe/caffenet.py该文件源代码是经典模型AlexNet的Caffe实现，有兴趣的小伙伴去拜读一下论文: ImageNet Classification with Deep Convolutional Neural Networks.pdf). 源码解读1. 导入模块123from __future__ import print_fun">
+<meta property="og:updated_time" content="2018-03-08T08:11:52.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="杭电ACM 1002">
-<meta name="twitter:description" content="去年6月份就弄好博客了，懒癌发作一直没弄，到10月份又开始弄硕士毕业论文，更没有时间，所以，一直到现在才开始搞。因为工作转行的关系，加上一直想上计算机科班出身的教程，所以自己没事瞎弄写相关的最基础的数据结构类代码。 好了废话不多说，开始进入正题。这是我撸的杭电ACM1002，下面把自己思路写下来。下面是刚拿到题时，没经过深思熟虑就写下了。 #include &amp;lt;iostream&amp;gt; #in">
+<meta name="twitter:title" content="Zeyu&#39;s Blog">
+<meta name="twitter:description" content="导言源码位置：caffe/examples/pycaffe/caffenet.py该文件源代码是经典模型AlexNet的Caffe实现，有兴趣的小伙伴去拜读一下论文: ImageNet Classification with Deep Convolutional Neural Networks.pdf). 源码解读1. 导入模块123from __future__ import print_fun">
 
 
 
@@ -135,13 +134,13 @@
 
 
 
-  <link rel="canonical" href="http://zengzeyu.com/2018/01/05/杭电ACM1002/"/>
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/08/Caffe源代码学习-—-AlexNet(Caffenet-py)/"/>
 
 
 
 
 
-  <title>杭电ACM 1002 | Zeyu's Blog</title>
+  <title> | Zeyu's Blog</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -319,7 +318,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/01/05/杭电ACM1002/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/08/Caffe源代码学习-—-AlexNet(Caffenet-py)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -336,7 +335,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">杭电ACM 1002</h1>
+          <h1 class="post-title" itemprop="name headline"></h1>
         
 
         <div class="post-meta">
@@ -348,8 +347,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-05T14:57:27+08:00">
-                2018-01-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-08T22:29:39+08:00">
+                2018-03-08
               </time>
             
 
@@ -366,7 +365,7 @@
 
           
           
-             <span id="/2018/01/05/杭电ACM1002/" class="leancloud_visitors" data-flag-title="杭电ACM 1002">
+             <span id="/2018/03/08/Caffe源代码学习-—-AlexNet(Caffenet-py)/" class="leancloud_visitors" data-flag-title="">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -394,44 +393,91 @@
       
 
       
-        <p>去年6月份就弄好博客了，懒癌发作一直没弄，到10月份又开始弄硕士毕业论文，更没有时间，所以，一直到现在才开始搞。因为工作转行的关系，加上一直想上计算机科班出身的教程，所以自己没事瞎弄写相关的最基础的数据结构类代码。</p>
-<p>好了废话不多说，开始进入正题。这是我撸的<a href="http://acm.hdu.edu.cn/showproblem.php?pid=1002" target="_blank" rel="external">杭电ACM1002</a>，下面把自己思路写下来。<br>下面是刚拿到题时，没经过深思熟虑就写下了。</p>
-<pre><code>#include &lt;iostream&gt;
-#include &lt;vector&gt;
-
-using namespace std;
-
-int main(int argc, char *argv[])
-{
-    int caseNum;
-    scanf(&quot;%d&quot;, &amp;caseNum);
-
-    long long A, B;
-    A = 0; B = 0;
-    vector&lt;vector&lt;long long&gt;&gt; lineNum;
-    lineNum.resize(caseNum);
-    for (int i = 0; i &lt; caseNum; i++ )
-    {
-        lineNum[i].resize(2);
-        scanf(&quot;%lld%lld&quot;, &amp;A, &amp;B);
-        lineNum[i][0] = A; lineNum[i][1] = B;
-    }
-    for (int i = 0; i &lt; caseNum-1; i++)
-    {
-        cout &lt;&lt; &quot;Case &quot; &lt;&lt; i+1 &lt;&lt;&quot;:\n&quot;;
-        cout &lt;&lt; lineNum[i][0] &lt;&lt; &quot; + &quot; &lt;&lt; lineNum[i][1] &lt;&lt; &quot; = &quot;
-        &lt;&lt;lineNum[i][0]+lineNum[i][1] &lt;&lt; &quot;\n&quot; &lt;&lt;endl;
-    }
-    cout &lt;&lt; &quot;Case &quot; &lt;&lt; caseNum &lt;&lt;&quot;:\n&quot;;
-    cout &lt;&lt; lineNum[caseNum-1][0] &lt;&lt; &quot; + &quot; &lt;&lt; lineNum[caseNum-1][1]
-    &lt;&lt; &quot; = &quot;&lt;&lt; lineNum[caseNum-1][0]+lineNum[caseNum-1][1] &lt;&lt;endl;
-    return 0;
-}
-</code></pre><p>根据题意，此处没考虑到：</p>
-<blockquote>
-<p>Notice that the integers are very large, that means you should not process them by using 32-bit integer. You may assume the length of each integer will not exceed 1000</p>
-</blockquote>
-<p>虽说，考虑到数有可能很大，使用了<em>long long</em>类型，但是数的位数有可能超过1000，所以没有一个现有的数据类型可以直接供加法运算。因此，对于很大位数的加法运算，需自己进行设计。<br>​    </p>
+        <h2 id="导言"><a href="#导言" class="headerlink" title="导言"></a>导言</h2><p>源码位置：<code>caffe/examples/pycaffe/caffenet.py</code><br>该文件源代码是经典模型AlexNet的Caffe实现，有兴趣的小伙伴去拜读一下论文: <a href="http://xanadu.cs.sjsu.edu/~drtylin/classes/cs267_old/ImageNet%20DNN%20NIPS2012(2" target="_blank" rel="external">ImageNet Classification with Deep Convolutional Neural Networks</a>.pdf).</p>
+<h2 id="源码解读"><a href="#源码解读" class="headerlink" title="源码解读"></a>源码解读</h2><h3 id="1-导入模块"><a href="#1-导入模块" class="headerlink" title="1. 导入模块"></a>1. 导入模块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">from __future__ import print_function</div><div class="line">from caffe import layers as L, params as P, to_proto</div><div class="line">from caffe.proto import caffe_pb2</div></pre></td></tr></table></figure>
+<h3 id="2-定义Layer函数"><a href="#2-定义Layer函数" class="headerlink" title="2. 定义Layer函数"></a>2. 定义Layer函数</h3><p><strong>包括：</strong> 卷积层（Convolution Layer）、全连接层（Full Connected Layer）和池化层（Pooling Layer）</p>
+<h4 id="2-1-卷积层（Convolution-Layer）函数"><a href="#2-1-卷积层（Convolution-Layer）函数" class="headerlink" title="2.1 卷积层（Convolution Layer）函数"></a>2.1 卷积层（Convolution Layer）函数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">def conv_relu(bottom, ks, nout, stride=1, pad=0, group=1):</div><div class="line">    conv = L.Convolution(bottom, kernel_size=ks, stride=stride,</div><div class="line">                                num_output=nout, pad=pad, group=group)</div><div class="line">    return conv, L.ReLU(conv, in_place=True)</div></pre></td></tr></table></figure>
+<p> <strong>1. 函数输入</strong></p>
+<ul>
+<li><code>bottom</code> - 输入节点（<code>blob</code>）名</li>
+<li><code>ks</code> - 卷积核尺寸（<code>kernel size</code>）</li>
+<li><code>nout</code> - 输出深度尺寸（<code>number output</code>）</li>
+<li><code>stride</code> - 卷积核滑窗距离</li>
+<li><code>pad</code> - 图像边缘添加尺寸，即在图像周围一周添加尺寸为<code>pad</code>的空白像素</li>
+<li><code>group</code> - 将数据进行分开训练堆数目</li>
+</ul>
+<p><strong>2. 调用Caffe卷基层生成函数</strong></p>
+<ul>
+<li><code>conv = L.Convolution(bottom, kernel_size=ks, stride=stride,num_output=nout, pad=pad, group=group)</code></li>
+</ul>
+<p><strong>3. 返回参数</strong></p>
+<ul>
+<li><code>conv</code> - 卷积层配置</li>
+<li><code>L.ReLU(conv, in_place=True)</code> - 卷积后的数据经过ReLU激活函数得到的数据<h4 id="2-2-全连接层（Full-Connected-Layer）"><a href="#2-2-全连接层（Full-Connected-Layer）" class="headerlink" title="2.2 全连接层（Full Connected Layer）"></a>2.2 全连接层（Full Connected Layer）</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">def fc_relu(bottom, nout):</div><div class="line">    fc = L.InnerProduct(bottom, num_output=nout)</div><div class="line">    return fc, L.ReLU(fc, in_place=True)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>1. 调用Caffe内积函数</strong></p>
+<ul>
+<li><code>fc = L.InnerProduct(bottom, num_output=nout)</code></li>
+</ul>
+<p><strong>2. 返回参数</strong></p>
+<ul>
+<li><code>fc, L.ReLU(fc, in_place=True)</code> - 全连接分类之后数据通过ReLU函数<h4 id="2-3-池化层（Pooling-Layer）"><a href="#2-3-池化层（Pooling-Layer）" class="headerlink" title="2.3 池化层（Pooling Layer）"></a>2.3 池化层（Pooling Layer）</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">def max_pool(bottom, ks, stride=1):</div><div class="line">    return L.Pooling(bottom, pool=P.Pooling.MAX, kernel_size=ks, stride=stride)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>调用Caffe池化层生成函数</strong></p>
+<ul>
+<li><code>L.Pooling)（）</code></li>
+<li><code>pool=P.Pooling.MAX</code> - 池化类型选择MAX，即取模板内最大值输出<h3 id="3-定义网络结构"><a href="#3-定义网络结构" class="headerlink" title="3. 定义网络结构"></a>3. 定义网络结构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">data, label = L.Data(source=lmdb, backend=P.Data.LMDB, batch_size=batch_size, ntop=2,</div><div class="line">        transform_param=dict(crop_size=227, mean_value=[104, 117, 123], mirror=True))</div><div class="line"></div><div class="line">         # the net itself</div><div class="line">    conv1, relu1 = conv_relu(data, 11, 96, stride=4)</div><div class="line">    pool1 = max_pool(relu1, 3, stride=2)</div><div class="line">    norm1 = L.LRN(pool1, local_size=5, alpha=1e-4, beta=0.75)</div><div class="line">    conv2, relu2 = conv_relu(norm1, 5, 256, pad=2, group=2)</div><div class="line">    pool2 = max_pool(relu2, 3, stride=2)</div><div class="line">    norm2 = L.LRN(pool2, local_size=5, alpha=1e-4, beta=0.75)</div><div class="line">    conv3, relu3 = conv_relu(norm2, 3, 384, pad=1)</div><div class="line">    conv4, relu4 = conv_relu(relu3, 3, 384, pad=1, group=2)</div><div class="line">    conv5, relu5 = conv_relu(relu4, 3, 256, pad=1, group=2)</div><div class="line">    pool5 = max_pool(relu5, 3, stride=2)</div><div class="line">    fc6, relu6 = fc_relu(pool5, 4096)</div><div class="line">    drop6 = L.Dropout(relu6, in_place=True)</div><div class="line">    fc7, relu7 = fc_relu(drop6, 4096)</div><div class="line">    drop7 = L.Dropout(relu7, in_place=True)</div><div class="line">    fc8 = L.InnerProduct(drop7, num_output=1000)</div><div class="line">    loss = L.SoftmaxWithLoss(fc8, label)</div><div class="line"></div><div class="line">    if include_acc:</div><div class="line">        acc = L.Accuracy(fc8, label)</div><div class="line">        return to_proto(loss, acc)</div><div class="line">    else:</div><div class="line">        return to_proto(loss)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>1. 函数输入</strong></p>
+<ul>
+<li><code>lmdb</code> - 文件名</li>
+<li><code>batch_size</code> - 每次训练输入样本数目</li>
+<li><code>include_acc</code> - 加速？</li>
+</ul>
+<p><strong>2. 调用Caffe数据层输入函数（Data）</strong><br><code>L.Data(source=lmdb, backend=P.Data.LMDB, batch_size=batch_size, ntop=2,
+        transform_param=dict(crop_size=227, mean_value=[104, 117, 123], mirror=True))</code></p>
+<ul>
+<li><code>backend</code> - 数据类型</li>
+<li><code>ntop</code> - 输出<code>blob</code>数目，因为数据层处理数据输出data和label，所以值为 2 </li>
+<li><code>transform_param</code> - 对单个图片处理： <code>crop_size</code>图片剪裁大小，<code>mean_value</code>RGB图像需要减去的值（目的是更好突出特征）和<code>mirror</code>镜像处理。</li>
+</ul>
+<p><strong>3. 网络结构</strong><br>此博客绘制了AlexNet网络结构图和数据流动图，方便直观理解网络结构，可移步：<a href="http://blog.csdn.net/sunbaigui/article/details/39938097" target="_blank" rel="external">深度学习之图像分类模型AlexNet解读</a><br>第1-5层为卷积层，如下表所示：<br>|Layer  |Operation| Output |<br>|:——–|:————-|:———:|<br>| Data |  crop_size:227, mean_value: [104, 117, 123], mirror: true  | data: 227x227x3; label: 227x227x1 |<br>| 1 | conv1 -&gt; relu1 -&gt; pool1 -&gt; norm1 | 27x27x96 |<br>| 2 | conv2 -&gt; relu2 -&gt; pool2 -&gt; norm2 | 13x13x256 |<br>| 3 | conv3 -&gt; relu3  | 11x11x384 |<br>| 4 | conv4 -&gt; relu4 | 11x11x384 |<br>| 5 | conv5 -&gt; relu5 -&gt; pool5 | 6x6x256 |<br>| 6 | fc6 -&gt; relu6 -&gt; drop6 | 4096 |<br>| 7 | fc7 -&gt; relu7 -&gt; drop7 | 4096 |<br>| 8 | fc8 -&gt; loss | 1000 |</p>
+<p><strong>以第1层代码为例进行分析:</strong></p>
+<ol>
+<li>第1层 = 卷积层（conv1+relu1） + 池化层（pool1） + 归一化（norm1） </li>
+</ol>
+<p>（1）. 第1层 - 卷积层（conv1+relu1）<br>作用：提取局部特征，使用ReLU作为CNN的激活函数，并验证其效果在较深的网络超过了Sigmoid，成功解决了Sigmoid在网络较深时的梯度弥散问题。<br><code>conv1, relu1 = conv_relu(data, 11, 96, stride=4)</code></p>
+<ul>
+<li>数据：数据层输出data数据</li>
+<li>卷积核大小： 11</li>
+<li>输出节点深度： 96</li>
+<li>滑窗距离： 4</li>
+</ul>
+<p>（2）. 第1层 - 池化层（pool1）<br>作用：提取最大值，避免平均池化的模糊化效果。在AlexNet中提出让步长比池化核的尺寸小，这样池化层的输出之间会有重叠和覆盖，提升了特征的丰富性。<br><code>pool1 = max_pool(relu1, 3, stride=2)</code></p>
+<ul>
+<li>数据： relu1</li>
+<li>模板核大小： 3</li>
+<li>滑窗距离： 2</li>
+</ul>
+<p>（3）. 第1层 - 局部响应归一化（Local Response Normalize）（norm1）<br>作用：对局部神经元的活动创建竞争机制，使得其中响应比较大的值变得相对更大，并抑制其他反馈较小的神经元，增强了模型的泛化能力<br><code>norm1 = L.LRN(pool1, local_size=5, alpha=1e-4, beta=0.75)</code></p>
+<ul>
+<li>数据： pool1</li>
+<li>取值模板尺寸： 5</li>
+<li>alpha: 0.0001 </li>
+<li>beta: 0.75</li>
+</ul>
+<p>###4. 输出网络结构文件（.prototxt）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">def make_net():</div><div class="line">    with open(&apos;train.prototxt&apos;, &apos;w&apos;) as f:</div><div class="line">        print(caffenet(&apos;/path/to/caffe-train-lmdb&apos;), file=f)</div><div class="line"></div><div class="line">    with open(&apos;test.prototxt&apos;, &apos;w&apos;) as f:</div><div class="line">        print(caffenet(&apos;/path/to/caffe-val-lmdb&apos;, batch_size=50, include_acc=True), file=f)</div></pre></td></tr></table></figure></p>
+<p>###5. 运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    make_net()</div></pre></td></tr></table></figure></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Caffene.py是入门Caffe较好的源代码，结合原论文看，同时能加深对网络结构的理解，补充理论知识。下面根据这个example形式构建自己的网络结构，其中第一步，也是学习深度学习最重要的一步，编写自己的数据类型接口层程序。</p>
+<p>以上。</p>
+<p>附：</p>
+<ol>
+<li><a href="https://www.cnblogs.com/gongxijun/p/6027747.html" target="_blank" rel="external">AlexNet网络总结</a></li>
+<li><a href="http://blog.csdn.net/sunbaigui/article/details/39938097" target="_blank" rel="external">深度学习之图像分类模型AlexNet解读</a></li>
+</ol>
 
       
     </div>
@@ -459,12 +505,6 @@ int main(int argc, char *argv[])
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/HD-ACM/" rel="tag"># HD ACM</a>
-          
-        </div>
-      
 
       
       
@@ -474,8 +514,8 @@ int main(int argc, char *argv[])
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/06/26/开篇2017/" rel="next" title="开篇2017">
-                <i class="fa fa-chevron-left"></i> 开篇2017
+              <a href="/2018/03/08/Numpy学习笔记/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
               </a>
             
           </div>
@@ -484,7 +524,7 @@ int main(int argc, char *argv[])
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/03/08/Numpy学习笔记/" rel="prev" title="">
+              <a href="/2018/03/08/ROS-Node之间通信打断操作实例/" rel="prev" title="">
                  <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -533,8 +573,17 @@ int main(int argc, char *argv[])
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/uploads/MyBlogAvatar.png"
@@ -616,6 +665,22 @@ int main(int argc, char *argv[])
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#导言"><span class="nav-number">1.</span> <span class="nav-text">导言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码解读"><span class="nav-number">2.</span> <span class="nav-text">源码解读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-导入模块"><span class="nav-number">2.1.</span> <span class="nav-text">1. 导入模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-定义Layer函数"><span class="nav-number">2.2.</span> <span class="nav-text">2. 定义Layer函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-卷积层（Convolution-Layer）函数"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.1 卷积层（Convolution Layer）函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-全连接层（Full-Connected-Layer）"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2 全连接层（Full Connected Layer）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-池化层（Pooling-Layer）"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.3 池化层（Pooling Layer）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-定义网络结构"><span class="nav-number">2.3.</span> <span class="nav-text">3. 定义网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
