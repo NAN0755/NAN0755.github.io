@@ -1,0 +1,1025 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="-haaFnsYIN3YdKTfE8bF5vzp879Tfd-BcLykx1LtSvk" />
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="rCu1ZaC1sv" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="DL,PCL," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="前言 FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割（semantic segmentation）论文：Fully Convolutional Networks for Semantic Segmentation。全卷积网络首现于这篇文章。这篇文章是将CNN结构应用到图像语义分割领域并取得突出结果的开山之作，因而拿到了CVPR 2015年的Bes">
+<meta name="keywords" content="DL,PCL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FCN-PCL 应用解析">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/15/18_3_15/fcn_alexnet_pcl/index.html">
+<meta property="og:site_name" content="Zeyu&#39;s Blog">
+<meta property="og:description" content="前言 FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割（semantic segmentation）论文：Fully Convolutional Networks for Semantic Segmentation。全卷积网络首现于这篇文章。这篇文章是将CNN结构应用到图像语义分割领域并取得突出结果的开山之作，因而拿到了CVPR 2015年的Bes">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/10028058-453277040a9c3cc9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/10028058-5b105644ace02a05.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-39bef235c497ef5b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-f14bf66059d90048.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2018-03-15T15:17:46.719Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FCN-PCL 应用解析">
+<meta name="twitter:description" content="前言 FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割（semantic segmentation）论文：Fully Convolutional Networks for Semantic Segmentation。全卷积网络首现于这篇文章。这篇文章是将CNN结构应用到图像语义分割领域并取得突出结果的开山之作，因而拿到了CVPR 2015年的Bes">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/10028058-453277040a9c3cc9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7GNE5JBRIB',
+      apiKey: 'acbc6b366ad9fd7ba89409e736b558ab',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/15/18_3_15/fcn_alexnet_pcl/"/>
+
+
+
+
+
+  <title>FCN-PCL 应用解析 | Zeyu's Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5bb12350481c6ccda395fbe33bd0dc13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zeyu's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Less is more.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/fcn_alexnet_pcl/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/MyBlogAvatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">FCN-PCL 应用解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-15T23:47:44+08:00">
+                2018-03-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DL/" itemprop="url" rel="index">
+                    <span itemprop="name">DL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/15/18_3_15/fcn_alexnet_pcl/" class="leancloud_visitors" data-flag-title="FCN-PCL 应用解析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><hr>
+<p>FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割（semantic segmentation）论文：<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf" target="_blank" rel="external">Fully Convolutional Networks for Semantic Segmentation</a>。全卷积网络首现于这篇文章。这篇文章是将CNN结构应用到图像语义分割领域并取得突出结果的开山之作，因而拿到了CVPR 2015年的Best paper honorable mention。图像语义分割，简而言之就是对一张图片上的所有像素点进行分类。如下图就是一个语义分割例子，不同颜色像素代表不同类别：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/10028058-453277040a9c3cc9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="原图"><br><img src="http://upload-images.jianshu.io/upload_images/10028058-5b105644ace02a05.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="语义分割（semantic segmentation）"></p>
+<p>UCB的FCN源码Github地址：<a href="https://github.com/shelhamer/fcn.berkeleyvision.org" target="_blank" rel="external">https://github.com/shelhamer/fcn.berkeleyvision.org</a><br>源码中一共包含了4种网络结构模型：<strong><em>nyud-fcn</em></strong>、<strong><em>pascalcontext-fcn</em></strong>、<strong><em>siftflow-fcn</em></strong>、<strong><em>voc-fcn</em></strong>。每一种网络结构根据提取卷积层不同，又分了3-4个不等的网络类别。<br>工作中个人的数据类型和格式不一定与<strong><em>voc-fcn-alexnet</em></strong>源代码提供的数据接口相同或类似（图片），如本文接下来要输入网络模型的数据类型为由激光雷达（LiDAR）扫描得到的点云数据（<strong><em>.pcd</em></strong>），那么如何进行实际操作呢？下面一步一步进行。</p>
+<h2 id="1-激光雷达数据转换"><a href="#1-激光雷达数据转换" class="headerlink" title="1. 激光雷达数据转换"></a>1. 激光雷达数据转换</h2><hr>
+<h3 id="1-1-激光雷达点云数据介绍"><a href="#1-1-激光雷达点云数据介绍" class="headerlink" title="1.1 激光雷达点云数据介绍"></a>1.1 激光雷达点云数据介绍</h3><p>首先介绍机械式旋转激光雷达生成的数据格式，激光雷达内部电机以一定角速度旋转，通过固定于其上的激光发射器和激光接收器测量激光雷达到障碍物的距离。以速腾聚创公司生产的16线激光雷达<a href="http://www.robosense.cn/rslidar/RS-LiDAR-16" target="_blank" rel="external">RS-LiDAR-16</a>为例，每秒进行10次360°旋转(10Hz)，每次旋转扫描得到周围场景的信息，每一线激光旋转一周得到2016个点，储存在 <strong><em>.pcd</em></strong> 格式文件中。以二维彩色图像的方式（如<strong><em>.png</em></strong>）来理解<strong><em>.pcd</em></strong>文件，16线代表图片高度，2016代表图片宽度，一共16x2016=32256个像素点。每个点 <strong><em>point</em></strong> 的数据有[<strong><em>x</em></strong>, <strong><em>y</em></strong>, <strong><em>z</em></strong>, <strong><em>intensity</em></strong>]，与二维图片中的RGB通道（RGB chanel）是同样的道理，每一个数据代表一个通道。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-39bef235c497ef5b.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="速腾聚创 RS-LiDAR-16"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-f14bf66059d90048.gif?imageMogr2/auto-orient/strip" alt="激光雷达点云示意图"></p>
+<h3 id="1-2-点云预处理"><a href="#1-2-点云预处理" class="headerlink" title="1.2 点云预处理"></a>1.2 点云预处理</h3><p>根据点云数据特征属性对其进行预处理，每个 <strong><em>point</em></strong> 的处理后特征有[<strong><em>row</em></strong>, <strong><em>column</em></strong>, <strong><em>height</em></strong>, <strong><em>range</em></strong>, <strong><em>mark</em></strong>]分别代表 <strong><em>point</em></strong> 的：[<strong><em>行序号</em></strong>， <strong><em>列标号</em></strong>， <strong><em>高度</em></strong>， <strong><em>距离</em></strong>， <strong><em>属性</em></strong>]，其中 <strong><em>height</em></strong> 与 <strong><em>z</em></strong> 值相等，<strong><em>range</em></strong> 由 <strong><em>sqrt(x^2 + y^2 + z^2)</em></strong> 计算得出， <strong><em>mark</em></strong> 为通过决策树（Decision tree）方式对 <strong><em>point</em></strong> 进行分类得到属性：障碍物点（obstacle mark）或地面点（ground mark），与ground true图片道理相同，作为训练预测分类的结果参考标准用于计算loss。这里作用相当于，人工添加了更多的特征通道，方便进行分类和预测。<br>以上预处理得到的数据通过<strong>cnpy</strong>库转换为 <strong><em>.npy</em></strong> 格式的二进制文件，方便NumPy对数据进行读取，<strong>cnpy</strong>库使用教程请移步：<a href="https://www.jianshu.com/p/a35d5f62f164" target="_blank" rel="external">cnpy库使用笔记</a>以及<a href="https://link.jianshu.com/?t=https%3A%2F%2Fgithub.com%2Frogersce%2Fcnpy%2Fblob%2Fmaster%2Fexample1.cpp" target="_blank" rel="external">官方example</a>。每一帧点云数据储存为一个 <strong><em>.npy</em></strong> 格式文件，命名方式越简单越好，方便读取排序，本文直接以序号作为文件名<strong>[0.npy, 1.npy, …, n.npy ]</strong>。</p>
+<h2 id="2-FCN-AlexNet的点云数据分类任务"><a href="#2-FCN-AlexNet的点云数据分类任务" class="headerlink" title="2. FCN-AlexNet的点云数据分类任务"></a>2. FCN-AlexNet的点云数据分类任务</h2><hr>
+<p><strong>FCN-AlexNet的点云数据分类任务工程包含：</strong></p>
+<ul>
+<li>5个<strong>Python</strong>文件： <strong>pcl_data_layer.py</strong>， <strong>net.py</strong>， <strong>solver.py</strong>， <strong>surgery.py</strong>， <strong>score.py</strong></li>
+<li>3个<strong>prototxt</strong>文件: <strong>train.prototxt</strong>， <strong>val.prototxt</strong>， <strong>solver.prototxt</strong></li>
+<li><p>1个<strong>caffe_model</strong>文件： <strong>fcn-alexnet-pascal.caffemodel</strong></p>
+<h3 id="2-1-FCN-AlexNet读取数据层（Data-layer）"><a href="#2-1-FCN-AlexNet读取数据层（Data-layer）" class="headerlink" title="2.1 FCN-AlexNet读取数据层（Data layer）"></a>2.1 FCN-AlexNet读取数据层（Data layer）</h3><p>文件命名为<strong>pcl_data_layer.py</strong>，该文件内包含<code>class PCLSegDataLayer()</code>类函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">import caffe</div><div class="line">import numpy as np</div><div class="line">import random</div><div class="line">import os</div><div class="line"></div><div class="line">class PCLSegDataLayer(caffe.Layer):</div><div class="line"></div><div class="line">    def setup(self, bottom, top):</div><div class="line"></div><div class="line">        params = eval(self.param_str)</div><div class="line">        self.npy_dir = params[&quot;pcl_dir&quot;]</div><div class="line">        self.list_name = list()</div><div class="line"></div><div class="line">        # two tops: data and label</div><div class="line">        if len(top) != 2:</div><div class="line">            raise Exception(&quot;Need to define two tops: data and label.&quot;)</div><div class="line">        # data layers have no bottoms</div><div class="line">        if len(bottom) != 0:</div><div class="line">            raise Exception(&quot;Do not define a bottom.&quot;)</div><div class="line"></div><div class="line">        self.load_file_name( self.npy_dir, self.list_name )</div><div class="line">        self.idx = 0</div><div class="line"></div><div class="line"></div><div class="line">    def reshape(self, bottom, top):</div><div class="line">        self.data, self.label = self.load_file( self.idx )</div><div class="line">        # reshape tops to fit (leading 1 is for batch dimension)</div><div class="line">        top[0].reshape(1, *self.data.shape)</div><div class="line">        top[1].reshape(1, *self.label.shape)</div><div class="line"></div><div class="line"></div><div class="line">    def forward(self, bottom, top):</div><div class="line">        # assign output</div><div class="line">        top[0].data[...] = self.data</div><div class="line">        top[1].data[...] = self.label</div><div class="line"></div><div class="line">        # pick next input</div><div class="line">        self.idx += 1</div><div class="line">        if self.idx == len(self.list_name):</div><div class="line">            self.idx = 0</div><div class="line"></div><div class="line">    def backward(self, top, propagate_down, bottom):</div><div class="line">        pass</div><div class="line"></div><div class="line">    def load_file(self, idx):</div><div class="line">        in_file = np.load(self.list_name[idx]) #[mark, row, col, height, range]</div><div class="line">        in_data = in_file[:,:,1:-1]</div><div class="line">        in_data = in_data.transpose((2, 0, 1))</div><div class="line">        in_label = in_file[:,:,0]</div><div class="line">        return in_data, in_label</div><div class="line"></div><div class="line">    def load_file_name(self, path, list_name):</div><div class="line">        for file in os.listdir(path):</div><div class="line">            file_path = os.path.join(path, file)</div><div class="line">            if os.path.isdir(file_path):</div><div class="line">                os.listdir(file_path, list_name)</div><div class="line">            else:</div><div class="line">                list_name.append(file_path)</div></pre></td></tr></table></figure>
+</li>
+<li><p>setup()： 建立类时的参数</p>
+</li>
+<li>reshape()： 根据输入调整模型入口大小</li>
+<li>forward()： 前向传播，由于是数据输入层，所以输出为原点云数据及其分类label</li>
+<li>backward()： 后向传播，数据层没有后向传播，所以舍弃</li>
+<li>load_file_name()： 读取指定文件夹内 <strong><em>.npy</em></strong> 格式文件并储存如列表list</li>
+<li>load_file()： 载入单个<strong><em>.npy</em></strong> 文件，并按照储存顺序对属性进行分类，输出data和label</li>
+</ul>
+<h3 id="2-2-FCN-AlexNet模型定义函数（net-py）"><a href="#2-2-FCN-AlexNet模型定义函数（net-py）" class="headerlink" title="2.2 FCN-AlexNet模型定义函数（net.py）"></a>2.2 FCN-AlexNet模型定义函数（net.py）</h3><p><strong>net.py</strong>文件用于生成<strong>net.prototxt</strong>文件，其定义了整个模型的结构和模型每层的各个参数。当然，模型网络结构可以利用官方已经训练好的<strong>fcn-alexnet-pascal.caffemodel</strong>来导出，也可以使用<strong>net.py</strong>自己生成，为了简化操作，本文使用<strong>fcn-alexnet-pascal.caffemodel</strong>来导出模型网络结构。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line">import sys</div><div class="line">sys.path.append(&apos;../../python&apos;)</div><div class="line"></div><div class="line">import caffe</div><div class="line">from caffe import layers as L, params as P</div><div class="line">from caffe.coord_map import crop</div><div class="line"></div><div class="line">def conv_relu(bottom, ks, nout, stride=1, pad=0, group=1):</div><div class="line">    conv = L.Convolution(bottom, kernel_size=ks, stride=stride,</div><div class="line">                                num_output=nout, pad=pad, group=group)</div><div class="line">    return conv, L.ReLU(conv, in_place=True)</div><div class="line"></div><div class="line">def max_pool(bottom, ks, stride=1):</div><div class="line">    return L.Pooling(bottom, pool=P.Pooling.MAX, kernel_size=ks, stride=stride)</div><div class="line"></div><div class="line">def fcn(split):</div><div class="line">    n = caffe.NetSpec()</div><div class="line">    pydata_params = dict()</div><div class="line">    pydata_params[&apos;pcl_dir&apos;] = &apos;../fcn_data_gen/data/npy&apos; #.npy files path</div><div class="line">    pylayer = &apos;PCLSegDataLayer&apos;</div><div class="line">    n.data, n.label = L.Python(module=&apos;pcl_data_layer&apos;, layer=pylayer,</div><div class="line">            ntop=2, param_str=str(pydata_params))</div><div class="line"></div><div class="line">    # the base net</div><div class="line">    n.conv1, n.relu1 = conv_relu(n.data, 11, 96, stride=4, pad=100)</div><div class="line">    n.pool1 = max_pool(n.relu1, 3, stride=2)</div><div class="line">    n.norm1 = L.LRN(n.pool1, local_size=5, alpha=1e-4, beta=0.75)</div><div class="line">    n.conv2, n.relu2 = conv_relu(n.norm1, 5, 256, pad=2, group=2)</div><div class="line">    n.pool2 = max_pool(n.relu2, 3, stride=2)</div><div class="line">    n.norm2 = L.LRN(n.pool2, local_size=5, alpha=1e-4, beta=0.75)</div><div class="line">    n.conv3, n.relu3 = conv_relu(n.norm2, 3, 384, pad=1)</div><div class="line">    n.conv4, n.relu4 = conv_relu(n.relu3, 3, 384, pad=1, group=2)</div><div class="line">    n.conv5, n.relu5 = conv_relu(n.relu4, 3, 256, pad=1, group=2)</div><div class="line">    n.pool5 = max_pool(n.relu5, 3, stride=2)</div><div class="line"></div><div class="line">    # fully conv</div><div class="line">    n.fc6, n.relu6 = conv_relu(n.pool5, 6, 4096)</div><div class="line">    n.drop6 = L.Dropout(n.relu6, dropout_ratio=0.5, in_place=True)</div><div class="line">    n.fc7, n.relu7 = conv_relu(n.drop6, 1, 4096)</div><div class="line">    n.drop7 = L.Dropout(n.relu7, dropout_ratio=0.5, in_place=True)</div><div class="line"></div><div class="line">    n.score_fr = L.Convolution(n.drop7, num_output=21, kernel_size=1, pad=0,</div><div class="line">        param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])</div><div class="line">    n.upscore = L.Deconvolution(n.score_fr,</div><div class="line">        convolution_param=dict(num_output=21, kernel_size=63, stride=32,</div><div class="line">            bias_term=False),</div><div class="line">        param=[dict(lr_mult=0)])</div><div class="line">    n.score = crop(n.upscore, n.data)</div><div class="line">    n.loss = L.SoftmaxWithLoss(n.score, n.label,</div><div class="line">            loss_param=dict(normalize=True, ignore_label=255))</div><div class="line"></div><div class="line">    return n.to_proto()</div><div class="line"></div><div class="line">def make_net():</div><div class="line">    with open(&apos;train.prototxt&apos;, &apos;w&apos;) as f:</div><div class="line">        f.write(str(fcn(&apos;train&apos;)))</div><div class="line"></div><div class="line">    with open(&apos;val.prototxt&apos;, &apos;w&apos;) as f:</div><div class="line">        f.write(str(fcn(&apos;seg11valid&apos;)))</div><div class="line"></div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    make_net()</div></pre></td></tr></table></figure></p>
+<ul>
+<li>conv_relu()： 定义卷积层输入参数</li>
+<li>max_pool()： 定义池化层输入参数</li>
+<li>fcn()： 定义模型网络结构</li>
+</ul>
+<h4 id="fcn-模型结构详解"><a href="#fcn-模型结构详解" class="headerlink" title="fcn()模型结构详解"></a>fcn()模型结构详解</h4><p>这里建议结合AlexNet原论文<a href="http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf" target="_blank" rel="external">ImageNet Classification with Deep Convolutional Neural Networks</a>一起看，并参考<a href="http://simtalk.cn/2016/09/20/AlexNet/" target="_blank" rel="external">AlexNet模型结构图例</a>来进行比较好理解每个参数的意义。</p>
+<h5 id="1-数据输入层"><a href="#1-数据输入层" class="headerlink" title="(1). 数据输入层"></a>(1). 数据输入层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">n = caffe.NetSpec()</div><div class="line">pydata_params = dict()</div><div class="line">pydata_params[&apos;pcl_dir&apos;] = &apos;../fcn_data_gen/data/npy&apos; #.npy files path</div><div class="line">pylayer = &apos;PCLSegDataLayer&apos;</div><div class="line">n.data, n.label = L.Python(module=&apos;pcl_data_layer&apos;, layer=pylayer,</div><div class="line">        ntop=2, param_str=str(pydata_params))</div></pre></td></tr></table></figure>
+<p>找到<code>pcl_data_layer.py</code>文件中的<code>PCLSegDataLayer</code>函数，使用该类处理数据方式作为模型数据输入层函数。</p>
+<h5 id="2-第一个卷积层"><a href="#2-第一个卷积层" class="headerlink" title="(2). 第一个卷积层"></a>(2). 第一个卷积层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">n.conv1, n.relu1 = conv_relu(n.data, 11, 96, stride=4, pad=100)</div><div class="line">n.pool1 = max_pool(n.relu1, 3, stride=2)</div><div class="line">n.norm1 = L.LRN(n.pool1, local_size=5, alpha=1e-4, beta=0.75)</div></pre></td></tr></table></figure>
+<p>关于为何<code>pad=100</code>，此文中有详细解释：<a href="https://zhuanlan.zhihu.com/p/22976342" target="_blank" rel="external">FCN学习:Semantic Segmentation</a></p>
+<h5 id="3-第二个卷积层"><a href="#3-第二个卷积层" class="headerlink" title="(3). 第二个卷积层"></a>(3). 第二个卷积层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">n.conv2, n.relu2 = conv_relu(n.norm1, 5, 256, pad=2, group=2)</div><div class="line">n.pool2 = max_pool(n.relu2, 3, stride=2)</div><div class="line">n.norm2 = L.LRN(n.pool2, local_size=5, alpha=1e-4, beta=0.75)</div></pre></td></tr></table></figure>
+<h5 id="4-第三个卷积层"><a href="#4-第三个卷积层" class="headerlink" title="(4). 第三个卷积层"></a>(4). 第三个卷积层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">n.conv3, n.relu3 = conv_relu(n.norm2, 3, 384, pad=1)</div></pre></td></tr></table></figure>
+<h5 id="5-第四个卷积层"><a href="#5-第四个卷积层" class="headerlink" title="(5). 第四个卷积层"></a>(5). 第四个卷积层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">n.conv4, n.relu4 = conv_relu(n.relu3, 3, 384, pad=1, group=2)</div></pre></td></tr></table></figure>
+<h5 id="6-第五个卷积层"><a href="#6-第五个卷积层" class="headerlink" title="(6). 第五个卷积层"></a>(6). 第五个卷积层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">n.conv5, n.relu5 = conv_relu(n.relu4, 3, 256, pad=1, group=2)</div><div class="line">n.pool5 = max_pool(n.relu5, 3, stride=2)</div></pre></td></tr></table></figure>
+<h5 id="7-第六个全连接层"><a href="#7-第六个全连接层" class="headerlink" title="(7). 第六个全连接层"></a>(7). 第六个全连接层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">n.fc6, n.relu6 = conv_relu(n.pool5, 6, 4096)</div><div class="line">n.drop6 = L.Dropout(n.relu6, dropout_ratio=0.5, in_place=True)</div></pre></td></tr></table></figure>
+<h5 id="8-第七个全连接层"><a href="#8-第七个全连接层" class="headerlink" title="(8). 第七个全连接层"></a>(8). 第七个全连接层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">n.fc7, n.relu7 = conv_relu(n.drop6, 1, 4096)</div><div class="line">n.drop7 = L.Dropout(n.relu7, dropout_ratio=0.5, in_place=True)</div></pre></td></tr></table></figure>
+<h5 id="9-第八个全连接层"><a href="#9-第八个全连接层" class="headerlink" title="(9). 第八个全连接层"></a>(9). 第八个全连接层</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">n.score_fr = L.Convolution(n.drop7, num_output=21, kernel_size=1, pad=0,</div><div class="line">    param=[dict(lr_mult=1, decay_mult=1), dict(lr_mult=2, decay_mult=0)])</div><div class="line">n.upscore = L.Deconvolution(n.score_fr,</div><div class="line">    convolution_param=dict(num_output=21, kernel_size=63, stride=32,</div><div class="line">        bias_term=False),</div><div class="line">    param=[dict(lr_mult=0)])</div><div class="line">n.score = crop(n.upscore, n.data)</div><div class="line">n.loss = L.SoftmaxWithLoss(n.score, n.label,</div><div class="line">        loss_param=dict(normalize=True, ignore_label=255))</div></pre></td></tr></table></figure>
+<h2 id="2-3-FCN-AlexNet求解函数（solve-py）"><a href="#2-3-FCN-AlexNet求解函数（solve-py）" class="headerlink" title="2.3 FCN-AlexNet求解函数（solve.py）"></a>2.3 FCN-AlexNet求解函数（solve.py）</h2><p><strong>solve.py</strong> 文件是整个模型的入口，它整合各个文件，输入外部参数，对结果进行求解并输出。由 <strong>solve.py</strong> 生成的 <strong>solver.prototxt</strong> 文件定义了求解函数的结构。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">import caffe</div><div class="line">import surgery, score</div><div class="line"></div><div class="line">import numpy as np</div><div class="line">import os</div><div class="line">import sys</div><div class="line"></div><div class="line">try:</div><div class="line">    import setproctitle</div><div class="line">    setproctitle.setproctitle(os.path.basename(os.getcwd()))</div><div class="line">except:</div><div class="line">    pass</div><div class="line"></div><div class="line">weights = &apos;../ilsvrc-nets/fcn-alexnet-pascal.caffemodel&apos;</div><div class="line"></div><div class="line"># init</div><div class="line"># caffe.set_device(int(sys.argv[0]))</div><div class="line"># caffe.set_mode_gpu()</div><div class="line"></div><div class="line">solver = caffe.SGDSolver(&apos;solver.prototxt&apos;)</div><div class="line">solver.net.copy_from(weights)</div><div class="line"></div><div class="line"># surgeries</div><div class="line">interp_layers = [k for k in solver.net.params.keys() if &apos;up&apos; in k]</div><div class="line">surgery.interp(solver.net, interp_layers)</div><div class="line"></div><div class="line"># scoring</div><div class="line">val = np.loadtxt(&apos;../data/pascal/seg11valid.txt&apos;, dtype=str)</div><div class="line"></div><div class="line">for _ in range(25):</div><div class="line">    solver.step(4000)</div><div class="line">    score.seg_tests(solver, False, val, layer=&apos;score&apos;)</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>weights = &#39;../ilsvrc-nets/fcn-alexnet-pascal.caffemodel&#39;</code>： 导入训练好的模型，可在[Netscope]中输入<strong>net.prototxt</strong>来进行网络结构可视化</li>
+<li><code># caffe.set_device(int(sys.argv[0]))</code><br><code># caffe.set_mode_gpu()</code>： 设置gpu来进行训练，本人电脑使用gpu报错，所以没有使用</li>
+<li><code>solver = caffe.SGDSolver(&#39;solver.prototxt&#39;)</code><br><code>solver.net.copy_from(weights)</code>：设置求解器模型</li>
+<li><code># surgeries</code>： （待补充）</li>
+<li><code># scoring</code> ： （待补充）</li>
+</ul>
+<h2 id="3-点云分割试验结果"><a href="#3-点云分割试验结果" class="headerlink" title="3. 点云分割试验结果"></a>3. 点云分割试验结果</h2><hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div><div class="line">301</div><div class="line">302</div><div class="line">303</div><div class="line">304</div><div class="line">305</div><div class="line">306</div><div class="line">307</div><div class="line">308</div><div class="line">309</div><div class="line">310</div><div class="line">311</div><div class="line">312</div><div class="line">313</div><div class="line">314</div><div class="line">315</div><div class="line">316</div><div class="line">317</div><div class="line">318</div><div class="line">319</div><div class="line">320</div><div class="line">321</div><div class="line">322</div><div class="line">323</div><div class="line">324</div><div class="line">325</div><div class="line">326</div><div class="line">327</div><div class="line">328</div><div class="line">329</div><div class="line">330</div><div class="line">331</div><div class="line">332</div><div class="line">333</div><div class="line">334</div><div class="line">335</div><div class="line">336</div><div class="line">337</div><div class="line">338</div><div class="line">339</div><div class="line">340</div><div class="line">341</div><div class="line">342</div><div class="line">343</div><div class="line">344</div><div class="line">345</div><div class="line">346</div><div class="line">347</div><div class="line">348</div><div class="line">349</div><div class="line">350</div><div class="line">351</div><div class="line">352</div><div class="line">353</div><div class="line">354</div><div class="line">355</div><div class="line">356</div><div class="line">357</div><div class="line">358</div><div class="line">359</div><div class="line">360</div><div class="line">361</div><div class="line">362</div><div class="line">363</div><div class="line">364</div><div class="line">365</div><div class="line">366</div><div class="line">367</div><div class="line">368</div><div class="line">369</div><div class="line">370</div><div class="line">371</div><div class="line">372</div><div class="line">373</div><div class="line">374</div><div class="line">375</div><div class="line">376</div><div class="line">377</div><div class="line">378</div><div class="line">379</div><div class="line">380</div><div class="line">381</div><div class="line">382</div><div class="line">383</div><div class="line">384</div><div class="line">385</div><div class="line">386</div><div class="line">387</div><div class="line">388</div><div class="line">389</div><div class="line">390</div><div class="line">391</div><div class="line">392</div><div class="line">393</div><div class="line">394</div><div class="line">395</div><div class="line">396</div><div class="line">397</div><div class="line">398</div><div class="line">399</div><div class="line">400</div><div class="line">401</div><div class="line">402</div><div class="line">403</div><div class="line">404</div><div class="line">405</div><div class="line">406</div><div class="line">407</div><div class="line">408</div><div class="line">409</div><div class="line">410</div><div class="line">411</div><div class="line">412</div><div class="line">413</div><div class="line">414</div><div class="line">415</div><div class="line">416</div><div class="line">417</div><div class="line">418</div><div class="line">419</div><div class="line">420</div><div class="line">421</div><div class="line">422</div><div class="line">423</div><div class="line">424</div><div class="line">425</div><div class="line">426</div><div class="line">427</div><div class="line">428</div><div class="line">429</div><div class="line">430</div><div class="line">431</div><div class="line">432</div><div class="line">433</div><div class="line">434</div><div class="line">435</div><div class="line">436</div><div class="line">437</div><div class="line">438</div><div class="line">439</div><div class="line">440</div><div class="line">441</div><div class="line">442</div><div class="line">443</div><div class="line">444</div><div class="line">445</div><div class="line">446</div><div class="line">447</div><div class="line">448</div><div class="line">449</div><div class="line">450</div><div class="line">451</div><div class="line">452</div><div class="line">453</div><div class="line">454</div><div class="line">455</div><div class="line">456</div><div class="line">457</div><div class="line">458</div><div class="line">459</div><div class="line">460</div><div class="line">461</div><div class="line">462</div><div class="line">463</div><div class="line">464</div><div class="line">465</div><div class="line">466</div><div class="line">467</div><div class="line">468</div><div class="line">469</div><div class="line">470</div><div class="line">471</div><div class="line">472</div><div class="line">473</div><div class="line">474</div><div class="line">475</div><div class="line">476</div><div class="line">477</div><div class="line">478</div><div class="line">479</div><div class="line">480</div><div class="line">481</div><div class="line">482</div><div class="line">483</div><div class="line">484</div><div class="line">485</div><div class="line">486</div><div class="line">487</div><div class="line">488</div><div class="line">489</div><div class="line">490</div><div class="line">491</div><div class="line">492</div><div class="line">493</div><div class="line">494</div><div class="line">495</div><div class="line">496</div><div class="line">497</div><div class="line">498</div><div class="line">499</div><div class="line">500</div><div class="line">501</div><div class="line">502</div><div class="line">503</div><div class="line">504</div><div class="line">505</div><div class="line">506</div><div class="line">507</div><div class="line">508</div><div class="line">509</div><div class="line">510</div><div class="line">511</div><div class="line">512</div><div class="line">513</div><div class="line">514</div><div class="line">515</div><div class="line">516</div><div class="line">517</div><div class="line">518</div><div class="line">519</div><div class="line">520</div><div class="line">521</div><div class="line">522</div><div class="line">523</div><div class="line">524</div><div class="line">525</div><div class="line">526</div><div class="line">527</div><div class="line">528</div><div class="line">529</div><div class="line">530</div><div class="line">531</div><div class="line">532</div><div class="line">533</div><div class="line">534</div><div class="line">535</div><div class="line">536</div><div class="line">537</div><div class="line">538</div><div class="line">539</div><div class="line">540</div><div class="line">541</div><div class="line">542</div><div class="line">543</div><div class="line">544</div><div class="line">545</div><div class="line">546</div><div class="line">547</div><div class="line">548</div><div class="line">549</div><div class="line">550</div><div class="line">551</div><div class="line">552</div><div class="line">553</div><div class="line">554</div><div class="line">555</div><div class="line">556</div><div class="line">557</div><div class="line">558</div><div class="line">559</div><div class="line">560</div><div class="line">561</div><div class="line">562</div><div class="line">563</div><div class="line">564</div><div class="line">565</div><div class="line">566</div><div class="line">567</div><div class="line">568</div><div class="line">569</div><div class="line">570</div><div class="line">571</div><div class="line">572</div><div class="line">573</div><div class="line">574</div><div class="line">575</div><div class="line">576</div><div class="line">577</div><div class="line">578</div><div class="line">579</div><div class="line">580</div><div class="line">581</div><div class="line">582</div><div class="line">583</div><div class="line">584</div><div class="line">585</div><div class="line">586</div><div class="line">587</div><div class="line">588</div><div class="line">589</div><div class="line">590</div><div class="line">591</div><div class="line">592</div><div class="line">593</div><div class="line">594</div><div class="line">595</div><div class="line">596</div><div class="line">597</div><div class="line">598</div><div class="line">599</div><div class="line">600</div><div class="line">601</div><div class="line">602</div><div class="line">603</div><div class="line">604</div><div class="line">605</div><div class="line">606</div><div class="line">607</div><div class="line">608</div><div class="line">609</div><div class="line">610</div><div class="line">611</div><div class="line">612</div><div class="line">613</div><div class="line">614</div><div class="line">615</div><div class="line">616</div><div class="line">617</div><div class="line">618</div><div class="line">619</div><div class="line">620</div><div class="line">621</div><div class="line">622</div><div class="line">623</div><div class="line">624</div><div class="line">625</div><div class="line">626</div><div class="line">627</div><div class="line">628</div><div class="line">629</div><div class="line">630</div><div class="line">631</div><div class="line">632</div><div class="line">633</div><div class="line">634</div><div class="line">635</div><div class="line">636</div><div class="line">637</div><div class="line">638</div><div class="line">639</div><div class="line">640</div><div class="line">641</div><div class="line">642</div><div class="line">643</div><div class="line">644</div><div class="line">645</div><div class="line">646</div><div class="line">647</div><div class="line">648</div><div class="line">649</div><div class="line">650</div><div class="line">651</div><div class="line">652</div><div class="line">653</div><div class="line">654</div><div class="line">655</div><div class="line">656</div><div class="line">657</div><div class="line">658</div><div class="line">659</div><div class="line">660</div><div class="line">661</div><div class="line">662</div><div class="line">663</div><div class="line">664</div><div class="line">665</div><div class="line">666</div><div class="line">667</div><div class="line">668</div><div class="line">669</div><div class="line">670</div><div class="line">671</div><div class="line">672</div><div class="line">673</div><div class="line">674</div><div class="line">675</div><div class="line">676</div><div class="line">677</div><div class="line">678</div><div class="line">679</div><div class="line">680</div><div class="line">681</div><div class="line">682</div><div class="line">683</div><div class="line">684</div><div class="line">685</div><div class="line">686</div><div class="line">687</div><div class="line">688</div><div class="line">689</div><div class="line">690</div><div class="line">691</div><div class="line">692</div><div class="line">693</div><div class="line">694</div><div class="line">695</div><div class="line">696</div><div class="line">697</div><div class="line">698</div><div class="line">699</div><div class="line">700</div><div class="line">701</div><div class="line">702</div><div class="line">703</div><div class="line">704</div><div class="line">705</div><div class="line">706</div><div class="line">707</div><div class="line">708</div><div class="line">709</div><div class="line">710</div><div class="line">711</div><div class="line">712</div><div class="line">713</div><div class="line">714</div><div class="line">715</div><div class="line">716</div><div class="line">717</div><div class="line">718</div><div class="line">719</div><div class="line">720</div><div class="line">721</div><div class="line">722</div><div class="line">723</div><div class="line">724</div><div class="line">725</div><div class="line">726</div><div class="line">727</div><div class="line">728</div><div class="line">729</div><div class="line">730</div><div class="line">731</div><div class="line">732</div><div class="line">733</div><div class="line">734</div><div class="line">735</div><div class="line">736</div><div class="line">737</div><div class="line">738</div><div class="line">739</div><div class="line">740</div><div class="line">741</div><div class="line">742</div><div class="line">743</div><div class="line">744</div><div class="line">745</div><div class="line">746</div><div class="line">747</div><div class="line">748</div><div class="line">749</div><div class="line">750</div><div class="line">751</div><div class="line">752</div><div class="line">753</div><div class="line">754</div><div class="line">755</div><div class="line">756</div><div class="line">757</div><div class="line">758</div><div class="line">759</div><div class="line">760</div><div class="line">761</div><div class="line">762</div><div class="line">763</div><div class="line">764</div><div class="line">765</div><div class="line">766</div><div class="line">767</div><div class="line">768</div><div class="line">769</div><div class="line">770</div><div class="line">771</div><div class="line">772</div><div class="line">773</div><div class="line">774</div><div class="line">775</div><div class="line">776</div><div class="line">777</div><div class="line">778</div><div class="line">779</div><div class="line">780</div><div class="line">781</div><div class="line">782</div><div class="line">783</div><div class="line">784</div><div class="line">785</div><div class="line">786</div><div class="line">787</div><div class="line">788</div><div class="line">789</div><div class="line">790</div><div class="line">791</div><div class="line">792</div><div class="line">793</div><div class="line">794</div><div class="line">795</div><div class="line">796</div><div class="line">797</div><div class="line">798</div><div class="line">799</div><div class="line">800</div><div class="line">801</div><div class="line">802</div><div class="line">803</div><div class="line">804</div><div class="line">805</div><div class="line">806</div><div class="line">807</div><div class="line">808</div><div class="line">809</div><div class="line">810</div><div class="line">811</div><div class="line">812</div><div class="line">813</div><div class="line">814</div><div class="line">815</div><div class="line">816</div><div class="line">817</div><div class="line">818</div><div class="line">819</div><div class="line">820</div><div class="line">821</div><div class="line">822</div><div class="line">823</div><div class="line">824</div><div class="line">825</div><div class="line">826</div><div class="line">827</div><div class="line">828</div><div class="line">829</div><div class="line">830</div><div class="line">831</div><div class="line">832</div><div class="line">833</div><div class="line">834</div><div class="line">835</div><div class="line">836</div><div class="line">837</div><div class="line">838</div><div class="line">839</div><div class="line">840</div><div class="line">841</div><div class="line">842</div><div class="line">843</div><div class="line">844</div><div class="line">845</div><div class="line">846</div><div class="line">847</div><div class="line">848</div><div class="line">849</div><div class="line">850</div><div class="line">851</div><div class="line">852</div><div class="line">853</div><div class="line">854</div><div class="line">855</div><div class="line">856</div><div class="line">857</div><div class="line">858</div><div class="line">859</div><div class="line">860</div><div class="line">861</div><div class="line">862</div><div class="line">863</div><div class="line">864</div><div class="line">865</div><div class="line">866</div><div class="line">867</div><div class="line">868</div><div class="line">869</div><div class="line">870</div><div class="line">871</div><div class="line">872</div><div class="line">873</div><div class="line">874</div><div class="line">875</div><div class="line">876</div><div class="line">877</div><div class="line">878</div><div class="line">879</div><div class="line">880</div><div class="line">881</div><div class="line">882</div><div class="line">883</div><div class="line">884</div><div class="line">885</div><div class="line">886</div><div class="line">887</div><div class="line">888</div><div class="line">889</div><div class="line">890</div><div class="line">891</div><div class="line">892</div><div class="line">893</div><div class="line">894</div><div class="line">895</div><div class="line">896</div><div class="line">897</div><div class="line">898</div><div class="line">899</div><div class="line">900</div><div class="line">901</div><div class="line">902</div><div class="line">903</div><div class="line">904</div><div class="line">905</div><div class="line">906</div><div class="line">907</div><div class="line">908</div><div class="line">909</div><div class="line">910</div><div class="line">911</div><div class="line">912</div><div class="line">913</div><div class="line">914</div><div class="line">915</div><div class="line">916</div><div class="line">917</div><div class="line">918</div><div class="line">919</div><div class="line">920</div><div class="line">921</div><div class="line">922</div><div class="line">923</div><div class="line">924</div><div class="line">925</div><div class="line">926</div><div class="line">927</div><div class="line">928</div><div class="line">929</div><div class="line">930</div><div class="line">931</div><div class="line">932</div><div class="line">933</div><div class="line">934</div><div class="line">935</div><div class="line">936</div><div class="line">937</div><div class="line">938</div><div class="line">939</div><div class="line">940</div><div class="line">941</div><div class="line">942</div><div class="line">943</div><div class="line">944</div><div class="line">945</div><div class="line">946</div><div class="line">947</div><div class="line">948</div><div class="line">949</div><div class="line">950</div><div class="line">951</div><div class="line">952</div><div class="line">953</div><div class="line">954</div><div class="line">955</div><div class="line">956</div><div class="line">957</div><div class="line">958</div><div class="line">959</div><div class="line">960</div><div class="line">961</div><div class="line">962</div><div class="line">963</div><div class="line">964</div><div class="line">965</div><div class="line">966</div><div class="line">967</div><div class="line">968</div><div class="line">969</div><div class="line">970</div><div class="line">971</div><div class="line">972</div><div class="line">973</div><div class="line">974</div><div class="line">975</div><div class="line">976</div><div class="line">977</div><div class="line">978</div><div class="line">979</div><div class="line">980</div><div class="line">981</div><div class="line">982</div><div class="line">983</div><div class="line">984</div><div class="line">985</div><div class="line">986</div><div class="line">987</div><div class="line">988</div><div class="line">989</div><div class="line">990</div><div class="line">991</div><div class="line">992</div><div class="line">993</div><div class="line">994</div><div class="line">995</div><div class="line">996</div><div class="line">997</div><div class="line">998</div><div class="line">999</div><div class="line">1000</div><div class="line">1001</div><div class="line">1002</div><div class="line">1003</div><div class="line">1004</div><div class="line">1005</div><div class="line">1006</div><div class="line">1007</div><div class="line">1008</div><div class="line">1009</div><div class="line">1010</div><div class="line">1011</div><div class="line">1012</div><div class="line">1013</div><div class="line">1014</div><div class="line">1015</div><div class="line">1016</div><div class="line">1017</div><div class="line">1018</div><div class="line">1019</div><div class="line">1020</div><div class="line">1021</div><div class="line">1022</div><div class="line">1023</div><div class="line">1024</div><div class="line">1025</div><div class="line">1026</div><div class="line">1027</div><div class="line">1028</div><div class="line">1029</div><div class="line">1030</div><div class="line">1031</div><div class="line">1032</div><div class="line">1033</div><div class="line">1034</div><div class="line">1035</div><div class="line">1036</div><div class="line">1037</div><div class="line">1038</div><div class="line">1039</div><div class="line">1040</div><div class="line">1041</div><div class="line">1042</div><div class="line">1043</div><div class="line">1044</div><div class="line">1045</div><div class="line">1046</div><div class="line">1047</div><div class="line">1048</div><div class="line">1049</div><div class="line">1050</div><div class="line">1051</div><div class="line">1052</div><div class="line">1053</div><div class="line">1054</div><div class="line">1055</div><div class="line">1056</div><div class="line">1057</div><div class="line">1058</div><div class="line">1059</div><div class="line">1060</div><div class="line">1061</div><div class="line">1062</div><div class="line">1063</div><div class="line">1064</div><div class="line">1065</div><div class="line">1066</div><div class="line">1067</div><div class="line">1068</div><div class="line">1069</div><div class="line">1070</div><div class="line">1071</div><div class="line">1072</div><div class="line">1073</div><div class="line">1074</div><div class="line">1075</div><div class="line">1076</div><div class="line">1077</div><div class="line">1078</div></pre></td><td class="code"><pre><div class="line">pydev debugger: process 9249 is connecting</div><div class="line"></div><div class="line">Connected to pydev debugger (build 173.4301.16)</div><div class="line">WARNING: Logging before InitGoogleLogging() is written to STDERR</div><div class="line">I0313 11:41:39.369604  9249 solver.cpp:45] Initializing solver from parameters: </div><div class="line">train_net: &quot;train.prototxt&quot;</div><div class="line">test_net: &quot;val.prototxt&quot;</div><div class="line">test_iter: 736</div><div class="line">test_interval: 999999999</div><div class="line">base_lr: 0.0001</div><div class="line">display: 20</div><div class="line">max_iter: 100000</div><div class="line">lr_policy: &quot;fixed&quot;</div><div class="line">momentum: 0.9</div><div class="line">weight_decay: 0.0005</div><div class="line">snapshot: 4000</div><div class="line">snapshot_prefix: &quot;snapshot/train&quot;</div><div class="line">test_initialization: false</div><div class="line">average_loss: 20</div><div class="line">iter_size: 20</div><div class="line">I0313 11:41:39.369671  9249 solver.cpp:92] Creating training net from train_net file: train.prototxt</div><div class="line">I0313 11:41:39.370101  9249 net.cpp:51] Initializing net from parameters: </div><div class="line">state &#123;</div><div class="line">  phase: TRAIN</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;data&quot;</div><div class="line">  type: &quot;Python&quot;</div><div class="line">  top: &quot;data&quot;</div><div class="line">  top: &quot;label&quot;</div><div class="line">  python_param &#123;</div><div class="line">    module: &quot;pcl_data_layer&quot;</div><div class="line">    layer: &quot;PCLSegDataLayer&quot;</div><div class="line">    param_str: &quot;&#123;\&apos;pcl_dir\&apos;: \&apos;/home/zzy/CLionProjects/ROS_Project/ws/src/fcn_data_gen/data/npy\&apos;&#125;&quot;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv1&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;data&quot;</div><div class="line">  top: &quot;conv1&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 96</div><div class="line">    pad: 100</div><div class="line">    kernel_size: 11</div><div class="line">    group: 1</div><div class="line">    stride: 4</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu1&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv1&quot;</div><div class="line">  top: &quot;conv1&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;pool1&quot;</div><div class="line">  type: &quot;Pooling&quot;</div><div class="line">  bottom: &quot;conv1&quot;</div><div class="line">  top: &quot;pool1&quot;</div><div class="line">  pooling_param &#123;</div><div class="line">    pool: MAX</div><div class="line">    kernel_size: 3</div><div class="line">    stride: 2</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;norm1&quot;</div><div class="line">  type: &quot;LRN&quot;</div><div class="line">  bottom: &quot;pool1&quot;</div><div class="line">  top: &quot;norm1&quot;</div><div class="line">  lrn_param &#123;</div><div class="line">    local_size: 5</div><div class="line">    alpha: 0.0001</div><div class="line">    beta: 0.75</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv2&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;norm1&quot;</div><div class="line">  top: &quot;conv2&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 256</div><div class="line">    pad: 2</div><div class="line">    kernel_size: 5</div><div class="line">    group: 2</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu2&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv2&quot;</div><div class="line">  top: &quot;conv2&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;pool2&quot;</div><div class="line">  type: &quot;Pooling&quot;</div><div class="line">  bottom: &quot;conv2&quot;</div><div class="line">  top: &quot;pool2&quot;</div><div class="line">  pooling_param &#123;</div><div class="line">    pool: MAX</div><div class="line">    kernel_size: 3</div><div class="line">    stride: 2</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;norm2&quot;</div><div class="line">  type: &quot;LRN&quot;</div><div class="line">  bottom: &quot;pool2&quot;</div><div class="line">  top: &quot;norm2&quot;</div><div class="line">  lrn_param &#123;</div><div class="line">    local_size: 5</div><div class="line">    alpha: 0.0001</div><div class="line">    beta: 0.75</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv3&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;norm2&quot;</div><div class="line">  top: &quot;conv3&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 384</div><div class="line">    pad: 1</div><div class="line">    kernel_size: 3</div><div class="line">    group: 1</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu3&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv3&quot;</div><div class="line">  top: &quot;conv3&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv4&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;conv3&quot;</div><div class="line">  top: &quot;conv4&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 384</div><div class="line">    pad: 1</div><div class="line">    kernel_size: 3</div><div class="line">    group: 2</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu4&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv4&quot;</div><div class="line">  top: &quot;conv4&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv5&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;conv4&quot;</div><div class="line">  top: &quot;conv5&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 256</div><div class="line">    pad: 1</div><div class="line">    kernel_size: 3</div><div class="line">    group: 2</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu5&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv5&quot;</div><div class="line">  top: &quot;conv5&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;pool5&quot;</div><div class="line">  type: &quot;Pooling&quot;</div><div class="line">  bottom: &quot;conv5&quot;</div><div class="line">  top: &quot;pool5&quot;</div><div class="line">  pooling_param &#123;</div><div class="line">    pool: MAX</div><div class="line">    kernel_size: 3</div><div class="line">    stride: 2</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;fc6&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;pool5&quot;</div><div class="line">  top: &quot;fc6&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 4096</div><div class="line">    pad: 0</div><div class="line">    kernel_size: 6</div><div class="line">    group: 1</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu6&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;fc6&quot;</div><div class="line">  top: &quot;fc6&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;drop6&quot;</div><div class="line">  type: &quot;Dropout&quot;</div><div class="line">  bottom: &quot;fc6&quot;</div><div class="line">  top: &quot;fc6&quot;</div><div class="line">  dropout_param &#123;</div><div class="line">    dropout_ratio: 0.5</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;fc7&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;fc6&quot;</div><div class="line">  top: &quot;fc7&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 4096</div><div class="line">    pad: 0</div><div class="line">    kernel_size: 1</div><div class="line">    group: 1</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu7&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;fc7&quot;</div><div class="line">  top: &quot;fc7&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;drop7&quot;</div><div class="line">  type: &quot;Dropout&quot;</div><div class="line">  bottom: &quot;fc7&quot;</div><div class="line">  top: &quot;fc7&quot;</div><div class="line">  dropout_param &#123;</div><div class="line">    dropout_ratio: 0.5</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;score_fr&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;fc7&quot;</div><div class="line">  top: &quot;score_fr&quot;</div><div class="line">  param &#123;</div><div class="line">    lr_mult: 1</div><div class="line">    decay_mult: 1</div><div class="line">  &#125;</div><div class="line">  param &#123;</div><div class="line">    lr_mult: 2</div><div class="line">    decay_mult: 0</div><div class="line">  &#125;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 21</div><div class="line">    pad: 0</div><div class="line">    kernel_size: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;upscore&quot;</div><div class="line">  type: &quot;Deconvolution&quot;</div><div class="line">  bottom: &quot;score_fr&quot;</div><div class="line">  top: &quot;upscore&quot;</div><div class="line">  param &#123;</div><div class="line">    lr_mult: 0</div><div class="line">  &#125;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 21</div><div class="line">    bias_term: false</div><div class="line">    kernel_size: 63</div><div class="line">    stride: 32</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;score&quot;</div><div class="line">  type: &quot;Crop&quot;</div><div class="line">  bottom: &quot;upscore&quot;</div><div class="line">  bottom: &quot;data&quot;</div><div class="line">  top: &quot;score&quot;</div><div class="line">  crop_param &#123;</div><div class="line">    axis: 2</div><div class="line">    offset: 18</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;loss&quot;</div><div class="line">  type: &quot;SoftmaxWithLoss&quot;</div><div class="line">  bottom: &quot;score&quot;</div><div class="line">  bottom: &quot;label&quot;</div><div class="line">  top: &quot;loss&quot;</div><div class="line">  loss_param &#123;</div><div class="line">    ignore_label: 255</div><div class="line">    normalize: true</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">I0313 11:41:39.370163  9249 layer_factory.hpp:77] Creating layer data</div><div class="line">I0313 11:41:39.370743  9249 net.cpp:84] Creating Layer data</div><div class="line">I0313 11:41:39.370753  9249 net.cpp:380] data -&gt; data</div><div class="line">I0313 11:41:39.370759  9249 net.cpp:380] data -&gt; label</div><div class="line">I0313 11:41:39.372340  9249 net.cpp:122] Setting up data</div><div class="line">I0313 11:41:39.372354  9249 net.cpp:129] Top shape: 1 3 16 2016 (96768)</div><div class="line">I0313 11:41:39.372357  9249 net.cpp:129] Top shape: 1 16 2016 (32256)</div><div class="line">I0313 11:41:39.372360  9249 net.cpp:137] Memory required for data: 516096</div><div class="line">I0313 11:41:39.372364  9249 layer_factory.hpp:77] Creating layer data_data_0_split</div><div class="line">I0313 11:41:39.372370  9249 net.cpp:84] Creating Layer data_data_0_split</div><div class="line">I0313 11:41:39.372372  9249 net.cpp:406] data_data_0_split &lt;- data</div><div class="line">I0313 11:41:39.372376  9249 net.cpp:380] data_data_0_split -&gt; data_data_0_split_0</div><div class="line">I0313 11:41:39.372382  9249 net.cpp:380] data_data_0_split -&gt; data_data_0_split_1</div><div class="line">I0313 11:41:39.372387  9249 net.cpp:122] Setting up data_data_0_split</div><div class="line">I0313 11:41:39.372391  9249 net.cpp:129] Top shape: 1 3 16 2016 (96768)</div><div class="line">I0313 11:41:39.372395  9249 net.cpp:129] Top shape: 1 3 16 2016 (96768)</div><div class="line">I0313 11:41:39.372397  9249 net.cpp:137] Memory required for data: 1290240</div><div class="line">I0313 11:41:39.372400  9249 layer_factory.hpp:77] Creating layer conv1</div><div class="line">I0313 11:41:39.372406  9249 net.cpp:84] Creating Layer conv1</div><div class="line">I0313 11:41:39.372409  9249 net.cpp:406] conv1 &lt;- data_data_0_split_0</div><div class="line">I0313 11:41:39.372412  9249 net.cpp:380] conv1 -&gt; conv1</div><div class="line">I0313 11:41:39.372515  9249 net.cpp:122] Setting up conv1</div><div class="line">I0313 11:41:39.372521  9249 net.cpp:129] Top shape: 1 96 52 552 (2755584)</div><div class="line">I0313 11:41:39.372524  9249 net.cpp:137] Memory required for data: 12312576</div><div class="line">I0313 11:41:39.372531  9249 layer_factory.hpp:77] Creating layer relu1</div><div class="line">I0313 11:41:39.372535  9249 net.cpp:84] Creating Layer relu1</div><div class="line">I0313 11:41:39.372539  9249 net.cpp:406] relu1 &lt;- conv1</div><div class="line">I0313 11:41:39.372541  9249 net.cpp:367] relu1 -&gt; conv1 (in-place)</div><div class="line">I0313 11:41:39.372546  9249 net.cpp:122] Setting up relu1</div><div class="line">I0313 11:41:39.372550  9249 net.cpp:129] Top shape: 1 96 52 552 (2755584)</div><div class="line">I0313 11:41:39.372552  9249 net.cpp:137] Memory required for data: 23334912</div><div class="line">I0313 11:41:39.372555  9249 layer_factory.hpp:77] Creating layer pool1</div><div class="line">I0313 11:41:39.372558  9249 net.cpp:84] Creating Layer pool1</div><div class="line">I0313 11:41:39.372560  9249 net.cpp:406] pool1 &lt;- conv1</div><div class="line">I0313 11:41:39.372565  9249 net.cpp:380] pool1 -&gt; pool1</div><div class="line">I0313 11:41:39.372573  9249 net.cpp:122] Setting up pool1</div><div class="line">I0313 11:41:39.372576  9249 net.cpp:129] Top shape: 1 96 26 276 (688896)</div><div class="line">I0313 11:41:39.372579  9249 net.cpp:137] Memory required for data: 26090496</div><div class="line">I0313 11:41:39.372581  9249 layer_factory.hpp:77] Creating layer norm1</div><div class="line">I0313 11:41:39.372586  9249 net.cpp:84] Creating Layer norm1</div><div class="line">I0313 11:41:39.372588  9249 net.cpp:406] norm1 &lt;- pool1</div><div class="line">I0313 11:41:39.372593  9249 net.cpp:380] norm1 -&gt; norm1</div><div class="line">I0313 11:41:39.372599  9249 net.cpp:122] Setting up norm1</div><div class="line">I0313 11:41:39.372602  9249 net.cpp:129] Top shape: 1 96 26 276 (688896)</div><div class="line">I0313 11:41:39.372604  9249 net.cpp:137] Memory required for data: 28846080</div><div class="line">I0313 11:41:39.372607  9249 layer_factory.hpp:77] Creating layer conv2</div><div class="line">I0313 11:41:39.372611  9249 net.cpp:84] Creating Layer conv2</div><div class="line">I0313 11:41:39.372613  9249 net.cpp:406] conv2 &lt;- norm1</div><div class="line">I0313 11:41:39.372617  9249 net.cpp:380] conv2 -&gt; conv2</div><div class="line">I0313 11:41:39.373008  9249 net.cpp:122] Setting up conv2</div><div class="line">I0313 11:41:39.373013  9249 net.cpp:129] Top shape: 1 256 26 276 (1837056)</div><div class="line">I0313 11:41:39.373015  9249 net.cpp:137] Memory required for data: 36194304</div><div class="line">I0313 11:41:39.373021  9249 layer_factory.hpp:77] Creating layer relu2</div><div class="line">I0313 11:41:39.373025  9249 net.cpp:84] Creating Layer relu2</div><div class="line">I0313 11:41:39.373028  9249 net.cpp:406] relu2 &lt;- conv2</div><div class="line">I0313 11:41:39.373030  9249 net.cpp:367] relu2 -&gt; conv2 (in-place)</div><div class="line">I0313 11:41:39.373034  9249 net.cpp:122] Setting up relu2</div><div class="line">I0313 11:41:39.373039  9249 net.cpp:129] Top shape: 1 256 26 276 (1837056)</div><div class="line">I0313 11:41:39.373040  9249 net.cpp:137] Memory required for data: 43542528</div><div class="line">I0313 11:41:39.373042  9249 layer_factory.hpp:77] Creating layer pool2</div><div class="line">I0313 11:41:39.373046  9249 net.cpp:84] Creating Layer pool2</div><div class="line">I0313 11:41:39.373049  9249 net.cpp:406] pool2 &lt;- conv2</div><div class="line">I0313 11:41:39.373052  9249 net.cpp:380] pool2 -&gt; pool2</div><div class="line">I0313 11:41:39.373057  9249 net.cpp:122] Setting up pool2</div><div class="line">I0313 11:41:39.373061  9249 net.cpp:129] Top shape: 1 256 13 138 (459264)</div><div class="line">I0313 11:41:39.373064  9249 net.cpp:137] Memory required for data: 45379584</div><div class="line">I0313 11:41:39.373065  9249 layer_factory.hpp:77] Creating layer norm2</div><div class="line">I0313 11:41:39.373070  9249 net.cpp:84] Creating Layer norm2</div><div class="line">I0313 11:41:39.373071  9249 net.cpp:406] norm2 &lt;- pool2</div><div class="line">I0313 11:41:39.373075  9249 net.cpp:380] norm2 -&gt; norm2</div><div class="line">I0313 11:41:39.373080  9249 net.cpp:122] Setting up norm2</div><div class="line">I0313 11:41:39.373082  9249 net.cpp:129] Top shape: 1 256 13 138 (459264)</div><div class="line">I0313 11:41:39.373085  9249 net.cpp:137] Memory required for data: 47216640</div><div class="line">I0313 11:41:39.373087  9249 layer_factory.hpp:77] Creating layer conv3</div><div class="line">I0313 11:41:39.373091  9249 net.cpp:84] Creating Layer conv3</div><div class="line">I0313 11:41:39.373093  9249 net.cpp:406] conv3 &lt;- norm2</div><div class="line">I0313 11:41:39.373096  9249 net.cpp:380] conv3 -&gt; conv3</div><div class="line">I0313 11:41:39.373900  9249 net.cpp:122] Setting up conv3</div><div class="line">I0313 11:41:39.373906  9249 net.cpp:129] Top shape: 1 384 13 138 (688896)</div><div class="line">I0313 11:41:39.373909  9249 net.cpp:137] Memory required for data: 49972224</div><div class="line">I0313 11:41:39.373914  9249 layer_factory.hpp:77] Creating layer relu3</div><div class="line">I0313 11:41:39.373919  9249 net.cpp:84] Creating Layer relu3</div><div class="line">I0313 11:41:39.373921  9249 net.cpp:406] relu3 &lt;- conv3</div><div class="line">I0313 11:41:39.373924  9249 net.cpp:367] relu3 -&gt; conv3 (in-place)</div><div class="line">I0313 11:41:39.373929  9249 net.cpp:122] Setting up relu3</div><div class="line">I0313 11:41:39.373931  9249 net.cpp:129] Top shape: 1 384 13 138 (688896)</div><div class="line">I0313 11:41:39.373934  9249 net.cpp:137] Memory required for data: 52727808</div><div class="line">I0313 11:41:39.373936  9249 layer_factory.hpp:77] Creating layer conv4</div><div class="line">I0313 11:41:39.373941  9249 net.cpp:84] Creating Layer conv4</div><div class="line">I0313 11:41:39.373944  9249 net.cpp:406] conv4 &lt;- conv3</div><div class="line">I0313 11:41:39.373947  9249 net.cpp:380] conv4 -&gt; conv4</div><div class="line">I0313 11:41:39.374778  9249 net.cpp:122] Setting up conv4</div><div class="line">I0313 11:41:39.374783  9249 net.cpp:129] Top shape: 1 384 13 138 (688896)</div><div class="line">I0313 11:41:39.374785  9249 net.cpp:137] Memory required for data: 55483392</div><div class="line">I0313 11:41:39.374789  9249 layer_factory.hpp:77] Creating layer relu4</div><div class="line">I0313 11:41:39.374794  9249 net.cpp:84] Creating Layer relu4</div><div class="line">I0313 11:41:39.374795  9249 net.cpp:406] relu4 &lt;- conv4</div><div class="line">I0313 11:41:39.374800  9249 net.cpp:367] relu4 -&gt; conv4 (in-place)</div><div class="line">I0313 11:41:39.374804  9249 net.cpp:122] Setting up relu4</div><div class="line">I0313 11:41:39.374807  9249 net.cpp:129] Top shape: 1 384 13 138 (688896)</div><div class="line">I0313 11:41:39.374809  9249 net.cpp:137] Memory required for data: 58238976</div><div class="line">I0313 11:41:39.374811  9249 layer_factory.hpp:77] Creating layer conv5</div><div class="line">I0313 11:41:39.374816  9249 net.cpp:84] Creating Layer conv5</div><div class="line">I0313 11:41:39.374819  9249 net.cpp:406] conv5 &lt;- conv4</div><div class="line">I0313 11:41:39.374824  9249 net.cpp:380] conv5 -&gt; conv5</div><div class="line">I0313 11:41:39.375376  9249 net.cpp:122] Setting up conv5</div><div class="line">I0313 11:41:39.375382  9249 net.cpp:129] Top shape: 1 256 13 138 (459264)</div><div class="line">I0313 11:41:39.375385  9249 net.cpp:137] Memory required for data: 60076032</div><div class="line">I0313 11:41:39.375392  9249 layer_factory.hpp:77] Creating layer relu5</div><div class="line">I0313 11:41:39.375397  9249 net.cpp:84] Creating Layer relu5</div><div class="line">I0313 11:41:39.375399  9249 net.cpp:406] relu5 &lt;- conv5</div><div class="line">I0313 11:41:39.375402  9249 net.cpp:367] relu5 -&gt; conv5 (in-place)</div><div class="line">I0313 11:41:39.375406  9249 net.cpp:122] Setting up relu5</div><div class="line">I0313 11:41:39.375409  9249 net.cpp:129] Top shape: 1 256 13 138 (459264)</div><div class="line">I0313 11:41:39.375412  9249 net.cpp:137] Memory required for data: 61913088</div><div class="line">I0313 11:41:39.375414  9249 layer_factory.hpp:77] Creating layer pool5</div><div class="line">I0313 11:41:39.375421  9249 net.cpp:84] Creating Layer pool5</div><div class="line">I0313 11:41:39.375422  9249 net.cpp:406] pool5 &lt;- conv5</div><div class="line">I0313 11:41:39.375425  9249 net.cpp:380] pool5 -&gt; pool5</div><div class="line">I0313 11:41:39.375432  9249 net.cpp:122] Setting up pool5</div><div class="line">I0313 11:41:39.375434  9249 net.cpp:129] Top shape: 1 256 6 69 (105984)</div><div class="line">I0313 11:41:39.375437  9249 net.cpp:137] Memory required for data: 62337024</div><div class="line">I0313 11:41:39.375439  9249 layer_factory.hpp:77] Creating layer fc6</div><div class="line">I0313 11:41:39.375444  9249 net.cpp:84] Creating Layer fc6</div><div class="line">I0313 11:41:39.375447  9249 net.cpp:406] fc6 &lt;- pool5</div><div class="line">I0313 11:41:39.375452  9249 net.cpp:380] fc6 -&gt; fc6</div><div class="line">I0313 11:41:39.404399  9249 net.cpp:122] Setting up fc6</div><div class="line">I0313 11:41:39.404426  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.404430  9249 net.cpp:137] Memory required for data: 63385600</div><div class="line">I0313 11:41:39.404438  9249 layer_factory.hpp:77] Creating layer relu6</div><div class="line">I0313 11:41:39.404445  9249 net.cpp:84] Creating Layer relu6</div><div class="line">I0313 11:41:39.404449  9249 net.cpp:406] relu6 &lt;- fc6</div><div class="line">I0313 11:41:39.404453  9249 net.cpp:367] relu6 -&gt; fc6 (in-place)</div><div class="line">I0313 11:41:39.404460  9249 net.cpp:122] Setting up relu6</div><div class="line">I0313 11:41:39.404464  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.404466  9249 net.cpp:137] Memory required for data: 64434176</div><div class="line">I0313 11:41:39.404469  9249 layer_factory.hpp:77] Creating layer drop6</div><div class="line">I0313 11:41:39.404474  9249 net.cpp:84] Creating Layer drop6</div><div class="line">I0313 11:41:39.404476  9249 net.cpp:406] drop6 &lt;- fc6</div><div class="line">I0313 11:41:39.404481  9249 net.cpp:367] drop6 -&gt; fc6 (in-place)</div><div class="line">I0313 11:41:39.404486  9249 net.cpp:122] Setting up drop6</div><div class="line">I0313 11:41:39.404489  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.404492  9249 net.cpp:137] Memory required for data: 65482752</div><div class="line">I0313 11:41:39.404495  9249 layer_factory.hpp:77] Creating layer fc7</div><div class="line">I0313 11:41:39.404500  9249 net.cpp:84] Creating Layer fc7</div><div class="line">I0313 11:41:39.404503  9249 net.cpp:406] fc7 &lt;- fc6</div><div class="line">I0313 11:41:39.404506  9249 net.cpp:380] fc7 -&gt; fc7</div><div class="line">I0313 11:41:39.417629  9249 net.cpp:122] Setting up fc7</div><div class="line">I0313 11:41:39.417654  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.417657  9249 net.cpp:137] Memory required for data: 66531328</div><div class="line">I0313 11:41:39.417665  9249 layer_factory.hpp:77] Creating layer relu7</div><div class="line">I0313 11:41:39.417672  9249 net.cpp:84] Creating Layer relu7</div><div class="line">I0313 11:41:39.417676  9249 net.cpp:406] relu7 &lt;- fc7</div><div class="line">I0313 11:41:39.417680  9249 net.cpp:367] relu7 -&gt; fc7 (in-place)</div><div class="line">I0313 11:41:39.417687  9249 net.cpp:122] Setting up relu7</div><div class="line">I0313 11:41:39.417690  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.417693  9249 net.cpp:137] Memory required for data: 67579904</div><div class="line">I0313 11:41:39.417696  9249 layer_factory.hpp:77] Creating layer drop7</div><div class="line">I0313 11:41:39.417703  9249 net.cpp:84] Creating Layer drop7</div><div class="line">I0313 11:41:39.417706  9249 net.cpp:406] drop7 &lt;- fc7</div><div class="line">I0313 11:41:39.417709  9249 net.cpp:367] drop7 -&gt; fc7 (in-place)</div><div class="line">I0313 11:41:39.417713  9249 net.cpp:122] Setting up drop7</div><div class="line">I0313 11:41:39.417716  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.417719  9249 net.cpp:137] Memory required for data: 68628480</div><div class="line">I0313 11:41:39.417721  9249 layer_factory.hpp:77] Creating layer score_fr</div><div class="line">I0313 11:41:39.417727  9249 net.cpp:84] Creating Layer score_fr</div><div class="line">I0313 11:41:39.417729  9249 net.cpp:406] score_fr &lt;- fc7</div><div class="line">I0313 11:41:39.417734  9249 net.cpp:380] score_fr -&gt; score_fr</div><div class="line">I0313 11:41:39.417858  9249 net.cpp:122] Setting up score_fr</div><div class="line">I0313 11:41:39.417865  9249 net.cpp:129] Top shape: 1 21 1 64 (1344)</div><div class="line">I0313 11:41:39.417867  9249 net.cpp:137] Memory required for data: 68633856</div><div class="line">I0313 11:41:39.417871  9249 layer_factory.hpp:77] Creating layer upscore</div><div class="line">I0313 11:41:39.417877  9249 net.cpp:84] Creating Layer upscore</div><div class="line">I0313 11:41:39.417881  9249 net.cpp:406] upscore &lt;- score_fr</div><div class="line">I0313 11:41:39.417884  9249 net.cpp:380] upscore -&gt; upscore</div><div class="line">I0313 11:41:39.419461  9249 net.cpp:122] Setting up upscore</div><div class="line">I0313 11:41:39.419472  9249 net.cpp:129] Top shape: 1 21 63 2079 (2750517)</div><div class="line">I0313 11:41:39.419476  9249 net.cpp:137] Memory required for data: 79635924</div><div class="line">I0313 11:41:39.419484  9249 layer_factory.hpp:77] Creating layer score</div><div class="line">I0313 11:41:39.419497  9249 net.cpp:84] Creating Layer score</div><div class="line">I0313 11:41:39.419499  9249 net.cpp:406] score &lt;- upscore</div><div class="line">I0313 11:41:39.419503  9249 net.cpp:406] score &lt;- data_data_0_split_1</div><div class="line">I0313 11:41:39.419507  9249 net.cpp:380] score -&gt; score</div><div class="line">I0313 11:41:39.419517  9249 net.cpp:122] Setting up score</div><div class="line">I0313 11:41:39.419539  9249 net.cpp:129] Top shape: 1 21 16 2016 (677376)</div><div class="line">I0313 11:41:39.419543  9249 net.cpp:137] Memory required for data: 82345428</div><div class="line">I0313 11:41:39.419544  9249 layer_factory.hpp:77] Creating layer loss</div><div class="line">I0313 11:41:39.419554  9249 net.cpp:84] Creating Layer loss</div><div class="line">I0313 11:41:39.419558  9249 net.cpp:406] loss &lt;- score</div><div class="line">I0313 11:41:39.419560  9249 net.cpp:406] loss &lt;- label</div><div class="line">I0313 11:41:39.419564  9249 net.cpp:380] loss -&gt; loss</div><div class="line">I0313 11:41:39.419572  9249 layer_factory.hpp:77] Creating layer loss</div><div class="line">I0313 11:41:39.420116  9249 net.cpp:122] Setting up loss</div><div class="line">I0313 11:41:39.420122  9249 net.cpp:129] Top shape: (1)</div><div class="line">I0313 11:41:39.420125  9249 net.cpp:132]     with loss weight 1</div><div class="line">I0313 11:41:39.420135  9249 net.cpp:137] Memory required for data: 82345432</div><div class="line">I0313 11:41:39.420137  9249 net.cpp:198] loss needs backward computation.</div><div class="line">I0313 11:41:39.420140  9249 net.cpp:198] score needs backward computation.</div><div class="line">I0313 11:41:39.420143  9249 net.cpp:198] upscore needs backward computation.</div><div class="line">I0313 11:41:39.420145  9249 net.cpp:198] score_fr needs backward computation.</div><div class="line">I0313 11:41:39.420148  9249 net.cpp:198] drop7 needs backward computation.</div><div class="line">I0313 11:41:39.420151  9249 net.cpp:198] relu7 needs backward computation.</div><div class="line">I0313 11:41:39.420155  9249 net.cpp:198] fc7 needs backward computation.</div><div class="line">I0313 11:41:39.420156  9249 net.cpp:198] drop6 needs backward computation.</div><div class="line">I0313 11:41:39.420159  9249 net.cpp:198] relu6 needs backward computation.</div><div class="line">I0313 11:41:39.420161  9249 net.cpp:198] fc6 needs backward computation.</div><div class="line">I0313 11:41:39.420164  9249 net.cpp:198] pool5 needs backward computation.</div><div class="line">I0313 11:41:39.420167  9249 net.cpp:198] relu5 needs backward computation.</div><div class="line">I0313 11:41:39.420169  9249 net.cpp:198] conv5 needs backward computation.</div><div class="line">I0313 11:41:39.420172  9249 net.cpp:198] relu4 needs backward computation.</div><div class="line">I0313 11:41:39.420176  9249 net.cpp:198] conv4 needs backward computation.</div><div class="line">I0313 11:41:39.420177  9249 net.cpp:198] relu3 needs backward computation.</div><div class="line">I0313 11:41:39.420181  9249 net.cpp:198] conv3 needs backward computation.</div><div class="line">I0313 11:41:39.420183  9249 net.cpp:198] norm2 needs backward computation.</div><div class="line">I0313 11:41:39.420186  9249 net.cpp:198] pool2 needs backward computation.</div><div class="line">I0313 11:41:39.420189  9249 net.cpp:198] relu2 needs backward computation.</div><div class="line">I0313 11:41:39.420192  9249 net.cpp:198] conv2 needs backward computation.</div><div class="line">I0313 11:41:39.420194  9249 net.cpp:198] norm1 needs backward computation.</div><div class="line">I0313 11:41:39.420197  9249 net.cpp:198] pool1 needs backward computation.</div><div class="line">I0313 11:41:39.420200  9249 net.cpp:198] relu1 needs backward computation.</div><div class="line">I0313 11:41:39.420203  9249 net.cpp:198] conv1 needs backward computation.</div><div class="line">I0313 11:41:39.420207  9249 net.cpp:200] data_data_0_split does not need backward computation.</div><div class="line">I0313 11:41:39.420210  9249 net.cpp:200] data does not need backward computation.</div><div class="line">I0313 11:41:39.420212  9249 net.cpp:242] This network produces output loss</div><div class="line">I0313 11:41:39.420224  9249 net.cpp:255] Network initialization done.</div><div class="line">I0313 11:41:39.420586  9249 solver.cpp:190] Creating test net (#0) specified by test_net file: val.prototxt</div><div class="line">I0313 11:41:39.420764  9249 net.cpp:51] Initializing net from parameters: </div><div class="line">state &#123;</div><div class="line">  phase: TEST</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;data&quot;</div><div class="line">  type: &quot;Python&quot;</div><div class="line">  top: &quot;data&quot;</div><div class="line">  top: &quot;label&quot;</div><div class="line">  python_param &#123;</div><div class="line">    module: &quot;pcl_data_layer&quot;</div><div class="line">    layer: &quot;PCLSegDataLayer&quot;</div><div class="line">    param_str: &quot;&#123;\&apos;pcl_dir\&apos;: \&apos;/home/zzy/CLionProjects/ROS_Project/ws/src/fcn_data_gen/data/npy\&apos;&#125;&quot;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv1&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;data&quot;</div><div class="line">  top: &quot;conv1&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 96</div><div class="line">    pad: 100</div><div class="line">    kernel_size: 11</div><div class="line">    group: 1</div><div class="line">    stride: 4</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu1&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv1&quot;</div><div class="line">  top: &quot;conv1&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;pool1&quot;</div><div class="line">  type: &quot;Pooling&quot;</div><div class="line">  bottom: &quot;conv1&quot;</div><div class="line">  top: &quot;pool1&quot;</div><div class="line">  pooling_param &#123;</div><div class="line">    pool: MAX</div><div class="line">    kernel_size: 3</div><div class="line">    stride: 2</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;norm1&quot;</div><div class="line">  type: &quot;LRN&quot;</div><div class="line">  bottom: &quot;pool1&quot;</div><div class="line">  top: &quot;norm1&quot;</div><div class="line">  lrn_param &#123;</div><div class="line">    local_size: 5</div><div class="line">    alpha: 0.0001</div><div class="line">    beta: 0.75</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv2&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;norm1&quot;</div><div class="line">  top: &quot;conv2&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 256</div><div class="line">    pad: 2</div><div class="line">    kernel_size: 5</div><div class="line">    group: 2</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu2&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv2&quot;</div><div class="line">  top: &quot;conv2&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;pool2&quot;</div><div class="line">  type: &quot;Pooling&quot;</div><div class="line">  bottom: &quot;conv2&quot;</div><div class="line">  top: &quot;pool2&quot;</div><div class="line">  pooling_param &#123;</div><div class="line">    pool: MAX</div><div class="line">    kernel_size: 3</div><div class="line">    stride: 2</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;norm2&quot;</div><div class="line">  type: &quot;LRN&quot;</div><div class="line">  bottom: &quot;pool2&quot;</div><div class="line">  top: &quot;norm2&quot;</div><div class="line">  lrn_param &#123;</div><div class="line">    local_size: 5</div><div class="line">    alpha: 0.0001</div><div class="line">    beta: 0.75</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv3&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;norm2&quot;</div><div class="line">  top: &quot;conv3&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 384</div><div class="line">    pad: 1</div><div class="line">    kernel_size: 3</div><div class="line">    group: 1</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu3&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv3&quot;</div><div class="line">  top: &quot;conv3&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv4&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;conv3&quot;</div><div class="line">  top: &quot;conv4&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 384</div><div class="line">    pad: 1</div><div class="line">    kernel_size: 3</div><div class="line">    group: 2</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu4&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv4&quot;</div><div class="line">  top: &quot;conv4&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;conv5&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;conv4&quot;</div><div class="line">  top: &quot;conv5&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 256</div><div class="line">    pad: 1</div><div class="line">    kernel_size: 3</div><div class="line">    group: 2</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu5&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;conv5&quot;</div><div class="line">  top: &quot;conv5&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;pool5&quot;</div><div class="line">  type: &quot;Pooling&quot;</div><div class="line">  bottom: &quot;conv5&quot;</div><div class="line">  top: &quot;pool5&quot;</div><div class="line">  pooling_param &#123;</div><div class="line">    pool: MAX</div><div class="line">    kernel_size: 3</div><div class="line">    stride: 2</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;fc6&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;pool5&quot;</div><div class="line">  top: &quot;fc6&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 4096</div><div class="line">    pad: 0</div><div class="line">    kernel_size: 6</div><div class="line">    group: 1</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu6&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;fc6&quot;</div><div class="line">  top: &quot;fc6&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;drop6&quot;</div><div class="line">  type: &quot;Dropout&quot;</div><div class="line">  bottom: &quot;fc6&quot;</div><div class="line">  top: &quot;fc6&quot;</div><div class="line">  dropout_param &#123;</div><div class="line">    dropout_ratio: 0.5</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;fc7&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;fc6&quot;</div><div class="line">  top: &quot;fc7&quot;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 4096</div><div class="line">    pad: 0</div><div class="line">    kernel_size: 1</div><div class="line">    group: 1</div><div class="line">    stride: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;relu7&quot;</div><div class="line">  type: &quot;ReLU&quot;</div><div class="line">  bottom: &quot;fc7&quot;</div><div class="line">  top: &quot;fc7&quot;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;drop7&quot;</div><div class="line">  type: &quot;Dropout&quot;</div><div class="line">  bottom: &quot;fc7&quot;</div><div class="line">  top: &quot;fc7&quot;</div><div class="line">  dropout_param &#123;</div><div class="line">    dropout_ratio: 0.5</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;score_fr&quot;</div><div class="line">  type: &quot;Convolution&quot;</div><div class="line">  bottom: &quot;fc7&quot;</div><div class="line">  top: &quot;score_fr&quot;</div><div class="line">  param &#123;</div><div class="line">    lr_mult: 1</div><div class="line">    decay_mult: 1</div><div class="line">  &#125;</div><div class="line">  param &#123;</div><div class="line">    lr_mult: 2</div><div class="line">    decay_mult: 0</div><div class="line">  &#125;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 21</div><div class="line">    pad: 0</div><div class="line">    kernel_size: 1</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;upscore&quot;</div><div class="line">  type: &quot;Deconvolution&quot;</div><div class="line">  bottom: &quot;score_fr&quot;</div><div class="line">  top: &quot;upscore&quot;</div><div class="line">  param &#123;</div><div class="line">    lr_mult: 0</div><div class="line">  &#125;</div><div class="line">  convolution_param &#123;</div><div class="line">    num_output: 21</div><div class="line">    bias_term: false</div><div class="line">    kernel_size: 63</div><div class="line">    stride: 32</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;score&quot;</div><div class="line">  type: &quot;Crop&quot;</div><div class="line">  bottom: &quot;upscore&quot;</div><div class="line">  bottom: &quot;data&quot;</div><div class="line">  top: &quot;score&quot;</div><div class="line">  crop_param &#123;</div><div class="line">    axis: 2</div><div class="line">    offset: 18</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">layer &#123;</div><div class="line">  name: &quot;loss&quot;</div><div class="line">  type: &quot;SoftmaxWithLoss&quot;</div><div class="line">  bottom: &quot;score&quot;</div><div class="line">  bottom: &quot;label&quot;</div><div class="line">  top: &quot;loss&quot;</div><div class="line">  loss_param &#123;</div><div class="line">    ignore_label: 255</div><div class="line">    normalize: true</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">I0313 11:41:39.420830  9249 layer_factory.hpp:77] Creating layer data</div><div class="line">I0313 11:41:39.420866  9249 net.cpp:84] Creating Layer data</div><div class="line">I0313 11:41:39.420871  9249 net.cpp:380] data -&gt; data</div><div class="line">I0313 11:41:39.420877  9249 net.cpp:380] data -&gt; label</div><div class="line">I0313 11:41:39.422286  9249 net.cpp:122] Setting up data</div><div class="line">I0313 11:41:39.422296  9249 net.cpp:129] Top shape: 1 3 16 2016 (96768)</div><div class="line">I0313 11:41:39.422299  9249 net.cpp:129] Top shape: 1 16 2016 (32256)</div><div class="line">I0313 11:41:39.422302  9249 net.cpp:137] Memory required for data: 516096</div><div class="line">I0313 11:41:39.422305  9249 layer_factory.hpp:77] Creating layer data_data_0_split</div><div class="line">I0313 11:41:39.422310  9249 net.cpp:84] Creating Layer data_data_0_split</div><div class="line">I0313 11:41:39.422313  9249 net.cpp:406] data_data_0_split &lt;- data</div><div class="line">I0313 11:41:39.422317  9249 net.cpp:380] data_data_0_split -&gt; data_data_0_split_0</div><div class="line">I0313 11:41:39.422322  9249 net.cpp:380] data_data_0_split -&gt; data_data_0_split_1</div><div class="line">I0313 11:41:39.422327  9249 net.cpp:122] Setting up data_data_0_split</div><div class="line">I0313 11:41:39.422332  9249 net.cpp:129] Top shape: 1 3 16 2016 (96768)</div><div class="line">I0313 11:41:39.422334  9249 net.cpp:129] Top shape: 1 3 16 2016 (96768)</div><div class="line">I0313 11:41:39.422338  9249 net.cpp:137] Memory required for data: 1290240</div><div class="line">I0313 11:41:39.422339  9249 layer_factory.hpp:77] Creating layer conv1</div><div class="line">I0313 11:41:39.422346  9249 net.cpp:84] Creating Layer conv1</div><div class="line">I0313 11:41:39.422349  9249 net.cpp:406] conv1 &lt;- data_data_0_split_0</div><div class="line">I0313 11:41:39.422353  9249 net.cpp:380] conv1 -&gt; conv1</div><div class="line">I0313 11:41:39.422446  9249 net.cpp:122] Setting up conv1</div><div class="line">I0313 11:41:39.422451  9249 net.cpp:129] Top shape: 1 96 52 552 (2755584)</div><div class="line">I0313 11:41:39.422454  9249 net.cpp:137] Memory required for data: 12312576</div><div class="line">I0313 11:41:39.422461  9249 layer_factory.hpp:77] Creating layer relu1</div><div class="line">I0313 11:41:39.422466  9249 net.cpp:84] Creating Layer relu1</div><div class="line">I0313 11:41:39.422469  9249 net.cpp:406] relu1 &lt;- conv1</div><div class="line">I0313 11:41:39.422472  9249 net.cpp:367] relu1 -&gt; conv1 (in-place)</div><div class="line">I0313 11:41:39.422477  9249 net.cpp:122] Setting up relu1</div><div class="line">I0313 11:41:39.422479  9249 net.cpp:129] Top shape: 1 96 52 552 (2755584)</div><div class="line">I0313 11:41:39.422482  9249 net.cpp:137] Memory required for data: 23334912</div><div class="line">I0313 11:41:39.422484  9249 layer_factory.hpp:77] Creating layer pool1</div><div class="line">I0313 11:41:39.422488  9249 net.cpp:84] Creating Layer pool1</div><div class="line">I0313 11:41:39.422490  9249 net.cpp:406] pool1 &lt;- conv1</div><div class="line">I0313 11:41:39.422495  9249 net.cpp:380] pool1 -&gt; pool1</div><div class="line">I0313 11:41:39.422502  9249 net.cpp:122] Setting up pool1</div><div class="line">I0313 11:41:39.422504  9249 net.cpp:129] Top shape: 1 96 26 276 (688896)</div><div class="line">I0313 11:41:39.422507  9249 net.cpp:137] Memory required for data: 26090496</div><div class="line">I0313 11:41:39.422508  9249 layer_factory.hpp:77] Creating layer norm1</div><div class="line">I0313 11:41:39.422513  9249 net.cpp:84] Creating Layer norm1</div><div class="line">I0313 11:41:39.422516  9249 net.cpp:406] norm1 &lt;- pool1</div><div class="line">I0313 11:41:39.422519  9249 net.cpp:380] norm1 -&gt; norm1</div><div class="line">I0313 11:41:39.422524  9249 net.cpp:122] Setting up norm1</div><div class="line">I0313 11:41:39.422528  9249 net.cpp:129] Top shape: 1 96 26 276 (688896)</div><div class="line">I0313 11:41:39.422529  9249 net.cpp:137] Memory required for data: 28846080</div><div class="line">I0313 11:41:39.422531  9249 layer_factory.hpp:77] Creating layer conv2</div><div class="line">I0313 11:41:39.422536  9249 net.cpp:84] Creating Layer conv2</div><div class="line">I0313 11:41:39.422539  9249 net.cpp:406] conv2 &lt;- norm1</div><div class="line">I0313 11:41:39.422543  9249 net.cpp:380] conv2 -&gt; conv2</div><div class="line">I0313 11:41:39.422933  9249 net.cpp:122] Setting up conv2</div><div class="line">I0313 11:41:39.422940  9249 net.cpp:129] Top shape: 1 256 26 276 (1837056)</div><div class="line">I0313 11:41:39.422941  9249 net.cpp:137] Memory required for data: 36194304</div><div class="line">I0313 11:41:39.422947  9249 layer_factory.hpp:77] Creating layer relu2</div><div class="line">I0313 11:41:39.422951  9249 net.cpp:84] Creating Layer relu2</div><div class="line">I0313 11:41:39.422955  9249 net.cpp:406] relu2 &lt;- conv2</div><div class="line">I0313 11:41:39.422958  9249 net.cpp:367] relu2 -&gt; conv2 (in-place)</div><div class="line">I0313 11:41:39.422962  9249 net.cpp:122] Setting up relu2</div><div class="line">I0313 11:41:39.422966  9249 net.cpp:129] Top shape: 1 256 26 276 (1837056)</div><div class="line">I0313 11:41:39.422967  9249 net.cpp:137] Memory required for data: 43542528</div><div class="line">I0313 11:41:39.422971  9249 layer_factory.hpp:77] Creating layer pool2</div><div class="line">I0313 11:41:39.422973  9249 net.cpp:84] Creating Layer pool2</div><div class="line">I0313 11:41:39.422976  9249 net.cpp:406] pool2 &lt;- conv2</div><div class="line">I0313 11:41:39.422979  9249 net.cpp:380] pool2 -&gt; pool2</div><div class="line">I0313 11:41:39.422984  9249 net.cpp:122] Setting up pool2</div><div class="line">I0313 11:41:39.422988  9249 net.cpp:129] Top shape: 1 256 13 138 (459264)</div><div class="line">I0313 11:41:39.422991  9249 net.cpp:137] Memory required for data: 45379584</div><div class="line">I0313 11:41:39.422992  9249 layer_factory.hpp:77] Creating layer norm2</div><div class="line">I0313 11:41:39.422997  9249 net.cpp:84] Creating Layer norm2</div><div class="line">I0313 11:41:39.422999  9249 net.cpp:406] norm2 &lt;- pool2</div><div class="line">I0313 11:41:39.423003  9249 net.cpp:380] norm2 -&gt; norm2</div><div class="line">I0313 11:41:39.423008  9249 net.cpp:122] Setting up norm2</div><div class="line">I0313 11:41:39.423012  9249 net.cpp:129] Top shape: 1 256 13 138 (459264)</div><div class="line">I0313 11:41:39.423013  9249 net.cpp:137] Memory required for data: 47216640</div><div class="line">I0313 11:41:39.423015  9249 layer_factory.hpp:77] Creating layer conv3</div><div class="line">I0313 11:41:39.423020  9249 net.cpp:84] Creating Layer conv3</div><div class="line">I0313 11:41:39.423023  9249 net.cpp:406] conv3 &lt;- norm2</div><div class="line">I0313 11:41:39.423027  9249 net.cpp:380] conv3 -&gt; conv3</div><div class="line">I0313 11:41:39.423882  9249 net.cpp:122] Setting up conv3</div><div class="line">I0313 11:41:39.423888  9249 net.cpp:129] Top shape: 1 384 13 138 (688896)</div><div class="line">I0313 11:41:39.423892  9249 net.cpp:137] Memory required for data: 49972224</div><div class="line">I0313 11:41:39.423897  9249 layer_factory.hpp:77] Creating layer relu3</div><div class="line">I0313 11:41:39.423902  9249 net.cpp:84] Creating Layer relu3</div><div class="line">I0313 11:41:39.423904  9249 net.cpp:406] relu3 &lt;- conv3</div><div class="line">I0313 11:41:39.423907  9249 net.cpp:367] relu3 -&gt; conv3 (in-place)</div><div class="line">I0313 11:41:39.423912  9249 net.cpp:122] Setting up relu3</div><div class="line">I0313 11:41:39.423914  9249 net.cpp:129] Top shape: 1 384 13 138 (688896)</div><div class="line">I0313 11:41:39.423918  9249 net.cpp:137] Memory required for data: 52727808</div><div class="line">I0313 11:41:39.423919  9249 layer_factory.hpp:77] Creating layer conv4</div><div class="line">I0313 11:41:39.423923  9249 net.cpp:84] Creating Layer conv4</div><div class="line">I0313 11:41:39.423925  9249 net.cpp:406] conv4 &lt;- conv3</div><div class="line">I0313 11:41:39.423930  9249 net.cpp:380] conv4 -&gt; conv4</div><div class="line">I0313 11:41:39.424738  9249 net.cpp:122] Setting up conv4</div><div class="line">I0313 11:41:39.424744  9249 net.cpp:129] Top shape: 1 384 13 138 (688896)</div><div class="line">I0313 11:41:39.424747  9249 net.cpp:137] Memory required for data: 55483392</div><div class="line">I0313 11:41:39.424751  9249 layer_factory.hpp:77] Creating layer relu4</div><div class="line">I0313 11:41:39.424756  9249 net.cpp:84] Creating Layer relu4</div><div class="line">I0313 11:41:39.424757  9249 net.cpp:406] relu4 &lt;- conv4</div><div class="line">I0313 11:41:39.424762  9249 net.cpp:367] relu4 -&gt; conv4 (in-place)</div><div class="line">I0313 11:41:39.424764  9249 net.cpp:122] Setting up relu4</div><div class="line">I0313 11:41:39.424767  9249 net.cpp:129] Top shape: 1 384 13 138 (688896)</div><div class="line">I0313 11:41:39.424770  9249 net.cpp:137] Memory required for data: 58238976</div><div class="line">I0313 11:41:39.424772  9249 layer_factory.hpp:77] Creating layer conv5</div><div class="line">I0313 11:41:39.424777  9249 net.cpp:84] Creating Layer conv5</div><div class="line">I0313 11:41:39.424779  9249 net.cpp:406] conv5 &lt;- conv4</div><div class="line">I0313 11:41:39.424784  9249 net.cpp:380] conv5 -&gt; conv5</div><div class="line">I0313 11:41:39.425376  9249 net.cpp:122] Setting up conv5</div><div class="line">I0313 11:41:39.425384  9249 net.cpp:129] Top shape: 1 256 13 138 (459264)</div><div class="line">I0313 11:41:39.425385  9249 net.cpp:137] Memory required for data: 60076032</div><div class="line">I0313 11:41:39.425393  9249 layer_factory.hpp:77] Creating layer relu5</div><div class="line">I0313 11:41:39.425397  9249 net.cpp:84] Creating Layer relu5</div><div class="line">I0313 11:41:39.425400  9249 net.cpp:406] relu5 &lt;- conv5</div><div class="line">I0313 11:41:39.425403  9249 net.cpp:367] relu5 -&gt; conv5 (in-place)</div><div class="line">I0313 11:41:39.425406  9249 net.cpp:122] Setting up relu5</div><div class="line">I0313 11:41:39.425410  9249 net.cpp:129] Top shape: 1 256 13 138 (459264)</div><div class="line">I0313 11:41:39.425412  9249 net.cpp:137] Memory required for data: 61913088</div><div class="line">I0313 11:41:39.425415  9249 layer_factory.hpp:77] Creating layer pool5</div><div class="line">I0313 11:41:39.425420  9249 net.cpp:84] Creating Layer pool5</div><div class="line">I0313 11:41:39.425423  9249 net.cpp:406] pool5 &lt;- conv5</div><div class="line">I0313 11:41:39.425426  9249 net.cpp:380] pool5 -&gt; pool5</div><div class="line">I0313 11:41:39.425432  9249 net.cpp:122] Setting up pool5</div><div class="line">I0313 11:41:39.425436  9249 net.cpp:129] Top shape: 1 256 6 69 (105984)</div><div class="line">I0313 11:41:39.425437  9249 net.cpp:137] Memory required for data: 62337024</div><div class="line">I0313 11:41:39.425441  9249 layer_factory.hpp:77] Creating layer fc6</div><div class="line">I0313 11:41:39.425446  9249 net.cpp:84] Creating Layer fc6</div><div class="line">I0313 11:41:39.425448  9249 net.cpp:406] fc6 &lt;- pool5</div><div class="line">I0313 11:41:39.425452  9249 net.cpp:380] fc6 -&gt; fc6</div><div class="line">I0313 11:41:39.454087  9249 net.cpp:122] Setting up fc6</div><div class="line">I0313 11:41:39.454115  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.454118  9249 net.cpp:137] Memory required for data: 63385600</div><div class="line">I0313 11:41:39.454126  9249 layer_factory.hpp:77] Creating layer relu6</div><div class="line">I0313 11:41:39.454134  9249 net.cpp:84] Creating Layer relu6</div><div class="line">I0313 11:41:39.454138  9249 net.cpp:406] relu6 &lt;- fc6</div><div class="line">I0313 11:41:39.454143  9249 net.cpp:367] relu6 -&gt; fc6 (in-place)</div><div class="line">I0313 11:41:39.454149  9249 net.cpp:122] Setting up relu6</div><div class="line">I0313 11:41:39.454152  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.454155  9249 net.cpp:137] Memory required for data: 64434176</div><div class="line">I0313 11:41:39.454157  9249 layer_factory.hpp:77] Creating layer drop6</div><div class="line">I0313 11:41:39.454162  9249 net.cpp:84] Creating Layer drop6</div><div class="line">I0313 11:41:39.454165  9249 net.cpp:406] drop6 &lt;- fc6</div><div class="line">I0313 11:41:39.454169  9249 net.cpp:367] drop6 -&gt; fc6 (in-place)</div><div class="line">I0313 11:41:39.454174  9249 net.cpp:122] Setting up drop6</div><div class="line">I0313 11:41:39.454177  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.454180  9249 net.cpp:137] Memory required for data: 65482752</div><div class="line">I0313 11:41:39.454182  9249 layer_factory.hpp:77] Creating layer fc7</div><div class="line">I0313 11:41:39.454188  9249 net.cpp:84] Creating Layer fc7</div><div class="line">I0313 11:41:39.454190  9249 net.cpp:406] fc7 &lt;- fc6</div><div class="line">I0313 11:41:39.454195  9249 net.cpp:380] fc7 -&gt; fc7</div><div class="line">I0313 11:41:39.467375  9249 net.cpp:122] Setting up fc7</div><div class="line">I0313 11:41:39.467401  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.467403  9249 net.cpp:137] Memory required for data: 66531328</div><div class="line">I0313 11:41:39.467411  9249 layer_factory.hpp:77] Creating layer relu7</div><div class="line">I0313 11:41:39.467418  9249 net.cpp:84] Creating Layer relu7</div><div class="line">I0313 11:41:39.467422  9249 net.cpp:406] relu7 &lt;- fc7</div><div class="line">I0313 11:41:39.467427  9249 net.cpp:367] relu7 -&gt; fc7 (in-place)</div><div class="line">I0313 11:41:39.467433  9249 net.cpp:122] Setting up relu7</div><div class="line">I0313 11:41:39.467437  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.467439  9249 net.cpp:137] Memory required for data: 67579904</div><div class="line">I0313 11:41:39.467442  9249 layer_factory.hpp:77] Creating layer drop7</div><div class="line">I0313 11:41:39.467449  9249 net.cpp:84] Creating Layer drop7</div><div class="line">I0313 11:41:39.467452  9249 net.cpp:406] drop7 &lt;- fc7</div><div class="line">I0313 11:41:39.467455  9249 net.cpp:367] drop7 -&gt; fc7 (in-place)</div><div class="line">I0313 11:41:39.467460  9249 net.cpp:122] Setting up drop7</div><div class="line">I0313 11:41:39.467463  9249 net.cpp:129] Top shape: 1 4096 1 64 (262144)</div><div class="line">I0313 11:41:39.467465  9249 net.cpp:137] Memory required for data: 68628480</div><div class="line">I0313 11:41:39.467468  9249 layer_factory.hpp:77] Creating layer score_fr</div><div class="line">I0313 11:41:39.467474  9249 net.cpp:84] Creating Layer score_fr</div><div class="line">I0313 11:41:39.467476  9249 net.cpp:406] score_fr &lt;- fc7</div><div class="line">I0313 11:41:39.467481  9249 net.cpp:380] score_fr -&gt; score_fr</div><div class="line">I0313 11:41:39.467617  9249 net.cpp:122] Setting up score_fr</div><div class="line">I0313 11:41:39.467622  9249 net.cpp:129] Top shape: 1 21 1 64 (1344)</div><div class="line">I0313 11:41:39.467624  9249 net.cpp:137] Memory required for data: 68633856</div><div class="line">I0313 11:41:39.467629  9249 layer_factory.hpp:77] Creating layer upscore</div><div class="line">I0313 11:41:39.467635  9249 net.cpp:84] Creating Layer upscore</div><div class="line">I0313 11:41:39.467638  9249 net.cpp:406] upscore &lt;- score_fr</div><div class="line">I0313 11:41:39.467643  9249 net.cpp:380] upscore -&gt; upscore</div><div class="line">I0313 11:41:39.469235  9249 net.cpp:122] Setting up upscore</div><div class="line">I0313 11:41:39.469246  9249 net.cpp:129] Top shape: 1 21 63 2079 (2750517)</div><div class="line">I0313 11:41:39.469249  9249 net.cpp:137] Memory required for data: 79635924</div><div class="line">I0313 11:41:39.469259  9249 layer_factory.hpp:77] Creating layer score</div><div class="line">I0313 11:41:39.469266  9249 net.cpp:84] Creating Layer score</div><div class="line">I0313 11:41:39.469269  9249 net.cpp:406] score &lt;- upscore</div><div class="line">I0313 11:41:39.469272  9249 net.cpp:406] score &lt;- data_data_0_split_1</div><div class="line">I0313 11:41:39.469276  9249 net.cpp:380] score -&gt; score</div><div class="line">I0313 11:41:39.469285  9249 net.cpp:122] Setting up score</div><div class="line">I0313 11:41:39.469288  9249 net.cpp:129] Top shape: 1 21 16 2016 (677376)</div><div class="line">I0313 11:41:39.469290  9249 net.cpp:137] Memory required for data: 82345428</div><div class="line">I0313 11:41:39.469293  9249 layer_factory.hpp:77] Creating layer loss</div><div class="line">I0313 11:41:39.469300  9249 net.cpp:84] Creating Layer loss</div><div class="line">I0313 11:41:39.469301  9249 net.cpp:406] loss &lt;- score</div><div class="line">I0313 11:41:39.469305  9249 net.cpp:406] loss &lt;- label</div><div class="line">I0313 11:41:39.469308  9249 net.cpp:380] loss -&gt; loss</div><div class="line">I0313 11:41:39.469314  9249 layer_factory.hpp:77] Creating layer loss</div><div class="line">I0313 11:41:39.469894  9249 net.cpp:122] Setting up loss</div><div class="line">I0313 11:41:39.469900  9249 net.cpp:129] Top shape: (1)</div><div class="line">I0313 11:41:39.469903  9249 net.cpp:132]     with loss weight 1</div><div class="line">I0313 11:41:39.469913  9249 net.cpp:137] Memory required for data: 82345432</div><div class="line">I0313 11:41:39.469915  9249 net.cpp:198] loss needs backward computation.</div><div class="line">I0313 11:41:39.469918  9249 net.cpp:198] score needs backward computation.</div><div class="line">I0313 11:41:39.469920  9249 net.cpp:198] upscore needs backward computation.</div><div class="line">I0313 11:41:39.469923  9249 net.cpp:198] score_fr needs backward computation.</div><div class="line">I0313 11:41:39.469926  9249 net.cpp:198] drop7 needs backward computation.</div><div class="line">I0313 11:41:39.469929  9249 net.cpp:198] relu7 needs backward computation.</div><div class="line">I0313 11:41:39.469931  9249 net.cpp:198] fc7 needs backward computation.</div><div class="line">I0313 11:41:39.469934  9249 net.cpp:198] drop6 needs backward computation.</div><div class="line">I0313 11:41:39.469936  9249 net.cpp:198] relu6 needs backward computation.</div><div class="line">I0313 11:41:39.469939  9249 net.cpp:198] fc6 needs backward computation.</div><div class="line">I0313 11:41:39.469943  9249 net.cpp:198] pool5 needs backward computation.</div><div class="line">I0313 11:41:39.469945  9249 net.cpp:198] relu5 needs backward computation.</div><div class="line">I0313 11:41:39.469947  9249 net.cpp:198] conv5 needs backward computation.</div><div class="line">I0313 11:41:39.469950  9249 net.cpp:198] relu4 needs backward computation.</div><div class="line">I0313 11:41:39.469952  9249 net.cpp:198] conv4 needs backward computation.</div><div class="line">I0313 11:41:39.469955  9249 net.cpp:198] relu3 needs backward computation.</div><div class="line">I0313 11:41:39.469957  9249 net.cpp:198] conv3 needs backward computation.</div><div class="line">I0313 11:41:39.469960  9249 net.cpp:198] norm2 needs backward computation.</div><div class="line">I0313 11:41:39.469964  9249 net.cpp:198] pool2 needs backward computation.</div><div class="line">I0313 11:41:39.469965  9249 net.cpp:198] relu2 needs backward computation.</div><div class="line">I0313 11:41:39.469969  9249 net.cpp:198] conv2 needs backward computation.</div><div class="line">I0313 11:41:39.469971  9249 net.cpp:198] norm1 needs backward computation.</div><div class="line">I0313 11:41:39.469974  9249 net.cpp:198] pool1 needs backward computation.</div><div class="line">I0313 11:41:39.469979  9249 net.cpp:198] relu1 needs backward computation.</div><div class="line">I0313 11:41:39.469981  9249 net.cpp:198] conv1 needs backward computation.</div><div class="line">I0313 11:41:39.469985  9249 net.cpp:200] data_data_0_split does not need backward computation.</div><div class="line">I0313 11:41:39.469987  9249 net.cpp:200] data does not need backward computation.</div><div class="line">I0313 11:41:39.469990  9249 net.cpp:242] This network produces output loss</div><div class="line">I0313 11:41:39.470001  9249 net.cpp:255] Network initialization done.</div><div class="line">I0313 11:41:39.470055  9249 solver.cpp:57] Solver scaffolding done.</div><div class="line">I0313 11:42:40.745103  9249 solver.cpp:239] Iteration 0 (-1.4013e-45 iter/s, 61.136s/20 iters), loss = 4.54161</div><div class="line">I0313 11:42:40.745129  9249 solver.cpp:258]     Train net output #0: loss = 4.00278 (* 1 = 4.00278 loss)</div><div class="line">I0313 11:42:40.745136  9249 sgd_solver.cpp:112] Iteration 0, lr = 0.0001</div><div class="line">I0313 12:02:52.273387  9249 solver.cpp:239] Iteration 20 (0.0165081 iter/s, 1211.53s/20 iters), loss = 17.0233</div><div class="line">I0313 12:02:52.273416  9249 solver.cpp:258]     Train net output #0: loss = 19.2508 (* 1 = 19.2508 loss)</div><div class="line">I0313 12:02:52.273422  9249 sgd_solver.cpp:112] Iteration 20, lr = 0.0001</div><div class="line">I0313 12:23:09.810516  9249 solver.cpp:239] Iteration 40 (0.0164266 iter/s, 1217.54s/20 iters), loss = 26.7316</div><div class="line">I0313 12:23:09.810544  9249 solver.cpp:258]     Train net output #0: loss = 30.1355 (* 1 = 30.1355 loss)</div><div class="line">I0313 12:23:09.810550  9249 sgd_solver.cpp:112] Iteration 40, lr = 0.0001</div><div class="line">I0313 12:43:32.716285  9249 solver.cpp:239] Iteration 60 (0.0163545 iter/s, 1222.91s/20 iters), loss = 30.2106</div><div class="line">I0313 12:43:32.716313  9249 solver.cpp:258]     Train net output #0: loss = 22.8696 (* 1 = 22.8696 loss)</div><div class="line">I0313 12:43:32.716320  9249 sgd_solver.cpp:112] Iteration 60, lr = 0.0001</div><div class="line">I0313 13:03:49.434516  9249 solver.cpp:239] Iteration 80 (0.0164377 iter/s, 1216.72s/20 iters), loss = 31.0818</div><div class="line">I0313 13:03:49.434543  9249 solver.cpp:258]     Train net output #0: loss = 23.1428 (* 1 = 23.1428 loss)</div><div class="line">I0313 13:03:49.434551  9249 sgd_solver.cpp:112] Iteration 80, lr = 0.0001</div><div class="line">I0313 13:23:51.860294  9249 solver.cpp:239] Iteration 100 (0.0166331 iter/s, 1202.43s/20 iters), loss = 32.5238</div><div class="line">I0313 13:23:51.860322  9249 solver.cpp:258]     Train net output #0: loss = 35.1909 (* 1 = 35.1909 loss)</div><div class="line">I0313 13:23:51.860328  9249 sgd_solver.cpp:112] Iteration 100, lr = 0.0001</div><div class="line">I0313 13:43:38.481149  9249 solver.cpp:239] Iteration 120 (0.0168546 iter/s, 1186.62s/20 iters), loss = 33.0024</div><div class="line">I0313 13:43:38.481176  9249 solver.cpp:258]     Train net output #0: loss = 40.9104 (* 1 = 40.9104 loss)</div><div class="line">I0313 13:43:38.481182  9249 sgd_solver.cpp:112] Iteration 120, lr = 0.0001</div><div class="line">I0313 14:03:27.667078  9249 solver.cpp:239] Iteration 140 (0.0168182 iter/s, 1189.19s/20 iters), loss = 36.4908</div><div class="line">I0313 14:03:27.667104  9249 solver.cpp:258]     Train net output #0: loss = 53.9975 (* 1 = 53.9975 loss)</div><div class="line">I0313 14:03:27.667111  9249 sgd_solver.cpp:112] Iteration 140, lr = 0.0001</div><div class="line">I0313 14:23:25.009404  9249 solver.cpp:239] Iteration 160 (0.0167037 iter/s, 1197.34s/20 iters), loss = 52.2285</div><div class="line">I0313 14:23:25.009431  9249 solver.cpp:258]     Train net output #0: loss = 26.9314 (* 1 = 26.9314 loss)</div><div class="line">I0313 14:23:25.009438  9249 sgd_solver.cpp:112] Iteration 160, lr = 0.0001</div><div class="line">I0313 14:43:35.026921  9249 solver.cpp:239] Iteration 180 (0.0165287 iter/s, 1210.02s/20 iters), loss = 33.087</div><div class="line">I0313 14:43:35.026950  9249 solver.cpp:258]     Train net output #0: loss = 44.6887 (* 1 = 44.6887 loss)</div><div class="line">I0313 14:43:35.026957  9249 sgd_solver.cpp:112] Iteration 180, lr = 0.0001</div><div class="line">I0313 15:03:45.718956  9249 solver.cpp:239] Iteration 200 (0.0165195 iter/s, 1210.69s/20 iters), loss = 33.0793</div><div class="line">I0313 15:03:45.718984  9249 solver.cpp:258]     Train net output #0: loss = 34.2235 (* 1 = 34.2235 loss)</div><div class="line">I0313 15:03:45.718991  9249 sgd_solver.cpp:112] Iteration 200, lr = 0.0001</div><div class="line">I0313 15:24:27.503715  9249 solver.cpp:239] Iteration 220 (0.0161059 iter/s, 1241.78s/20 iters), loss = 33.1698</div><div class="line">I0313 15:24:27.503741  9249 solver.cpp:258]     Train net output #0: loss = 45.0323 (* 1 = 45.0323 loss)</div><div class="line">I0313 15:24:27.503748  9249 sgd_solver.cpp:112] Iteration 220, lr = 0.0001</div><div class="line">I0313 15:44:53.585564  9249 solver.cpp:239] Iteration 240 (0.0163121 iter/s, 1226.08s/20 iters), loss = 35.7697</div><div class="line">I0313 15:44:53.585592  9249 solver.cpp:258]     Train net output #0: loss = 45.5302 (* 1 = 45.5302 loss)</div><div class="line">I0313 15:44:53.585598  9249 sgd_solver.cpp:112] Iteration 240, lr = 0.0001</div><div class="line">I0313 16:04:44.744935  9249 solver.cpp:239] Iteration 260 (0.0167904 iter/s, 1191.16s/20 iters), loss = 29.4003</div><div class="line">I0313 16:04:44.744963  9249 solver.cpp:258]     Train net output #0: loss = 19.9242 (* 1 = 19.9242 loss)</div><div class="line">I0313 16:04:44.744969  9249 sgd_solver.cpp:112] Iteration 260, lr = 0.0001</div><div class="line">I0313 16:24:00.216655  9249 solver.cpp:239] Iteration 280 (0.017309 iter/s, 1155.47s/20 iters), loss = 24.0391</div><div class="line">I0313 16:24:00.216681  9249 solver.cpp:258]     Train net output #0: loss = 35.6398 (* 1 = 35.6398 loss)</div><div class="line">I0313 16:24:00.216687  9249 sgd_solver.cpp:112] Iteration 280, lr = 0.0001</div><div class="line">I0313 16:43:22.672458  9249 solver.cpp:239] Iteration 300 (0.017205 iter/s, 1162.45s/20 iters), loss = 33.2369</div><div class="line">I0313 16:43:22.672485  9249 solver.cpp:258]     Train net output #0: loss = 38.8301 (* 1 = 38.8301 loss)</div><div class="line">I0313 16:43:22.672492  9249 sgd_solver.cpp:112] Iteration 300, lr = 0.0001</div><div class="line">I0313 17:02:56.876072  9249 solver.cpp:239] Iteration 320 (0.0170328 iter/s, 1174.2s/20 iters), loss = 33.7243</div><div class="line">I0313 17:02:56.876101  9249 solver.cpp:258]     Train net output #0: loss = 33.6585 (* 1 = 33.6585 loss)</div><div class="line">I0313 17:02:56.876106  9249 sgd_solver.cpp:112] Iteration 320, lr = 0.0001</div></pre></td></tr></table></figure>
+<p>可以看到在未更改其他网络参数的情况下，loss居高不下，本文着重与对<strong>Data layer</strong>的理解，下一篇文章将对网络结构内部进行优化，以达到点云数据loss达到预期的目标。</p>
+<p>以上。</p>
+<hr>
+<p>参考文献：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/22976342" target="_blank" rel="external">FCN学习:Semantic Segmentation</a></li>
+<li><a href="http://simtalk.cn/2016/09/20/AlexNet/" target="_blank" rel="external">AlexNet</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DL/" rel="tag"># DL</a>
+          
+            <a href="/tags/PCL/" rel="tag"># PCL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/08/Caffe源代码学习之AlexNet_Caffenet_py/" rel="next" title="Caffe源代码学习 — AlexNet(Caffenet.py)">
+                <i class="fa fa-chevron-left"></i> Caffe源代码学习 — AlexNet(Caffenet.py)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/15/18_3_15/kitti_bin_to_pcd/" rel="prev" title="KITTI 原始bin格式数据集转PCD格式">
+                KITTI 原始bin格式数据集转PCD格式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/MyBlogAvatar.png"
+               alt="Zeyu" />
+          <p class="site-author-name" itemprop="name">Zeyu</p>
+           
+              <p class="site-description motion-element" itemprop="description">Try everything fancy!</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/nan0755" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/real99" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/ceng-ze-yu-26/activities" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-zhihu"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-激光雷达数据转换"><span class="nav-number">2.</span> <span class="nav-text">1. 激光雷达数据转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-激光雷达点云数据介绍"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 激光雷达点云数据介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-点云预处理"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 点云预处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-FCN-AlexNet的点云数据分类任务"><span class="nav-number">3.</span> <span class="nav-text">2. FCN-AlexNet的点云数据分类任务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-FCN-AlexNet读取数据层（Data-layer）"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 FCN-AlexNet读取数据层（Data layer）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-FCN-AlexNet模型定义函数（net-py）"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 FCN-AlexNet模型定义函数（net.py）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fcn-模型结构详解"><span class="nav-number">3.2.1.</span> <span class="nav-text">fcn()模型结构详解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-数据输入层"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">(1). 数据输入层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-第一个卷积层"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">(2). 第一个卷积层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-第二个卷积层"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">(3). 第二个卷积层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-第三个卷积层"><span class="nav-number">3.2.1.4.</span> <span class="nav-text">(4). 第三个卷积层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-第四个卷积层"><span class="nav-number">3.2.1.5.</span> <span class="nav-text">(5). 第四个卷积层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-第五个卷积层"><span class="nav-number">3.2.1.6.</span> <span class="nav-text">(6). 第五个卷积层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-第六个全连接层"><span class="nav-number">3.2.1.7.</span> <span class="nav-text">(7). 第六个全连接层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-第七个全连接层"><span class="nav-number">3.2.1.8.</span> <span class="nav-text">(8). 第七个全连接层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-第八个全连接层"><span class="nav-number">3.2.1.9.</span> <span class="nav-text">(9). 第八个全连接层</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-FCN-AlexNet求解函数（solve-py）"><span class="nav-number">4.</span> <span class="nav-text">2.3 FCN-AlexNet求解函数（solve.py）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-点云分割试验结果"><span class="nav-number">5.</span> <span class="nav-text">3. 点云分割试验结果</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zeyu</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz", "BdWgkDuuoBKUAUvH1b0e3RJF");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

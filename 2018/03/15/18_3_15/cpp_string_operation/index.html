@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="ROS,PCL," />
+  <meta name="keywords" content="c++," />
 
 
 
@@ -97,19 +97,17 @@
 
 
 
-<meta name="description" content="前言公司开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：  读取文件夹下PCD文件，按照文件名进行排序； 通过Qt开发UI界面，界面包括操作按钮： continue: 循环播放PCD文件并发布 next，pre： 后一帧或前一帧PCD文件 save index： 保存当前帧PCD文件名到.txt文件   当continue操作正在进行时，点击其余按钮，实现打断停止功能  分析 将">
-<meta name="keywords" content="ROS,PCL">
+<meta name="description" content="前言 作为传递信息的载体string数据类型广泛应用于各种编程语言中，尤其在轻量化语言 Python 中发挥的淋漓尽致，通过string传递信息 Python 使各个模块组装在一起完成指定的工作任务，这也是 Python 被称为“胶水语言”的原因。本文着眼于 c++ 中string的应用。首先建议先浏览string在线文档，这其中包含了大多数日常所需函数。 正文 1. string 内查找字符串s">
+<meta name="keywords" content="c++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ROS Node 之间通信打断操作实例">
-<meta property="og:url" content="http://zengzeyu.com/2018/03/08/ROS_Node之间通信打断操作实例/index.html">
+<meta property="og:title" content="c++ string 操作汇总">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/15/18_3_15/cpp_string_operation/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
-<meta property="og:description" content="前言公司开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：  读取文件夹下PCD文件，按照文件名进行排序； 通过Qt开发UI界面，界面包括操作按钮： continue: 循环播放PCD文件并发布 next，pre： 后一帧或前一帧PCD文件 save index： 保存当前帧PCD文件名到.txt文件   当continue操作正在进行时，点击其余按钮，实现打断停止功能  分析 将">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/10028058-a2ce62e46149adfb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2018-03-08T23:59:07.739Z">
+<meta property="og:description" content="前言 作为传递信息的载体string数据类型广泛应用于各种编程语言中，尤其在轻量化语言 Python 中发挥的淋漓尽致，通过string传递信息 Python 使各个模块组装在一起完成指定的工作任务，这也是 Python 被称为“胶水语言”的原因。本文着眼于 c++ 中string的应用。首先建议先浏览string在线文档，这其中包含了大多数日常所需函数。 正文 1. string 内查找字符串s">
+<meta property="og:updated_time" content="2018-03-15T15:16:35.298Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ROS Node 之间通信打断操作实例">
-<meta name="twitter:description" content="前言公司开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：  读取文件夹下PCD文件，按照文件名进行排序； 通过Qt开发UI界面，界面包括操作按钮： continue: 循环播放PCD文件并发布 next，pre： 后一帧或前一帧PCD文件 save index： 保存当前帧PCD文件名到.txt文件   当continue操作正在进行时，点击其余按钮，实现打断停止功能  分析 将">
-<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/10028058-a2ce62e46149adfb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:title" content="c++ string 操作汇总">
+<meta name="twitter:description" content="前言 作为传递信息的载体string数据类型广泛应用于各种编程语言中，尤其在轻量化语言 Python 中发挥的淋漓尽致，通过string传递信息 Python 使各个模块组装在一起完成指定的工作任务，这也是 Python 被称为“胶水语言”的原因。本文着眼于 c++ 中string的应用。首先建议先浏览string在线文档，这其中包含了大多数日常所需函数。 正文 1. string 内查找字符串s">
 
 
 
@@ -137,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://zengzeyu.com/2018/03/08/ROS_Node之间通信打断操作实例/"/>
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/15/18_3_15/cpp_string_operation/"/>
 
 
 
 
 
-  <title>ROS Node 之间通信打断操作实例 | Zeyu's Blog</title>
+  <title>c++ string 操作汇总 | Zeyu's Blog</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -321,7 +319,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/08/ROS_Node之间通信打断操作实例/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/cpp_string_operation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -338,7 +336,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">ROS Node 之间通信打断操作实例</h1>
+          <h1 class="post-title" itemprop="name headline">c++ string 操作汇总</h1>
         
 
         <div class="post-meta">
@@ -350,8 +348,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-08T23:47:44+08:00">
-                2018-03-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-15T23:47:44+08:00">
+                2018-03-15
               </time>
             
 
@@ -373,8 +371,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ROS/" itemprop="url" rel="index">
-                    <span itemprop="name">ROS</span>
+                  <a href="/categories/C/" itemprop="url" rel="index">
+                    <span itemprop="name">C++</span>
                   </a>
                 </span>
 
@@ -390,7 +388,7 @@
 
           
           
-             <span id="/2018/03/08/ROS_Node之间通信打断操作实例/" class="leancloud_visitors" data-flag-title="ROS Node 之间通信打断操作实例">
+             <span id="/2018/03/15/18_3_15/cpp_string_operation/" class="leancloud_visitors" data-flag-title="c++ string 操作汇总">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -418,37 +416,28 @@
       
 
       
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>公司开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：</p>
-<ol>
-<li>读取文件夹下PCD文件，按照文件名进行排序；</li>
-<li>通过Qt开发UI界面，界面包括操作按钮：<ul>
-<li><code>continue</code>: 循环播放PCD文件并发布</li>
-<li><code>next</code>，<code>pre</code>： 后一帧或前一帧PCD文件</li>
-<li><code>save index</code>： 保存当前帧PCD文件名到<code>.txt</code>文件</li>
-</ul>
-</li>
-<li>当<code>continue</code>操作正在进行时，点击其余按钮，实现打断停止功能</li>
-</ol>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><ol>
-<li>将UI界面和实际后台操作分开进行多线程操作，否则在进行<code>continue</code>过程中时，无法通过外部改变判断条件进行打断；</li>
-<li>ROS的一个<code>Node</code>默认为是一个进程，所以采用<code>double Node</code>实现多线程；</li>
-<li><p>ROS的单个Node可以同时实现<code>subscribe</code>和<code>publish</code>多个消息。本文假设UI界面为<code>Node 1</code>，包括：读取PCD文件，对点击操作进行反应并发送按钮消息到后端；后台实现为<code>Node 2</code>，包括：按钮消息的实现代码。</p>
-</li>
-<li><p>UI界面<br><img src="http://upload-images.jianshu.io/upload_images/10028058-a2ce62e46149adfb.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-07 10:23:37.jpg"></p>
-</li>
-<li><p><code>Node 2</code>关键代码<br>由于ROS<code>Node</code>之间特殊的通信机制，如果将条件判断机制放在<code>Node 2</code>的子函数中，那么<code>Node 2</code>在接收<code>Node 1</code>的消息时，如果<code>continue</code>操作正在进行，则必须当<code>continue</code>执行完毕之后再收到<code>Node 1</code>的消息。所以，必须将判断条件房子ROS的<code>Master</code>部分，通过<code>Master</code>对<code>Node 1</code>当前消息进行反应，可实时打断<code>Node 2</code>正在进行的<code>continue</code>操作，马上进行当前消息的操作。<br>以下是<code>Node 2</code>中的<code>main</code>函数的ROS循环部分代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">enum recv_sign &#123; none_sign = 0, stop_sign = 1, continue_sign = 2, load_sign = 3 &#125;;</div><div class="line"></div><div class="line">while(ros::ok())</div><div class="line">    &#123;</div><div class="line">        if( g_con_signal == continue_sign )</div><div class="line">        &#123;</div><div class="line">            if ( g_cur_index &lt; g_pcd_filelist.size() - 1 )</div><div class="line">            &#123;</div><div class="line">                publishPCD();</div><div class="line">                g_cur_index++;</div><div class="line">            &#125;</div><div class="line">            else</div><div class="line">                g_cur_index = 0;</div><div class="line">        &#125;</div><div class="line">        else if ( g_con_signal == stop_sign )</div><div class="line">        &#123;</div><div class="line">            if ( g_pcd_info == &quot;pre_pcd_signal&quot; )</div><div class="line">            &#123;</div><div class="line">                if ( g_cur_index &gt; 0 )</div><div class="line">                &#123;</div><div class="line">                    g_cur_index--;</div><div class="line">                    publishPCD();</div><div class="line">                &#125;</div><div class="line">                else</div><div class="line">                    std::cerr &lt;&lt; &quot;Reach 1st file!!&quot; &lt;&lt; std::endl;</div><div class="line">            &#125;</div><div class="line">            else if ( g_pcd_info == &quot;next_pcd_signal&quot; )</div><div class="line">            &#123;</div><div class="line">                if ( g_cur_index &lt; g_pcd_filelist.size() - 1 )</div><div class="line">                    g_cur_index ++;</div><div class="line">                else</div><div class="line">                    g_cur_index = 0;</div><div class="line"></div><div class="line">                publishPCD();</div><div class="line">            &#125;</div><div class="line">            else if ( g_pcd_info == &quot;save_index&quot; )</div><div class="line">            &#123;</div><div class="line">                g_outfile &lt;&lt; g_pcd_filelist[g_cur_index] &lt;&lt; std::endl;</div><div class="line">            &#125;</div><div class="line">            g_con_signal = none_sign;</div><div class="line">        &#125;</div><div class="line">        else if ( g_con_signal == load_sign )</div><div class="line">        &#123;</div><div class="line">            g_file_root_path = g_pcd_info;</div><div class="line">            std::cout &lt;&lt; g_file_root_path &lt;&lt; std::endl;</div><div class="line">            read_filelists( g_file_root_path + &quot;/&quot;, g_pcd_filelist, &quot;.pcd&quot; );</div><div class="line">            for (int i = 0; i &lt; g_pcd_filelist.size(); ++i)</div><div class="line">            &#123;</div><div class="line">                std::cout &lt;&lt; g_pcd_filelist[i] &lt;&lt; std::endl;</div><div class="line">            &#125;</div><div class="line">            g_con_signal = none_sign;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ros::spinOnce();</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>代码说明：</p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><hr>
+<p>作为传递信息的载体<code>string</code>数据类型广泛应用于各种编程语言中，尤其在轻量化语言 <strong>Python</strong> 中发挥的淋漓尽致，通过<code>string</code>传递信息 <strong>Python</strong> 使各个模块组装在一起完成指定的工作任务，这也是 <strong>Python</strong> 被称为“胶水语言”的原因。<br>本文着眼于 <strong>c++</strong> 中<code>string</code>的应用。首先建议先浏览<code>string</code><a href="http://www.cplusplus.com/reference/string/string/" target="_blank" rel="external">在线文档</a>，这其中包含了大多数日常所需函数。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><hr>
+<h3 id="1-string-内查找字符串str"><a href="#1-string-内查找字符串str" class="headerlink" title="1. string 内查找字符串str"></a>1. <code>string</code> 内查找字符串<code>str</code></h3><p><code>std::string::find(str)</code>函数：<a href="http://www.cplusplus.com/reference/string/string/find/" target="_blank" rel="external">http://www.cplusplus.com/reference/string/string/find/</a><br><strong>Example</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">// string::find</div><div class="line">#include &lt;iostream&gt;       // std::cout</div><div class="line">#include &lt;string&gt;         // std::string</div><div class="line"></div><div class="line">int main ()</div><div class="line">&#123;</div><div class="line">  std::string str (&quot;There are two needles in this haystack with needles.&quot;);</div><div class="line">  std::string str2 (&quot;needle&quot;);</div><div class="line"></div><div class="line">  // different member versions of find in the same order as above:</div><div class="line">  std::size_t found = str.find(str2);</div><div class="line">  if (found!=std::string::npos)</div><div class="line">    std::cout &lt;&lt; &quot;first &apos;needle&apos; found at: &quot; &lt;&lt; found &lt;&lt; &apos;\n&apos;;</div><div class="line"></div><div class="line">  found=str.find(&quot;needles are small&quot;,found+1,6);</div><div class="line">  if (found!=std::string::npos)</div><div class="line">    std::cout &lt;&lt; &quot;second &apos;needle&apos; found at: &quot; &lt;&lt; found &lt;&lt; &apos;\n&apos;;</div><div class="line"></div><div class="line">  found=str.find(&quot;haystack&quot;);</div><div class="line">  if (found!=std::string::npos)</div><div class="line">    std::cout &lt;&lt; &quot;&apos;haystack&apos; also found at: &quot; &lt;&lt; found &lt;&lt; &apos;\n&apos;;</div><div class="line"></div><div class="line">  found=str.find(&apos;.&apos;);</div><div class="line">  if (found!=std::string::npos)</div><div class="line">    std::cout &lt;&lt; &quot;Period found at: &quot; &lt;&lt; found &lt;&lt; &apos;\n&apos;;</div><div class="line"></div><div class="line">  // let&apos;s replace the first needle:</div><div class="line">  str.replace(str.find(str2),str2.length(),&quot;preposition&quot;);</div><div class="line">  std::cout &lt;&lt; str &lt;&lt; &apos;\n&apos;;</div><div class="line"></div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中 <code>npos</code> 值为 <code>-1</code>，用于判断。<br>其他查找功能类函数：</p>
 <ul>
-<li><code>Node 1</code>同时发送2个<code>std_msgs::String</code>：<code>g_con_signal</code>用于控制是否执行循环条件；<code>g_pcd_info</code>用于在不执行<code>continue</code>操作时进行细分操作划分，包括：<code>save index</code>操作的文件路径和<code>load</code>PCD文件时文件路径。</li>
-<li><code>g_con_signal</code>可以取4个值：<code>enum recv_sign { none_sign = 0, stop_sign = 1, continue_sign = 2, load_sign = 3 };</code>，分别对应不同操作，其中<code>none_sign</code>用于执行除<code>continue</code>操作之外的跳出当前循环，达到只需执行一次的目的，防止陷入死循环（无线循环）。</li>
-<li><code>ros::spinOnce()</code>用于刷新ROS执行条件，每次进入<code>while(ros::ok())</code>循环时，就会内部条件进行判断。</li>
+<li><a href="http://www.cplusplus.com/reference/string/string/rfind/" target="_blank" rel="external"><strong>rfind</strong></a>： 找到目标<code>str</code>最后一次出现位置</li>
+<li><a href="http://www.cplusplus.com/reference/string/string/find_first_of/" target="_blank" rel="external"><strong>find_first_of</strong></a>： 从起始位置查找目标<code>str</code></li>
+<li><a href="http://www.cplusplus.com/reference/string/string/find_last_of/" target="_blank" rel="external"><strong>find_last_of</strong></a>： 从结束位置往回查找目标<code>str</code></li>
 </ul>
-<p>后续：<br><code>Node 2</code>当前帧文件名返回给<code>Node 1</code>用于显示于UI界面功能尚待加入。</p>
+<h2 id="2-string内删除目标str"><a href="#2-string内删除目标str" class="headerlink" title="2. string内删除目标str"></a>2. <code>string</code>内删除目标<code>str</code></h2><p> <a href="http://www.cplusplus.com/reference/string/string/substr/" target="_blank" rel="external"><strong>substr</strong></a>： 本质还是查找目标<code>str</code><br><strong>Example</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">// string::substr</div><div class="line">#include &lt;iostream&gt;</div><div class="line">#include &lt;string&gt;</div><div class="line"></div><div class="line">int main ()</div><div class="line">&#123;</div><div class="line">  std::string str=&quot;We think in generalities, but we live in details.&quot;;</div><div class="line">                                           // (quoting Alfred N. Whitehead)</div><div class="line"></div><div class="line">  std::string str2 = str.substr (3,5);     // &quot;think&quot;</div><div class="line"></div><div class="line">  std::size_t pos = str.find(&quot;live&quot;);      // position of &quot;live&quot; in str</div><div class="line"></div><div class="line">  std::string str3 = str.substr (pos);     // get from &quot;live&quot; to the end</div><div class="line"></div><div class="line">  std::cout &lt;&lt; str2 &lt;&lt; &apos; &apos; &lt;&lt; str3 &lt;&lt; &apos;\n&apos;;</div><div class="line"></div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="3-字符串分割"><a href="#3-字符串分割" class="headerlink" title="3. 字符串分割"></a>3. 字符串分割</h2><p>字符串分割推荐使用 <strong>std::stringstream</strong> 作为中间载体和 <a href="http://www.cplusplus.com/reference/istream/istream/getline/" target="_blank" rel="external"><strong>getline()</strong></a> 函数组合来完成。<br>以分割字符 “ <strong>;</strong> ”为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">void splitPathStr(std::string&amp; path_str)</div><div class="line">&#123;</div><div class="line">    std::vector&lt;std::string&gt; filelists;</div><div class="line">    std::stringstream sstr( path_str );</div><div class="line">    std::string token;</div><div class="line">    while(getline(sstr, token, &apos;;&apos;))</div><div class="line">    &#123;</div><div class="line">        filelists.push_back(token);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="4-int型与string型互相转换"><a href="#4-int型与string型互相转换" class="headerlink" title="4. int型与string型互相转换"></a>4. int型与string型互相转换</h2><p><strong>int</strong>型转<strong>string</strong>型<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">void int2str(const int &amp;int_temp,string &amp;string_temp)  </div><div class="line">&#123;  </div><div class="line">        stringstream stream;  </div><div class="line">        stream&lt;&lt;int_temp;  </div><div class="line">        string_temp=stream.str();   //此处也可以用 stream&gt;&gt;string_temp  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>string</strong>型转<strong>int</strong>型<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">void str2int(int &amp;int_temp,const string &amp;string_temp)  </div><div class="line">&#123;  </div><div class="line">    stringstream stream(string_temp);  </div><div class="line">    stream&gt;&gt;int_temp;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>未完待续…</p>
 <p>以上。</p>
 <hr>
+<p>参考文献：</p>
+<ol>
+<li><a href="http://www.cplusplus.com/reference/" target="_blank" rel="external">c++ reference</a></li>
+<li><a href="http://www.cnblogs.com/gaobw/p/7070622.html" target="_blank" rel="external">C++中int、string等常见类型转换</a></li>
+</ol>
 
       
     </div>
@@ -478,9 +467,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/ROS/" rel="tag"># ROS</a>
-          
-            <a href="/tags/PCL/" rel="tag"># PCL</a>
+            <a href="/tags/c/" rel="tag"># c++</a>
           
         </div>
       
@@ -493,8 +480,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/06/26/开篇2017/" rel="next" title="开篇2017">
-                <i class="fa fa-chevron-left"></i> 开篇2017
+              <a href="/2018/03/15/18_3_15/kitti_bin_to_pcd/" rel="next" title="KITTI 原始bin格式数据集转PCD格式">
+                <i class="fa fa-chevron-left"></i> KITTI 原始bin格式数据集转PCD格式
               </a>
             
           </div>
@@ -503,8 +490,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/03/08/Numpy学习笔记/" rel="prev" title="NumPy学习笔记">
-                NumPy学习笔记 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/03/15/18_3_15/cnpy_note/" rel="prev" title="cnpy 库使用笔记">
+                cnpy 库使用笔记 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -663,7 +650,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分析"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正文"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-string-内查找字符串str"><span class="nav-number">2.1.</span> <span class="nav-text">1. string 内查找字符串str</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-string内删除目标str"><span class="nav-number">3.</span> <span class="nav-text">2. string内删除目标str</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-字符串分割"><span class="nav-number">4.</span> <span class="nav-text">3. 字符串分割</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-int型与string型互相转换"><span class="nav-number">5.</span> <span class="nav-text">4. int型与string型互相转换</span></a></li></ol></div>
             
 
           </div>

@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="NumPy," />
 
 
 
@@ -97,16 +97,17 @@
 
 
 
-<meta name="description" content="2018年硕士毕业于哈工大机械电子工程专业，从事无人驾驶激光雷达点云算法开发，个人网站不定时更新一些自己工作或业余东西，希望喜欢~ E-mail：zengzeyu@hotmail.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ABOUT">
-<meta property="og:url" content="http://zengzeyu.com/about/index.html">
+<meta name="description" content="前言 在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥开发。cnpy地址：https://github.com/rogersce/cnpy官方例子：https://github.com/rogersce">
+<meta name="keywords" content="NumPy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cnpy 库使用笔记">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/15/18_3_15/cnpy_note/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
-<meta property="og:description" content="2018年硕士毕业于哈工大机械电子工程专业，从事无人驾驶激光雷达点云算法开发，个人网站不定时更新一些自己工作或业余东西，希望喜欢~ E-mail：zengzeyu@hotmail.com">
-<meta property="og:updated_time" content="2018-03-09T12:41:42.150Z">
+<meta property="og:description" content="前言 在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥开发。cnpy地址：https://github.com/rogersce/cnpy官方例子：https://github.com/rogersce">
+<meta property="og:updated_time" content="2018-03-15T15:15:11.711Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ABOUT">
-<meta name="twitter:description" content="2018年硕士毕业于哈工大机械电子工程专业，从事无人驾驶激光雷达点云算法开发，个人网站不定时更新一些自己工作或业余东西，希望喜欢~ E-mail：zengzeyu@hotmail.com">
+<meta name="twitter:title" content="cnpy 库使用笔记">
+<meta name="twitter:description" content="前言 在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥开发。cnpy地址：https://github.com/rogersce/cnpy官方例子：https://github.com/rogersce">
 
 
 
@@ -134,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://zengzeyu.com/about/"/>
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/15/18_3_15/cnpy_note/"/>
 
 
 
 
 
-  <title>ABOUT | Zeyu's Blog</title>
+  <title>cnpy 库使用笔记 | Zeyu's Blog</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -309,20 +310,204 @@
             
 
   <div id="posts" class="posts-expand">
-  <header class="post-header">
+    
 
-	<h1 class="post-title" itemprop="name headline">ABOUT</h1>
+  
 
+  
+  
+  
 
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/cnpy_note/">
 
-</header>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/MyBlogAvatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
 
     
-    
-      <p>2018年硕士毕业于哈工大机械电子工程专业，从事无人驾驶激光雷达点云算法开发，个人网站不定时更新一些自己工作或业余东西，希望喜欢~</p>
-<p>E-mail：zengzeyu@hotmail.com</p>
+      <header class="post-header">
 
+        
+        
+          <h1 class="post-title" itemprop="name headline">cnpy 库使用笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-15T23:47:44+08:00">
+                2018-03-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/15/18_3_15/cnpy_note/" class="leancloud_visitors" data-flag-title="cnpy 库使用笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
     
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥开发。<br>cnpy地址：<a href="https://github.com/rogersce/cnpy" target="_blank" rel="external">https://github.com/rogersce/cnpy</a><br>官方例子：<a href="https://github.com/rogersce/cnpy/blob/master/example1.cpp" target="_blank" rel="external">https://github.com/rogersce/cnpy/blob/master/example1.cpp</a></p>
+<h3 id="应用方法"><a href="#应用方法" class="headerlink" title="应用方法"></a>应用方法</h3><hr>
+<h4 id="cnpy有两种应用方法："><a href="#cnpy有两种应用方法：" class="headerlink" title="cnpy有两种应用方法："></a>cnpy有两种应用方法：</h4><ol>
+<li>官网方法：将cnpy库加入到ubuntu系统环境中，当做系统库进行调用，类似于安装好的OpenCV库；</li>
+<li>ROS package 方法：将cnpy库包含到ROS工作空间下，当做独立的package供调用。</li>
+</ol>
+<h4 id="方法1："><a href="#方法1：" class="headerlink" title="方法1："></a>方法1：</h4><hr>
+<p>按照官网安装教程安装即可：</p>
+<h5 id="Installation"><a href="#Installation" class="headerlink" title="Installation:"></a>Installation:</h5><p>Default installation directory is /usr/local. To specify a different directory, add <code>-DCMAKE_INSTALL_PREFIX=/path/to/install/dir</code> to the cmake invocation in step 4.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">1.  get [cmake](https://github.com/rogersce/cnpy/blob/master/www.cmake.org)</div><div class="line">2.  create a build directory, say $HOME/build</div><div class="line">3.  cd $HOME/build</div><div class="line">4.  cmake /path/to/cnpy</div><div class="line">5.  make</div><div class="line">6.  make install</div></pre></td></tr></table></figure></p>
+<h5 id="Using"><a href="#Using" class="headerlink" title="Using:"></a>Using:</h5><p>To use, <code>#include&quot;cnpy.h&quot;</code> in your source code. Compile the source code mycode.cpp as<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">g++ -o mycode mycode.cpp -L/path/to/install/dir -lcnpy -lz --std=c++11</div></pre></td></tr></table></figure></p>
+<h4 id="方法2："><a href="#方法2：" class="headerlink" title="方法2："></a>方法2：</h4><hr>
+<ol>
+<li><p>将下载好的<code>cnpy</code>文件夹放到与调用<code>cnpy</code>库的 package A 同级目录下，并将以下内容添加到A的<code>package.xml</code>中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;build_depend&gt;cnpy&lt;/build_depend&gt;</div><div class="line">    &lt;run_depend&gt;cnpy&lt;/run_depend&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>然后以下内容添加到 A 的<code>Cmakelist.txt</code>中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">find_package(</div><div class="line">        cnpy )</div><div class="line"></div><div class="line">catkin_package(</div><div class="line">        CATKIN_DEPENDS cnpy )</div></pre></td></tr></table></figure>
+</li>
+<li><p>在 A 中调用的<code>xx.h</code>中按照路径包含即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#include &quot;../../../cnpy/include/cnpy/cnpy.h&quot;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>此方法也适用于任何其他想要调用的package，按照上书步骤操作即可。</p>
+<p>以上。</p>
+<hr>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NumPy/" rel="tag"># NumPy</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/15/18_3_15/cpp_string_operation/" rel="next" title="c++ string 操作汇总">
+                <i class="fa fa-chevron-left"></i> c++ string 操作汇总
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -354,8 +539,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/uploads/MyBlogAvatar.png"
@@ -446,6 +640,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用方法"><span class="nav-number">2.</span> <span class="nav-text">应用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cnpy有两种应用方法："><span class="nav-number">2.1.</span> <span class="nav-text">cnpy有两种应用方法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法1："><span class="nav-number">2.2.</span> <span class="nav-text">方法1：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Installation"><span class="nav-number">2.2.1.</span> <span class="nav-text">Installation:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Using"><span class="nav-number">2.2.2.</span> <span class="nav-text">Using:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法2："><span class="nav-number">2.3.</span> <span class="nav-text">方法2：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -566,10 +776,10 @@
 
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 

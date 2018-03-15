@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://zengzeyu.com/2018/03/15/18_3_15/kitti_bin_to_pcd/</loc>
+    
+    <lastmod>2018-03-15T15:18:53.425Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://zengzeyu.com/2018/03/15/18_3_15/fcn_alexnet_pcl/</loc>
+    
+    <lastmod>2018-03-15T15:17:46.719Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://zengzeyu.com/2018/03/15/18_3_15/cpp_string_operation/</loc>
+    
+    <lastmod>2018-03-15T15:16:35.298Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://zengzeyu.com/2018/03/15/18_3_15/cnpy_note/</loc>
+    
+    <lastmod>2018-03-15T15:15:11.711Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://zengzeyu.com/about/index.html</loc>
     
     <lastmod>2018-03-09T12:41:42.150Z</lastmod>
