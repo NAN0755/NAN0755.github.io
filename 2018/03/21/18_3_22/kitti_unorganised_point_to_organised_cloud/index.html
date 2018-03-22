@@ -1,0 +1,992 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="-haaFnsYIN3YdKTfE8bF5vzp879Tfd-BcLykx1LtSvk" />
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="rCu1ZaC1sv" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ROS,PCL," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="欢迎访问我的个人博客： zengzeyu.com 前言 KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《KITTI - 二进制点云数据集》。KITTI下载点云数据集为 unorganised ， 这为计算带来了麻烦，本文将无序点云进行排序生成有序点（organiesd）。 解决方案 KITTI 点云数据集是原始激光雷达点云经过了预处理之后的点云，预处理包括：  将高度为">
+<meta name="keywords" content="ROS,PCL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KITTI unorganised cloud to organised cloud">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/index.html">
+<meta property="og:site_name" content="Zeyu&#39;s Blog">
+<meta property="og:description" content="欢迎访问我的个人博客： zengzeyu.com 前言 KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《KITTI - 二进制点云数据集》。KITTI下载点云数据集为 unorganised ， 这为计算带来了麻烦，本文将无序点云进行排序生成有序点（organiesd）。 解决方案 KITTI 点云数据集是原始激光雷达点云经过了预处理之后的点云，预处理包括：  将高度为">
+<meta property="og:updated_time" content="2018-03-22T14:47:00.397Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KITTI unorganised cloud to organised cloud">
+<meta name="twitter:description" content="欢迎访问我的个人博客： zengzeyu.com 前言 KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《KITTI - 二进制点云数据集》。KITTI下载点云数据集为 unorganised ， 这为计算带来了麻烦，本文将无序点云进行排序生成有序点（organiesd）。 解决方案 KITTI 点云数据集是原始激光雷达点云经过了预处理之后的点云，预处理包括：  将高度为">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7GNE5JBRIB',
+      apiKey: 'acbc6b366ad9fd7ba89409e736b558ab',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/"/>
+
+
+
+
+
+  <title>KITTI unorganised cloud to organised cloud | Zeyu's Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5bb12350481c6ccda395fbe33bd0dc13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zeyu's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Less is more.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/MyBlogAvatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">KITTI unorganised cloud to organised cloud</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-21T22:55:54+08:00">
+                2018-03-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ROS/" itemprop="url" rel="index">
+                    <span itemprop="name">ROS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" class="leancloud_visitors" data-flag-title="KITTI unorganised cloud to organised cloud">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><hr>
+<p>KITTI 点云数据集 <strong>bin</strong> 格式转 <strong>pcd</strong> 格式请参照本人博客文章： 《KITTI - 二进制点云数据集》。<br>KITTI下载点云数据集为 <strong>unorganised</strong> ， 这为计算带来了麻烦，本文将无序点云进行排序生成有序点（<strong>organiesd</strong>）。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><hr>
+<p>KITTI 点云数据集是原始激光雷达点云经过了预处理之后的点云，预处理包括：</p>
+<ul>
+<li>将高度为2米以上点过滤（2米为估计，没有考证）</li>
+<li>噪点过滤</li>
+</ul>
+<h3 id="思路-1："><a href="#思路-1：" class="headerlink" title="思路 1："></a>思路 1：</h3><ol>
+<li>将垂直方向上的激光束按照64个水平高度格子进行分类</li>
+<li>在每一个水平高度上，按照水平角度分辨率计算此排激光束排序</li>
+<li>根据水平面上的 <strong><em>x</em></strong>、<strong><em>y</em></strong> 坐标值进行排序<h4 id="预期问题："><a href="#预期问题：" class="headerlink" title="预期问题："></a>预期问题：</h4></li>
+</ol>
+<ul>
+<li>每一束激光的角度对应格子，不一定能正好对上，也就是说，可能存在数据偏差，结果导致某一个格子没有点，某个格子有多个点情况。当然，这种情况在激光雷达生成原始数据中就存在。<h4 id="重要问题："><a href="#重要问题：" class="headerlink" title="重要问题："></a>重要问题：</h4></li>
+<li><p><strong>1. 怎样判断哪一堆点云属于一束激光扫出来的？或者说，怎样判断在 </strong>unorganised<strong> 点云中哪里是下一帧点云的分隔标识？通过哪些信息来定义这个标识，从而能保证分隔正确？</strong><br><strong>思路：</strong><br>KITTI数据集存储是按照一束激光的所有扫描数据存储完之后再存储下一束激光的数据，所以标识可以通过计算点在水平面上的转角值之差来得到。<br><strong>解决方法：</strong><br>因为每一束激光扫描起始点转角为0°附近值，结束点转角为360°附近值，所以在<strong>unorganised</strong>点云中，当相邻两个点转角值差大于100°（或者更大，值可任意取，但建议不要超过300°）时，可认定为两束激光扫描点云储存在<strong>unorganised</strong>点云中的分界标识。</p>
+</li>
+<li><p><strong>2. 如何确定每一排格子数目？怎样将每一束激光点云储存在对应的此排格子中？</strong><br><strong>思路：</strong><br>a. 由<a href="http://www.velodynelidar.com/hdl-64e.html" target="_blank" rel="external">官方提供水平角分辨率<strong>0.08°</strong></a>进行格子数确定<br>b. 统计每排最小转角 <strong><em>alpha</em></strong> ，以此作为水平角分辨率<br><strong>解决方法：</strong><br>根据方法b计算得出<strong><em>alpha</em></strong>值在<strong>0.08</strong>附近：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line">0: 0.0766167</div><div class="line">1: 0.0766167</div><div class="line">2: 0.0766167</div><div class="line">3: 0.0791294</div><div class="line">4: 0.0815647</div><div class="line">5: 0.0740187</div><div class="line">6: 0.0815647</div><div class="line">7: 0.0766167</div><div class="line">8: 0.0791294</div><div class="line">9: 0.0766167</div><div class="line">10: 0.0791294</div><div class="line">11: 0.0815647</div><div class="line">12: 0.0815647</div><div class="line">13: 0.0815647</div><div class="line">14: 0.0791294</div><div class="line">15: 0.0766167</div><div class="line">16: 0.0815647</div><div class="line">17: 0.0791294</div><div class="line">18: 0.0791294</div><div class="line">19: 0.0791294</div><div class="line">20: 0.0815647</div><div class="line">21: 0.0815647</div><div class="line">22: 0.0815647</div><div class="line">23: 0.0791294</div><div class="line">24: 0.0791294</div><div class="line">25: 0.0740187</div><div class="line">26: 0.0766167</div><div class="line">27: 0.0766167</div><div class="line">28: 0.0766167</div><div class="line">29: 0.0766167</div><div class="line">30: 0.0766167</div><div class="line">31: 0.0766167</div><div class="line">32: 0.068528</div><div class="line">33: 0.0656106</div><div class="line">34: 0.068528</div><div class="line">35: 0.0740187</div><div class="line">36: 0.0740187</div><div class="line">37: 0.0740187</div><div class="line">38: 0.0740187</div><div class="line">39: 0.0713263</div><div class="line">40: 0.0766167</div><div class="line">41: 0.0713263</div><div class="line">42: 0.0713263</div><div class="line">43: 0.0740187</div><div class="line">44: 0.0656106</div><div class="line">45: 0.0656106</div><div class="line">46: 0.0713263</div><div class="line">47: 0.0740187</div><div class="line">48: 0.0740187</div><div class="line">49: 0.0713263</div><div class="line">50: 0.0656106</div><div class="line">51: 0.0656106</div><div class="line">52: 0.0713263</div><div class="line">53: 0.0713263</div><div class="line">54: 0.0713263</div><div class="line">55: 0.068528</div><div class="line">56: 0.068528</div><div class="line">57: 0.068528</div><div class="line">58: 0.068528</div><div class="line">59: 0.0656106</div><div class="line">60: 0.0559529</div><div class="line">61: 0.068528</div><div class="line">62: 0.0625573</div><div class="line">63: 0.0656106</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>同时，根据官方给定数据水平角分辨率 <strong>0.08°</strong> 进行计算，得到最大点格子数为：<strong><code>max col: 4499</code></strong><br>因此，本文决定依据官方给定数据水平角分辨率 <strong>0.08°</strong> 进行计算，结果得到每一束激光扫描得到点个数为：<br><strong>360° / 0.08° = 4500 （个）</strong></p>
+<ul>
+<li><p><strong>3. PCL中的 </strong>Organiesd cloud<strong> 属性设置</strong><br>PCL中通过如下代码，设置初始点云为 <strong>organised</strong> ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">bool initialKittiOrganiseCloud(const int &amp;row_size, const int &amp;col_size,pcl::PointCloud&lt;pcl::PointXYZI&gt;::Ptr&amp; in_cloud)</div><div class="line">&#123;</div><div class="line">    in_cloud-&gt;resize( row_size * col_size );</div><div class="line">    in_cloud-&gt;height = row_size;</div><div class="line">    in_cloud-&gt;width = col_size;</div><div class="line">    return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>4. 关于C++：为何在构造函数内进行的对变量的初始化值会在后续函数中发现该函数并未达到初始化的效果？而当将初始化变量函数放到其他函数内，后续函数并不会报错？<br>具体如下：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">// 初始化变量函数</div><div class="line">bool GroundRemove::initialKittiOrganiseCloud(const int &amp;row_size, const int &amp;col_size)</div><div class="line">&#123;</div><div class="line">    kitti_organised_cloud_ptr_-&gt;height = row_size;</div><div class="line">    kitti_organised_cloud_ptr_-&gt;width = col_size;</div><div class="line">    kitti_organised_cloud_ptr_-&gt;resize( row_size * col_size );</div><div class="line">    for (int i = 0; i &lt; kitti_organised_cloud_ptr_-&gt;height; ++i)</div><div class="line">    &#123;</div><div class="line">        for (int j = 0; j &lt; kitti_organised_cloud_ptr_-&gt;width; ++j)</div><div class="line">        &#123;</div><div class="line">            kitti_organised_cloud_ptr_-&gt;at( j,i ).x = NAN;</div><div class="line">            kitti_organised_cloud_ptr_-&gt;at( j,i ).y = NAN;</div><div class="line">            kitti_organised_cloud_ptr_-&gt;at( j,i ).z = NAN;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return true;</div><div class="line"> &#125;</div><div class="line"></div><div class="line">//构造函数</div><div class="line">GroundRemove::GroundRemove()</div><div class="line">&#123;</div><div class="line">    kitti_organised_cloud_ptr_.reset( new PointCloudXYZI );</div><div class="line">    this-&gt;initialKittiOrganiseCloud(64, 4500)</div><div class="line">&#125;</div><div class="line"></div><div class="line">//后续函数</div><div class="line">bool GroundRemove::arrangePointInOrganise(std::vector&lt;PointCloudXYZI&gt; &amp;in_cloud,</div><div class="line">                                                 PointCloudXYZI::Ptr &amp;out_cloud)</div><div class="line">&#123;</div><div class="line">    if ( in_cloud.empty() )</div><div class="line">    &#123;</div><div class="line">        std::cerr &lt;&lt; &quot;Input cloud vector is EMPTY!&quot; &lt;&lt; std::endl;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">    else if ( !out_cloud-&gt;isOrganized() )</div><div class="line">    &#123;</div><div class="line">        std::cerr &lt;&lt; &quot;Input point cloud is UNORGANISED!&quot; &lt;&lt; std::endl;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    float angle = 0.0;</div><div class="line">    float distance = 0.0;</div><div class="line">    int col_num = 0;</div><div class="line">    int tmp_vec_point = 0;</div><div class="line">    for (int i = 0; i &lt; in_cloud.size(); ++i)</div><div class="line">    &#123;</div><div class="line">        for (int j = 0; j &lt; in_cloud[i].size(); ++j)</div><div class="line">        &#123;</div><div class="line">             angle = this-&gt;computeHorResoluteAngle( in_cloud[i].at(j) ) / M_PI * 180.0f;</div><div class="line">             col_num = static_cast&lt;int &gt; ( angle / velodyne_angle_res );</div><div class="line">             out_cloud-&gt;at(col_num,i) = in_cloud[i].at(j)</div><div class="line">         &#125;</div><div class="line">    &#125;</div><div class="line">    return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>当把 <strong><code>initialKittiOrganiseCloud()</code></strong>函数放在构造函数中时，<strong><code>arrangePointInOrganise()</code></strong>内在检测会发生<strong><code>Input point cloud is UNORGANISED!</code></strong>输出，而当把<strong><code>initialKittiOrganiseCloud()</code></strong>函数放在其他函数中时，该检测会通过。<br><strong>思路：</strong><br>猜测与构造函数的机制有关，也有可能与PCL有关。<br><strong>解决方法：</strong><br>如果非要在构造函数中使用该函数，尚未找到解决办法。<strong>记录于此，待解决。</strong></p>
+<ul>
+<li><strong>5. 为何每次储存点云相对于原数据会少300个点？具体如下：</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">bool GroundRemove::arrangePointInOrganise(std::vector&lt;PointCloudXYZI&gt; &amp;in_cloud,</div><div class="line">                                         PointCloudXYZI::Ptr &amp;out_cloud)</div><div class="line">&#123;</div><div class="line">    if ( in_cloud.empty() )</div><div class="line">    &#123;</div><div class="line">        std::cerr &lt;&lt; &quot;Input cloud vector is EMPTY!&quot; &lt;&lt; std::endl;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line">    else if ( !out_cloud-&gt;isOrganized() )</div><div class="line">    &#123;</div><div class="line">        std::cerr &lt;&lt; &quot;Input point cloud is UNORGANISED!&quot; &lt;&lt; std::endl;</div><div class="line">        return false;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    float angle = 0.0f;</div><div class="line">    float distance = 0.0f;</div><div class="line">    int col_num = 0;</div><div class="line">    int tmp_vec_point = 0;</div><div class="line">    for (int i = 0; i &lt; in_cloud.size(); ++i)</div><div class="line">    &#123;</div><div class="line">        for (int j = 0; j &lt; in_cloud[i].size(); ++j)</div><div class="line">        &#123;</div><div class="line">            angle = this-&gt;computeHorResoluteAngle( in_cloud[i].at(j) ) / M_PI * 180.0f;</div><div class="line">            col_num = static_cast&lt;int &gt; ( angle / velodyne_angle_res );</div><div class="line">            out_cloud-&gt;at(col_num,i) = in_cloud[i].at(j);</div><div class="line">        &#125;</div><div class="line">        tmp_vec_point += in_cloud[i].size();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    int tmp_pt_point = 0;</div><div class="line">    int tmp_nan_point = 0;</div><div class="line">    for (int k = 0; k &lt; out_cloud-&gt;size(); ++k)</div><div class="line">    &#123;</div><div class="line">        if (isnanf(out_cloud-&gt;at(k).x))</div><div class="line">            tmp_nan_point ++;</div><div class="line">        else</div><div class="line">            tmp_pt_point ++;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    std::cout &lt;&lt; &quot;origin point size: &quot; &lt;&lt; origin_cloud_ptr_-&gt;size() &lt;&lt; std::endl;</div><div class="line">    std::cout &lt;&lt; &quot;tmp_vec_point: &quot; &lt;&lt; tmp_vec_point &lt;&lt; std::endl;</div><div class="line">    std::cout &lt;&lt; &quot;tmp_pt_point: &quot; &lt;&lt; tmp_pt_point &lt;&lt; std::endl;</div><div class="line">    std::cout &lt;&lt; &quot;num diff: &quot; &lt;&lt; tmp_vec_point - tmp_pt_point &lt;&lt; std::endl;</div><div class="line">    std::cout &lt;&lt; &quot;nan point: &quot; &lt;&lt; tmp_nan_point + tmp_pt_point &lt;&lt; std::endl;</div><div class="line"></div><div class="line">    return true;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 某一帧输出</div><div class="line">origin point size: 120805</div><div class="line">tmp_vec_point: 120804</div><div class="line">tmp_pt_point: 120482</div><div class="line">num diff: 322</div><div class="line">nan point: 288000</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>思路：</strong><br>在<code>out_cloud-&gt;at(col_num,i) = in_cloud[i].at(j);</code>这行代码中，有这样的逻辑：<br>只管填入点，不管<code>out_cloud-&gt;at(col_num,i)</code>此前是否已经有点，这就会导致点的损失。<br><strong>解决方法：</strong><br>这种情况无法避免，当同一个格子中时，只能选取更优的点，选取原则：格子中距离雷达最近距离的点。</p>
+<h2 id="以上。"><a href="#以上。" class="headerlink" title="以上。"></a>以上。</h2><p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ROS/" rel="tag"># ROS</a>
+          
+            <a href="/tags/PCL/" rel="tag"># PCL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" rel="next" title="基于几何特征的地面点云分割">
+                <i class="fa fa-chevron-left"></i> 基于几何特征的地面点云分割
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/MyBlogAvatar.png"
+               alt="Zeyu" />
+          <p class="site-author-name" itemprop="name">Zeyu</p>
+           
+              <p class="site-description motion-element" itemprop="description">Try everything fancy!</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/nan0755" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/real99" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/ceng-ze-yu-26/activities" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-zhihu"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思路-1："><span class="nav-number">2.1.</span> <span class="nav-text">思路 1：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#预期问题："><span class="nav-number">2.1.1.</span> <span class="nav-text">预期问题：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重要问题："><span class="nav-number">2.1.2.</span> <span class="nav-text">重要问题：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以上。"><span class="nav-number">3.</span> <span class="nav-text">以上。</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zeyu</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz", "BdWgkDuuoBKUAUvH1b0e3RJF");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

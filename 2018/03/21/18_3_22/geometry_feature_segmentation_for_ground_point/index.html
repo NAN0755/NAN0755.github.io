@@ -1,0 +1,1046 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="-haaFnsYIN3YdKTfE8bF5vzp879Tfd-BcLykx1LtSvk" />
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="rCu1ZaC1sv" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ROS,PCL," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="欢迎访问我的个人博客： zengzeyu.com 前言 激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：  水平面校准 法向量 栅格高度差 栅格最低高度以上0.2米 绝对高度 平均高度  以上方法基于假设是地面点云所构成的地面为平面，而不是弧面，当然对于有倾斜角度的地">
+<meta name="keywords" content="ROS,PCL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于几何特征的地面点云分割">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/index.html">
+<meta property="og:site_name" content="Zeyu&#39;s Blog">
+<meta property="og:description" content="欢迎访问我的个人博客： zengzeyu.com 前言 激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：  水平面校准 法向量 栅格高度差 栅格最低高度以上0.2米 绝对高度 平均高度  以上方法基于假设是地面点云所构成的地面为平面，而不是弧面，当然对于有倾斜角度的地">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-a89ad85720742b69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-465dd5b6f651a8a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-8fbf0adb43fb73a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-7a000d1ce9475827.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-f045d011c812ae05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-d1c1dc002a216fae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-b1bd69d9d7e04181.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-3f9f58ddc8d145b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-350e221b7d7b3bcd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-b59b735d90d94aa3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-2d8f34015aa60324.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-03-22T14:46:50.378Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于几何特征的地面点云分割">
+<meta name="twitter:description" content="欢迎访问我的个人博客： zengzeyu.com 前言 激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：  水平面校准 法向量 栅格高度差 栅格最低高度以上0.2米 绝对高度 平均高度  以上方法基于假设是地面点云所构成的地面为平面，而不是弧面，当然对于有倾斜角度的地">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10028058-a89ad85720742b69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7GNE5JBRIB',
+      apiKey: 'acbc6b366ad9fd7ba89409e736b558ab',
+      indexName: 'blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/"/>
+
+
+
+
+
+  <title>基于几何特征的地面点云分割 | Zeyu's Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5bb12350481c6ccda395fbe33bd0dc13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Zeyu's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Less is more.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/MyBlogAvatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于几何特征的地面点云分割</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-21T22:55:54+08:00">
+                2018-03-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ROS/" itemprop="url" rel="index">
+                    <span itemprop="name">ROS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" class="leancloud_visitors" data-flag-title="基于几何特征的地面点云分割">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><hr>
+<p>激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：</p>
+<ul>
+<li>水平面校准</li>
+<li>法向量</li>
+<li>栅格高度差</li>
+<li>栅格最低高度以上0.2米</li>
+<li>绝对高度</li>
+<li>平均高度</li>
+</ul>
+<p>以上方法基于假设是地面点云所构成的地面为平面，而不是弧面，当然对于有倾斜角度的地面也是可以先通过水平面校准然后再进行后处理来达到目标。下面将针对以上几种方法，通过实验结果比对各自方法优劣。</p>
+<h2 id="1-激光雷达地面点云分割方法"><a href="#1-激光雷达地面点云分割方法" class="headerlink" title="1. 激光雷达地面点云分割方法"></a>1. 激光雷达地面点云分割方法</h2><hr>
+<h3 id="1-1-水平面校准"><a href="#1-1-水平面校准" class="headerlink" title="1.1 水平面校准"></a>1.1 水平面校准</h3><hr>
+<p>水平面校准顾名思义就是通过找到地面点所在平面，然后进行校准点云的方法。通过此步可将数据采集阶段，采集道德地面点云相对于激光雷达 <strong><em>z</em></strong> 轴不平行校准为与之平行。目的是为后续处理提供更易于处理的点云。</p>
+<h4 id="方法过程："><a href="#方法过程：" class="headerlink" title="方法过程："></a>方法过程：</h4><ol>
+<li>分割出大致地面点</li>
+<li>找到地点所在平面</li>
+<li>通过变换矩阵校准平面</li>
+</ol>
+<p><strong>1. 分割出大致地面点</strong><br>这一步可使用栅格高度差、绝对高度、法向量等方法来进行分割，目的只需要找到大部分地面点即可，不用进行精确的分割。本文通过法向量进行分割找到地面点。</p>
+<p><strong>2. 找到地点所在平面</strong><br>通过PCL自带函数进行处理。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">bool estimateGroundPlane(PointCloudXYZI::Ptr &amp;in_cloud, PointCloudXYZI::Ptr &amp;out_cloud,</div><div class="line">                                   visualization_msgs::MarkerPtr &amp;plane_marker, const float in_distance_thre)</div><div class="line">&#123;</div><div class="line">    //plane segmentation</div><div class="line">    pcl::SACSegmentation&lt;pcl::PointXYZI&gt; plane_seg;</div><div class="line">    pcl::PointIndices::Ptr plane_inliers ( new pcl::PointIndices );</div><div class="line">    pcl::ModelCoefficients::Ptr plane_coefficients ( new pcl::ModelCoefficients );</div><div class="line">    plane_seg.setOptimizeCoefficients (true);</div><div class="line">    plane_seg.setModelType ( pcl::SACMODEL_PLANE );</div><div class="line">    plane_seg.setMethodType ( pcl::SAC_RANSAC );</div><div class="line">    plane_seg.setDistanceThreshold ( in_distance_thre );</div><div class="line">    plane_seg.setInputCloud ( in_cloud );</div><div class="line">    plane_seg.segment ( *plane_inliers, *plane_coefficients );</div><div class="line">    return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过上述代码找到平面之后，确定平面法向量就可以找到其到 <strong><em>z</em></strong> 轴的变换矩阵 <strong><em>T</em></strong> 。</p>
+<p><strong>3. 通过变换矩阵校准平面</strong><br>将原始点云与变换矩阵 <strong><em>T</em></strong> 作点积就可得到校准后点云。<br><img src="https://upload-images.jianshu.io/upload_images/10028058-a89ad85720742b69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="校准点云（白色点为校准前点云，绿色点为校准后点云）"><br>从图左下方可观察到校准后点云与原始点云有一定距离，说明激光雷达在采集数据时，其 <strong><em>z</em></strong> 轴与地面法向量不平行，而且这种情况随时都在发生。自动驾驶车辆行驶过程中，路面随时都有小的颠簸，偶尔还会有较大颠簸，如通过城市道路中的减速带，转弯时速度过大等等情况。所以校准点云是很有必要的。</p>
+<h3 id="1-2-栅格高度差方法"><a href="#1-2-栅格高度差方法" class="headerlink" title="1.2 栅格高度差方法"></a>1.2 栅格高度差方法</h3><hr>
+<h4 id="方法过程：-1"><a href="#方法过程：-1" class="headerlink" title="方法过程："></a>方法过程：</h4><ol>
+<li>根据栅格尺寸生成栅格</li>
+<li>计算每个栅格最低点与最高点高度差 </li>
+<li>比较 <strong><em>h</em></strong> 与预设高度差阈值 <strong><em>threshold</em></strong> 大小，对栅格进行分类</li>
+<li>根据栅格分类，对栅格内点进行分类</li>
+</ol>
+<h4 id="方法结果"><a href="#方法结果" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="https://upload-images.jianshu.io/upload_images/10028058-465dd5b6f651a8a2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="鸟瞰图"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-8fbf0adb43fb73a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="右视图"></p>
+<h4 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h4><p>依据对每个栅格的高度差的大小进行分类，栅格高度差方法依赖于点云数据。栅格内地面点高度差特征符合栅格高度差方法，但是对于高平台仍然符合该特征，所以对于进行栅格话之后的高平台点仍然被分类为地面点。但是，该方法的分类出的地面点包含真实的地面点。</p>
+<h3 id="1-3-法向量方法"><a href="#1-3-法向量方法" class="headerlink" title="1.3 法向量方法"></a>1.3 法向量方法</h3><hr>
+<p>法向量方法基于假设为计算得到的地面点法向量为竖直向上或向下，即地面点法向量值为 <strong>（0, 0, 1）</strong> 或 <strong>（0, 0, -1）</strong> 。</p>
+<h4 id="方法过程：-2"><a href="#方法过程：-2" class="headerlink" title="方法过程："></a>方法过程：</h4><ol>
+<li>计算点法向量</li>
+<li>设定法向量阈值 <strong><em>threshold</em></strong> 进行点分类</li>
+</ol>
+<h4 id="方法结果-1"><a href="#方法结果-1" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="https://upload-images.jianshu.io/upload_images/10028058-7a000d1ce9475827.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="鸟瞰图"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-f045d011c812ae05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="右视图"></p>
+<h4 id="结果分析-1"><a href="#结果分析-1" class="headerlink" title="结果分析"></a>结果分析</h4><p>根据法向量方法的假设，一定要先对点云进行校正，如果不进行校正，那么很可能出现某一帧没有地面点被分割出来的极端情况（激光雷达倾斜角度过大）。法向量方法与高度差方法结果类似，对于平台类型障碍物生成的点无法有效区分。所以可以看到右视图中有部分店漂浮与真实地面点上方。</p>
+<h3 id="1-4-栅格最低高度以上0-2米方法"><a href="#1-4-栅格最低高度以上0-2米方法" class="headerlink" title="1.4 栅格最低高度以上0.2米方法"></a>1.4 栅格最低高度以上0.2米方法</h3><hr>
+<p>栅格最低高度以上 <strong>0.2</strong> 米方法中的数值 <strong>0.2</strong> 可在 <strong>0.2</strong> 附近进行选取，有论文设置为 <strong>0.15</strong> 。此方法与栅格高度差方法类似，也是基于栅格内点的高度信息来进行点分类。不过该方法并没有对栅格进行地面栅格或障碍物栅格分类，而在每个栅格内进行点的分类，最后将所有栅格内的点汇总得到地面点。</p>
+<h4 id="方法过程：-3"><a href="#方法过程：-3" class="headerlink" title="方法过程："></a>方法过程：</h4><ol>
+<li>生成栅格地图</li>
+<li>找到栅格内最低点，并储存其高度 <strong><em>h</em></strong></li>
+<li>找到栅格内点高度小于 <strong><em>h + 0.2</em></strong>，分类为地面点</li>
+</ol>
+<h4 id="方法结果-2"><a href="#方法结果-2" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="https://upload-images.jianshu.io/upload_images/10028058-d1c1dc002a216fae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="鸟瞰图"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-b1bd69d9d7e04181.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="右视图"></p>
+<h4 id="结果分析-2"><a href="#结果分析-2" class="headerlink" title="结果分析"></a>结果分析</h4><p>栅格最低高度以上0.2米方法依赖于栅格内的最低点选取，当最地点正好是真实地面点时，结果较为正确，反之则不然。与栅格高度差方法类似，该方法对悬浮物无法处理。</p>
+<h3 id="1-5-绝对高度方法"><a href="#1-5-绝对高度方法" class="headerlink" title="1.5 绝对高度方法"></a>1.5 绝对高度方法</h3><hr>
+<p>绝对高度方法根据校准后点云高度进行分割，通过设定阈值将点云分为地面点和障碍物点。</p>
+<h4 id="方法过程：-4"><a href="#方法过程：-4" class="headerlink" title="方法过程："></a>方法过程：</h4><ol>
+<li>校准点云</li>
+<li>根据高度阈值 <strong><em>threshold</em></strong> 对点进行分类</li>
+</ol>
+<h4 id="方法结果-3"><a href="#方法结果-3" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="https://upload-images.jianshu.io/upload_images/10028058-3f9f58ddc8d145b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="鸟瞰图"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-350e221b7d7b3bcd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="右视图"></p>
+<h4 id="结果分析-3"><a href="#结果分析-3" class="headerlink" title="结果分析"></a>结果分析</h4><p>绝对高度方法必须对校准点云进行操作，根据校准后点云通过设定高度阈值进行分类。从鸟瞰图可看出，远处有一部分地面点被分割为障碍物点，从结果右视图可看出，该方法对悬浮物可很好处理。</p>
+<h3 id="1-6-平均高度方法"><a href="#1-6-平均高度方法" class="headerlink" title="1.6 平均高度方法"></a>1.6 平均高度方法</h3><hr>
+<p>平均高度方法是对预处理后已经包含大部分地面点进行的处理，而不能单独进行使用。本文采用<strong>栅格最低点高度以上 <em>0.2</em> 米</strong>方法作为预处理，其他地面点预处理也可。该方法基于假设为，预处理分割后得到点中地面点为绝大部分点，从而可根据平均高度作为进一步滤波。</p>
+<h4 id="方法过程：-5"><a href="#方法过程：-5" class="headerlink" title="方法过程："></a>方法过程：</h4><ol>
+<li>栅格最低点高度以上 <em>0.2</em> 米方法分割出地面点</li>
+<li>计算 <strong>过程 1.</strong> 得到地面点的平均高度 <strong><em>h</em></strong></li>
+<li>以 <strong><em>h</em></strong> 为阈值再进行分割得到地面点</li>
+</ol>
+<h4 id="方法结果-4"><a href="#方法结果-4" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="https://upload-images.jianshu.io/upload_images/10028058-b59b735d90d94aa3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="鸟瞰图"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-2d8f34015aa60324.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="右视图"></p>
+<h4 id="结果分析-4"><a href="#结果分析-4" class="headerlink" title="结果分析"></a>结果分析</h4><p>平均高度方法作为其他方法的一个小的补充，可对分割出的点悬浮物点进行进一步滤波。但对当大平台场景无法处理。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><hr>
+<p>本文对基于几何特征方法 <strong>水平面校准方法</strong>、<strong>法向量方法</strong>、<strong>栅格高度差方法</strong>、<strong>栅格最低高度以上0.2米方法</strong>、<strong>绝对高度方法</strong>、<strong>平均高度方法</strong> 等方法进行了分别分析，对各自方法优缺点进行了探讨。各个方法可以进行合理组合来达到地面点分割效果。<br>这些方法可作为机器学习方法的数据集生成，为机器学习方法做好数据准备。</p>
+<hr>
+<p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ROS/" rel="tag"># ROS</a>
+          
+            <a href="/tags/PCL/" rel="tag"># PCL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/21/18_3_22/Effective-c++-1.0/" rel="next" title="Effective c++ 1.0">
+                <i class="fa fa-chevron-left"></i> Effective c++ 1.0
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" rel="prev" title="KITTI unorganised cloud to organised cloud">
+                KITTI unorganised cloud to organised cloud <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/MyBlogAvatar.png"
+               alt="Zeyu" />
+          <p class="site-author-name" itemprop="name">Zeyu</p>
+           
+              <p class="site-description motion-element" itemprop="description">Try everything fancy!</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/nan0755" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/real99" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/ceng-ze-yu-26/activities" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-zhihu"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-激光雷达地面点云分割方法"><span class="nav-number">2.</span> <span class="nav-text">1. 激光雷达地面点云分割方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-水平面校准"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 水平面校准</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法过程："><span class="nav-number">2.1.1.</span> <span class="nav-text">方法过程：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-栅格高度差方法"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 栅格高度差方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法过程：-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">方法过程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法结果"><span class="nav-number">2.2.2.</span> <span class="nav-text">方法结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结果分析"><span class="nav-number">2.2.3.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-法向量方法"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 法向量方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法过程：-2"><span class="nav-number">2.3.1.</span> <span class="nav-text">方法过程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法结果-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">方法结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结果分析-1"><span class="nav-number">2.3.3.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-栅格最低高度以上0-2米方法"><span class="nav-number">2.4.</span> <span class="nav-text">1.4 栅格最低高度以上0.2米方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法过程：-3"><span class="nav-number">2.4.1.</span> <span class="nav-text">方法过程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法结果-2"><span class="nav-number">2.4.2.</span> <span class="nav-text">方法结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结果分析-2"><span class="nav-number">2.4.3.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-绝对高度方法"><span class="nav-number">2.5.</span> <span class="nav-text">1.5 绝对高度方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法过程：-4"><span class="nav-number">2.5.1.</span> <span class="nav-text">方法过程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法结果-3"><span class="nav-number">2.5.2.</span> <span class="nav-text">方法结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结果分析-3"><span class="nav-number">2.5.3.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-平均高度方法"><span class="nav-number">2.6.</span> <span class="nav-text">1.6 平均高度方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法过程：-5"><span class="nav-number">2.6.1.</span> <span class="nav-text">方法过程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法结果-4"><span class="nav-number">2.6.2.</span> <span class="nav-text">方法结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结果分析-4"><span class="nav-number">2.6.3.</span> <span class="nav-text">结果分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论"><span class="nav-number">3.</span> <span class="nav-text">结论</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zeyu</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz", "BdWgkDuuoBKUAUvH1b0e3RJF");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
