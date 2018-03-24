@@ -5,7 +5,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/24/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</loc>
-    <lastmod>2018-03-24T15:17:21.209Z</lastmod>
+    <lastmod>2018-03-24T15:24:50.391Z</lastmod>
     <data>
         <display>
         <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</title>
@@ -158,9 +158,9 @@
         <title>FCN-PCL 应用解析</title>
         <pubTime>2018-03-15T15:47:44.000Z</pubTime>
         
-        <tag>DL</tag>
-         
         <tag>PCL</tag>
+         
+        <tag>DL</tag>
          
          
            
