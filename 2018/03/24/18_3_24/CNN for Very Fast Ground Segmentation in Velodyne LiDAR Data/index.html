@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Python,DL," />
+  <meta name="keywords" content="PCL,CNN," />
 
 
 
@@ -97,17 +97,24 @@
 
 
 
-<meta name="description" content="新建Numpy结构型数据： 12345import numpy as np student = np.dtype([(&amp;apos;name&amp;apos;,&amp;apos;S20&amp;apos;), (&amp;apos;age&amp;apos;,np.int8), (&amp;apos;marks&amp;apos;, np.float4)]) a = np.array([(&amp;apos;abc&amp;apos;, 21, 50),(&amp;apos">
-<meta name="keywords" content="Python,DL">
+<meta name="description" content="前言 本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。 地面点分割方法 训练数据说明 首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 64x4500，本文每一帧数据为 64x360 ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 1° 的归类分为">
+<meta name="keywords" content="PCL,CNN">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NumPy学习笔记">
-<meta property="og:url" content="http://zengzeyu.com/2018/03/08/Numpy学习笔记/index.html">
+<meta property="og:title" content="CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/24/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
-<meta property="og:description" content="新建Numpy结构型数据： 12345import numpy as np student = np.dtype([(&amp;apos;name&amp;apos;,&amp;apos;S20&amp;apos;), (&amp;apos;age&amp;apos;,np.int8), (&amp;apos;marks&amp;apos;, np.float4)]) a = np.array([(&amp;apos;abc&amp;apos;, 21, 50),(&amp;apos">
-<meta property="og:updated_time" content="2018-03-08T14:41:27.547Z">
+<meta property="og:description" content="前言 本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。 地面点分割方法 训练数据说明 首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 64x4500，本文每一帧数据为 64x360 ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 1° 的归类分为">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-9f36bdbffa079ed2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-2733dbe408f56512.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-816d4607cb5d3875.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-5119dbf286402ffb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-6bba27cb72e18258.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-3875bce36b9f2a46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-03-24T15:17:21.209Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="NumPy学习笔记">
-<meta name="twitter:description" content="新建Numpy结构型数据： 12345import numpy as np student = np.dtype([(&amp;apos;name&amp;apos;,&amp;apos;S20&amp;apos;), (&amp;apos;age&amp;apos;,np.int8), (&amp;apos;marks&amp;apos;, np.float4)]) a = np.array([(&amp;apos;abc&amp;apos;, 21, 50),(&amp;apos">
+<meta name="twitter:title" content="CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data">
+<meta name="twitter:description" content="前言 本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。 地面点分割方法 训练数据说明 首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 64x4500，本文每一帧数据为 64x360 ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 1° 的归类分为">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10028058-9f36bdbffa079ed2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -135,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://zengzeyu.com/2018/03/08/Numpy学习笔记/"/>
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/24/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/"/>
 
 
 
 
 
-  <title>NumPy学习笔记 | Zeyu's Blog</title>
+  <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data | Zeyu's Blog</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -319,7 +326,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/08/Numpy学习笔记/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/24/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -336,7 +343,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">NumPy学习笔记</h1>
+          <h1 class="post-title" itemprop="name headline">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</h1>
         
 
         <div class="post-meta">
@@ -348,8 +355,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-08T23:47:44+08:00">
-                2018-03-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T22:55:54+08:00">
+                2018-03-24
               </time>
             
 
@@ -371,8 +378,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/categories/Paper/" itemprop="url" rel="index">
+                    <span itemprop="name">Paper</span>
                   </a>
                 </span>
 
@@ -388,7 +395,7 @@
 
           
           
-             <span id="/2018/03/08/Numpy学习笔记/" class="leancloud_visitors" data-flag-title="NumPy学习笔记">
+             <span id="/2018/03/24/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/" class="leancloud_visitors" data-flag-title="CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -416,24 +423,31 @@
       
 
       
-        <p><strong>新建Numpy结构型数据：</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">import numpy as np student = np.dtype([(&apos;name&apos;,&apos;S20&apos;), (&apos;age&apos;,np.int8), (&apos;marks&apos;, np.float4)]) </div><div class="line">a = np.array([(&apos;abc&apos;, 21, 50),(&apos;xyz&apos;, 18, 75)], dtype = student) </div><div class="line">print a</div><div class="line">#输出</div><div class="line">[(&apos;abc&apos;, 21, 50.0), (&apos;xyz&apos;, 18, 75.0)]</div></pre></td></tr></table></figure>
-<p>其中，<code>string</code>类型数据用<code>S20</code>表示（<code>20</code>可更改），其余数据类型如<code>np.int8</code>和<code>np.float4</code>均有内建数据表示。</p>
-<p><strong>Numpy数组属性：</strong><br>调整数组大小<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">import numpy as np </div><div class="line">a = np.array([[1,2,3],[4,5,6]]) </div><div class="line">b = a.reshape(3,2)  </div><div class="line">print b</div><div class="line">#输出</div><div class="line">[[1, 2] </div><div class="line"> [3, 4] </div><div class="line"> [5, 6]]</div></pre></td></tr></table></figure></p>
-<p>三维数组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"># 一维数组  </div><div class="line">import numpy as np </div><div class="line">a = np.arange(24) a.ndim </div><div class="line"># 现在调整其大小</div><div class="line"># 2*4*3： 2个二维数组，每个数组大小4*3</div><div class="line">b = a.reshape(2,4,3)  </div><div class="line">print b </div><div class="line">#输出</div><div class="line"># b 现在拥有三个维度</div><div class="line">[[[ 0,  1,  2] </div><div class="line">  [ 3,  4,  5] </div><div class="line">  [ 6,  7,  8] </div><div class="line">  [ 9, 10, 11]]  </div><div class="line">  [[12, 13, 14] </div><div class="line">   [15, 16, 17]</div><div class="line">   [18, 19, 20] </div><div class="line">   [21, 22, 23]]]</div></pre></td></tr></table></figure></p>
-<p><strong>Numpy 来自现有数据的数组</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"># 将列表转换为 ndarray </div><div class="line">import numpy as np </div><div class="line"></div><div class="line">x =  [1,2,3] </div><div class="line">a = np.asarray(x)  </div><div class="line">print a</div><div class="line">#输出</div><div class="line">[1  2  3]</div></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"># 来自元组的 ndarray  </div><div class="line">import numpy as np </div><div class="line"></div><div class="line">x =  (1,2,3) </div><div class="line">a = np.asarray(x)  </div><div class="line">print a</div><div class="line">#输出</div><div class="line">[1  2  3]</div></pre></td></tr></table></figure>
-<p><strong>Numpy-frombuffer</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">import numpy as np </div><div class="line">s =  &apos;Hello World&apos; </div><div class="line">a = np.frombuffer(s, dtype =  &apos;S1&apos;)  </div><div class="line">print a</div><div class="line">#输出</div><div class="line">[&apos;H&apos;  &apos;e&apos;  &apos;l&apos;  &apos;l&apos;  &apos;o&apos;  &apos; &apos;  &apos;W&apos;  &apos;o&apos;  &apos;r&apos;  &apos;l&apos;  &apos;d&apos;]</div></pre></td></tr></table></figure></p>
-<p><strong>Numpy-切片和索引</strong><br>基本切片是 Python 中基本切片概念到 n 维的扩展。 通过将<code>start</code>，<code>stop</code>和<code>step</code>参数提供给内置的<code>slice</code>函数来构造一个 Python <code>slice</code>对象。 此<code>slice</code>对象被传递给数组来提取数组的一部分。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">import numpy as np</div><div class="line">a = np.arange(10)</div><div class="line">s = slice(2,7,1)  # 2返回值为2的索引，7返回值为7的索引，1为步长</div><div class="line">print a[s]</div><div class="line">#输出</div><div class="line">[2 3 4 5 6]</div></pre></td></tr></table></figure></p>
-<p>在上面的例子中，<code>ndarray</code>对象由<code>arange()</code>函数创建。 然后，分别用起始，终止和步长值<code>2</code>，<code>7</code>和<code>2</code>定义切片对象。 当这个切片对象传递给<code>ndarray</code>时，会对它的一部分进行切片，从索引<code>2</code>到<code>7</code>，步长为<code>2</code>。</p>
-<p><strong>NumPy - 数组上的迭代</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">import numpy as np</div><div class="line">a = np.arange(0,60,5) </div><div class="line">a = a.reshape(3,4)  </div><div class="line">print  &apos;原始数组是：&apos;  </div><div class="line">print a print  &apos;\n&apos;  </div><div class="line">print  &apos;修改后的数组是：&apos;  </div><div class="line">for x in np.nditer(a): </div><div class="line">  print x</div><div class="line">#输出</div><div class="line">原始数组是：</div><div class="line">[[ 0 5 10 15]</div><div class="line"> [20 25 30 35]</div><div class="line"> [40 45 50 55]]</div><div class="line"></div><div class="line">修改后的数组是：</div><div class="line">0 5 10 15 20 25 30 35 40 45 50 55</div></pre></td></tr></table></figure></p>
-<p><strong>注意：</strong>迭代的顺序匹配数组的内容布局，而不考虑特定的排序。 这可以通过迭代上述数组的转置来看到。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">import numpy as np </div><div class="line">a = np.arange(0,60,5) </div><div class="line">a = a.reshape(3,4) </div><div class="line">print &apos;原始数组是：&apos; </div><div class="line">print a print &apos;\n&apos; </div><div class="line">print &apos;原始数组的转置是：&apos; </div><div class="line">b = a.T</div><div class="line">print b</div><div class="line">print &apos;\n&apos; print &apos;修改后的数组是：&apos; </div><div class="line">for x in np.nditer(b): </div><div class="line">      print x,</div><div class="line">#输出</div><div class="line">原始数组是： </div><div class="line">[[ 0 5 10 15] </div><div class="line">[20 25 30 35] </div><div class="line">[40 45 50 55]] </div><div class="line">原始数组的转置是： </div><div class="line">[[ 0 20 40] </div><div class="line">[ 5 25 45] </div><div class="line">[10 30 50] </div><div class="line">[15 35 55]] </div><div class="line">修改后的数组是： </div><div class="line">0 5 10 15 20 25 30 35 40 45 50 55</div></pre></td></tr></table></figure></p>
-<p><code>numpy.ndarray.flatten</code></p>
-<p>该函数返回折叠为一维的数组副本，函数接受下列参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ndarray.flatten(order)</div></pre></td></tr></table></figure></p>
-<p>其中：</p>
-<ul>
-<li>order：<code>C</code> – 按行，<code>F</code>– 按列，<code>A</code> – 原顺序，<code>k</code> – 元素在内存中的出现顺序。</li>
-</ul>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><hr>
+<p>本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。</p>
+<h1 id="地面点分割方法"><a href="#地面点分割方法" class="headerlink" title="地面点分割方法"></a>地面点分割方法</h1><hr>
+<h2 id="训练数据说明"><a href="#训练数据说明" class="headerlink" title="训练数据说明"></a>训练数据说明</h2><hr>
+<p>首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 <strong>64x4500</strong>，本文每一帧数据为 <strong>64x360</strong> ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 <strong>1°</strong> 的归类分为 <strong>360</strong> 份，每一份点云的信息提取某一个点或者平均信息作为点代表，代表点的特征和 <strong><em>label</em></strong> 填入格子中生成CNN所需训练数据。每个点 <strong><em>label</em></strong> 进行二分类，分为地面点和分地面点。点特征包括 <strong><em>P = [Px, Py, Pz, Pi, Pr]</em></strong> (<strong><em>[ 坐标x， 坐标y， 坐标z， 反射强度intensity， 距离range ]</em></strong>)。</p>
+<h2 id="A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）"><a href="#A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）" class="headerlink" title="A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）"></a>A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）</h2><hr>
+<p>为了将稀疏的3D点云数据应用的2D的CNN中，本文将其编码为2D的多信号通道数据储存在矩阵 <strong><em>M</em></strong> 中，如下图所示。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-9f36bdbffa079ed2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>矩阵M尺寸为 <strong><em>64x360</em></strong> ，降采样过程中，对一个格子内多个点进行平均取值作为代表。同时为了简化数据，<strong><em>[x,z]</em></strong> 计算得到的值代表距离，因为本文默认 <strong><em>Y</em></strong> 轴为高度方向，所以 <strong><em>x， z</em></strong> 值为对偶，可以采取此种方式进行简化数据。对于空格子，则从临近格子进行线性插值来生成该格子内值。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-2733dbe408f56512.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="B-训练数据集（Training-Dataset）"><a href="#B-训练数据集（Training-Dataset）" class="headerlink" title="B. 训练数据集（Training Dataset）"></a>B. 训练数据集（Training Dataset）</h2><hr>
+<p>训练数据集的重要性不容多说，本文自行开发了基于人工种子点选取的点云分割工具（semiautomatic tool for ground annotation，原理参考图像中的<a href="https://blog.csdn.net/shenziheng1/article/details/50878911" target="_blank" rel="external">区域增长算法</a>，只不过此处将点之间距离作为判断条件代替灰度值，同时发现当上下限为<strong><em>[0.03, 0.07]米</em></strong>时分割效果最好。选取了KITTI不同场景下共252帧点云作为人工分割数据，将分割好的数据按照<strong><em>7:3</em></strong>比例分为<strong><em>[训练集，评价集]</em></strong>。<br>由于上面得到的数据量太少，所以本文又通过其他一些方法对剩下的19k帧数据，生成了训练所需数据集，基与点云特征有：最低高度，高度变化值，两线激光点云之间的距离和高度差。本文也尝试过自动生成数据（artificial 3D LiDAR data），但是效果较差。</p>
+<h2 id="C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）"><a href="#C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）" class="headerlink" title="C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）"></a>C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）</h2><hr>
+<p>因为生成的训练数据较少，所以只采用浅层的CNN网络结构（shallow CNN architectures），类型为全卷积（fully convolutional）。卷基层和反卷基层都包含非线性的ReLU神经元（ReLU non-linearities），采用梯度下降方法进行训练。网络结构如下图所示：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-816d4607cb5d3875.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>上文 <strong>A.</strong> 中得到的矩阵 <strong><em>M</em></strong> 作为网络输入，因为是逐点（pixel）进行分类，所以网络的输出尺寸与输入尺寸相同，根据分类： <strong><em>ground = 1</em></strong>，其余点根据softmax函数概率映射进行输出。反卷积层（Deconvolutional<br>layers，广泛应用于语义分割（semantic segmentation）领域）在本文提出的4个网络结构中的中3个都有应用，其中包括效果最好的 <strong><em>L05+deconv</em></strong> （上图中第一个）。</p>
+<p>CNN的输入数据先要进行归一化（normalize）和剪裁（rescale），高度方面KITTI数据集将 <strong>3m</strong> 以上的数据进行了滤波处理，深度 <strong><em>d</em></strong> 通道方面则使用 <strong><em>log</em></strong> 进行归一化处理。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-5119dbf286402ffb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-6bba27cb72e18258.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><hr>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-3875bce36b9f2a46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><strong>以上。</strong></p>
+<hr>
+<p>参考文献：<a href="https://arxiv.org/pdf/1709.02128v1.pdf" target="_blank" rel="external">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data.PDF</a></p>
+<p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
 
       
     </div>
@@ -463,9 +477,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Python/" rel="tag"># Python</a>
+            <a href="/tags/PCL/" rel="tag"># PCL</a>
           
-            <a href="/tags/DL/" rel="tag"># DL</a>
+            <a href="/tags/CNN/" rel="tag"># CNN</a>
           
         </div>
       
@@ -478,8 +492,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/08/ROS_Node之间通信打断操作实例/" rel="next" title="ROS Node 之间通信打断操作实例">
-                <i class="fa fa-chevron-left"></i> ROS Node 之间通信打断操作实例
+              <a href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" rel="next" title="KITTI unorganised cloud to organised cloud">
+                <i class="fa fa-chevron-left"></i> KITTI unorganised cloud to organised cloud
               </a>
             
           </div>
@@ -487,10 +501,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/03/15/18_3_15/cpp_string_operation/" rel="prev" title="c++ string 操作汇总">
-                c++ string 操作汇总 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -537,8 +547,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/uploads/MyBlogAvatar.png"
@@ -553,7 +572,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -564,7 +583,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -575,7 +594,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -629,6 +648,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#地面点分割方法"><span class="nav-number">2.</span> <span class="nav-text">地面点分割方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#训练数据说明"><span class="nav-number">2.1.</span> <span class="nav-text">训练数据说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）"><span class="nav-number">2.2.</span> <span class="nav-text">A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B-训练数据集（Training-Dataset）"><span class="nav-number">2.3.</span> <span class="nav-text">B. 训练数据集（Training Dataset）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）"><span class="nav-number">2.4.</span> <span class="nav-text">C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验结果"><span class="nav-number">3.</span> <span class="nav-text">实验结果</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

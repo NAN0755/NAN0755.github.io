@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://zengzeyu.com/2018/03/24/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</loc>
+    
+    <lastmod>2018-03-24T15:17:21.209Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/</loc>
     
     <lastmod>2018-03-22T14:47:00.397Z</lastmod>
@@ -65,21 +72,21 @@
   </url>
   
   <url>
-    <loc>http://zengzeyu.com/2018/03/08/ROS_Node%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%89%93%E6%96%AD%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B/</loc>
+    <loc>http://zengzeyu.com/2018/03/08/18_3_08/ROS_Node%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%89%93%E6%96%AD%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B/</loc>
     
     <lastmod>2018-03-08T23:59:07.739Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://zengzeyu.com/2018/03/08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
+    <loc>http://zengzeyu.com/2018/03/08/18_3_08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     
     <lastmod>2018-03-08T14:41:27.547Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://zengzeyu.com/2018/03/08/Caffe%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B9%8BAlexNet_Caffenet_py/</loc>
+    <loc>http://zengzeyu.com/2018/03/08/18_3_08/Caffe%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B9%8BAlexNet_Caffenet_py/</loc>
     
     <lastmod>2018-03-08T14:40:07.834Z</lastmod>
     
