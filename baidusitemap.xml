@@ -3,6 +3,7 @@
 
 
     
+    
   <url>
     <loc>http://zengzeyu.com/2018/03/30/18_3_30/pcl_kdtree_and_octree/</loc>
     <lastmod>2018-04-02T06:40:46.000Z</lastmod>
@@ -31,9 +32,9 @@
         <title>激光雷达点云数据内部空点补全算法</title>
         <pubTime>2018-03-28T14:55:54.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>ROS</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -53,9 +54,9 @@
         <title>KITTI 原始点云数据（PCL）地面点分割</title>
         <pubTime>2018-03-28T14:55:54.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>ROS</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -75,9 +76,9 @@
         <title>点云降采样输入到caffe数据输入层</title>
         <pubTime>2018-03-21T14:55:54.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>ROS</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -119,9 +120,9 @@
         <title>KITTI unorganised cloud to organised cloud</title>
         <pubTime>2018-03-21T14:55:54.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>ROS</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -141,9 +142,9 @@
         <title>基于几何特征的地面点云分割</title>
         <pubTime>2018-03-21T14:55:54.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>ROS</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -222,9 +223,9 @@
         <title>KITTI 原始bin格式数据集转PCD格式</title>
         <pubTime>2018-03-15T15:47:44.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>ROS</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -278,7 +279,6 @@
     </url>
 
     
-    
   <url>
     <loc>http://zengzeyu.com/2018/03/08/18_3_08/ROS_Node%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%89%93%E6%96%AD%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B/</loc>
     <lastmod>2018-03-08T23:59:07.739Z</lastmod>
@@ -287,9 +287,9 @@
         <title>ROS Node 之间通信打断操作实例</title>
         <pubTime>2018-03-08T15:47:44.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>ROS</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -309,9 +309,9 @@
         <title>NumPy学习笔记</title>
         <pubTime>2018-03-08T15:47:44.000Z</pubTime>
         
-        <tag>DL</tag>
-         
         <tag>Python</tag>
+         
+        <tag>DL</tag>
          
          
            
@@ -331,11 +331,11 @@
         <title>Caffe源代码学习 — AlexNet(Caffenet.py)</title>
         <pubTime>2018-03-08T15:47:44.000Z</pubTime>
         
-        <tag>DL</tag>
-         
         <tag>Caffe</tag>
          
         <tag>Python</tag>
+         
+        <tag>DL</tag>
          
          
            
