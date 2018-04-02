@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="ROS,PCL," />
+  <meta name="keywords" content="PCL,ROS," />
 
 
 
@@ -98,19 +98,18 @@
 
 
 <meta name="description" content="欢迎访问我的个人博客：zegnzeyu.com 前言 KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出尺寸为 HxW = 64x4500， 本文准备复现论文 CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data， 根据论文内CNN网络结构需要对数据尺寸进行调整">
-<meta name="keywords" content="ROS,PCL">
+<meta name="keywords" content="PCL,ROS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="点云降采样输入到caffe数据输入层">
-<meta property="og:url" content="http://zengzeyu.com/2018/03/30/18_3_30/down_sample_for_caffe_data_layer/index.html">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
 <meta property="og:description" content="欢迎访问我的个人博客：zegnzeyu.com 前言 KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出尺寸为 HxW = 64x4500， 本文准备复现论文 CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data， 根据论文内CNN网络结构需要对数据尺寸进行调整">
-<meta property="og:image" content="https://img-blog.csdn.net/20180327205127398?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
-<meta property="og:image" content="https://img-blog.csdn.net/20180329174353876?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
-<meta property="og:updated_time" content="2018-03-30T12:49:09.839Z">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-5caa1c5c8af2546d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-04-02T06:31:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="点云降采样输入到caffe数据输入层">
 <meta name="twitter:description" content="欢迎访问我的个人博客：zegnzeyu.com 前言 KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出尺寸为 HxW = 64x4500， 本文准备复现论文 CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data， 根据论文内CNN网络结构需要对数据尺寸进行调整">
-<meta name="twitter:image" content="https://img-blog.csdn.net/20180327205127398?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10028058-5caa1c5c8af2546d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -138,7 +137,7 @@
 
 
 
-  <link rel="canonical" href="http://zengzeyu.com/2018/03/30/18_3_30/down_sample_for_caffe_data_layer/"/>
+  <link rel="canonical" href="http://zengzeyu.com/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/"/>
 
 
 
@@ -322,7 +321,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/30/18_3_30/down_sample_for_caffe_data_layer/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -351,8 +350,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-30T22:55:54+08:00">
-                2018-03-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-21T22:55:54+08:00">
+                2018-03-21
               </time>
             
 
@@ -391,7 +390,7 @@
 
           
           
-             <span id="/2018/03/30/18_3_30/down_sample_for_caffe_data_layer/" class="leancloud_visitors" data-flag-title="点云降采样输入到caffe数据输入层">
+             <span id="/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/" class="leancloud_visitors" data-flag-title="点云降采样输入到caffe数据输入层">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -439,10 +438,9 @@
 </ul>
 <h1 id="数据调整输出"><a href="#数据调整输出" class="headerlink" title="数据调整输出"></a>数据调整输出</h1><hr>
 <p><strong>以 label data 为例输出显示，使用matplot进行绘图，python代码如下：</strong><br>​<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">import matplotlib.pyplot as plt</div><div class="line"></div><div class="line">in_label = in_file[:,:,0]</div><div class="line">fig = plt.figure()</div><div class="line">origin_label = fig.add_subplot(121)</div><div class="line">origin_label.imshow(in_label)</div><div class="line">rescale_label = </div><div class="line">plt.show(fig)</div><div class="line">​</div></pre></td></tr></table></figure></p>
-<h3 id="调整前数据（源数据）"><a href="#调整前数据（源数据）" class="headerlink" title="调整前数据（源数据）"></a>调整前数据（源数据）</h3><p>由下图可看出，点颜色有三种，分别是代表三个 <strong><em>label</em></strong> 值： [ -1, 0, 1 ]</p>
-<p><img src="https://img-blog.csdn.net/20180327205127398?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
-<h3 id="调整后数据"><a href="#调整后数据" class="headerlink" title="调整后数据"></a>调整后数据</h3><p>调整尺寸后点颜色有二种，分别代表两个 <strong><em>label</em></strong> 值： [ 0, 1 ]</p>
-<p><img src="https://img-blog.csdn.net/20180329174353876?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<h3 id="调整前后数据（源数据）"><a href="#调整前后数据（源数据）" class="headerlink" title="调整前后数据（源数据）"></a>调整前后数据（源数据）</h3><p>由下图可看出，点颜色有三种，分别是代表三个 <strong><em>label</em></strong> 值： [ -1, 0, 1 ]</p>
+<p>调整尺寸后点颜色有二种，分别代表两个 <strong><em>label</em></strong> 值： [ 0, 1 ]</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-5caa1c5c8af2546d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-29 16:04:32.png"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure>
       
     </div>
@@ -472,9 +470,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/ROS/" rel="tag"># ROS</a>
-          
             <a href="/tags/PCL/" rel="tag"># PCL</a>
+          
+            <a href="/tags/ROS/" rel="tag"># ROS</a>
           
         </div>
       
@@ -487,8 +485,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/28/18_3_30/kitti_ground_point_seg/" rel="next" title="KITTI 原始点云数据（PCL）地面点分割">
-                <i class="fa fa-chevron-left"></i> KITTI 原始点云数据（PCL）地面点分割
+              <a href="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" rel="next" title="基于几何特征的地面点云分割">
+                <i class="fa fa-chevron-left"></i> 基于几何特征的地面点云分割
               </a>
             
           </div>
@@ -496,6 +494,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/21/18_3_22/Effective-c++-1.0/" rel="prev" title="Effective c++ 1.0">
+                Effective c++ 1.0 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -567,7 +569,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -578,7 +580,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -653,7 +655,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#点云数据调整"><span class="nav-number">2.</span> <span class="nav-text">点云数据调整</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调整规则"><span class="nav-number">2.1.</span> <span class="nav-text">调整规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#尺寸调整规则"><span class="nav-number">2.1.1.</span> <span class="nav-text">尺寸调整规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据调整"><span class="nav-number">2.1.2.</span> <span class="nav-text">数据调整</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-明确提取代表点的原则，目标"><span class="nav-number">2.1.2.0.1.</span> <span class="nav-text">1. 明确提取代表点的原则，目标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考："><span class="nav-number">2.1.2.0.2.</span> <span class="nav-text">2. 当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考：</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据调整输出"><span class="nav-number">3.</span> <span class="nav-text">数据调整输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#调整前数据（源数据）"><span class="nav-number">3.0.1.</span> <span class="nav-text">调整前数据（源数据）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调整后数据"><span class="nav-number">3.0.2.</span> <span class="nav-text">调整后数据</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#点云数据调整"><span class="nav-number">2.</span> <span class="nav-text">点云数据调整</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调整规则"><span class="nav-number">2.1.</span> <span class="nav-text">调整规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#尺寸调整规则"><span class="nav-number">2.1.1.</span> <span class="nav-text">尺寸调整规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据调整"><span class="nav-number">2.1.2.</span> <span class="nav-text">数据调整</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-明确提取代表点的原则，目标"><span class="nav-number">2.1.2.0.1.</span> <span class="nav-text">1. 明确提取代表点的原则，目标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考："><span class="nav-number">2.1.2.0.2.</span> <span class="nav-text">2. 当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考：</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据调整输出"><span class="nav-number">3.</span> <span class="nav-text">数据调整输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#调整前后数据（源数据）"><span class="nav-number">3.0.1.</span> <span class="nav-text">调整前后数据（源数据）</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

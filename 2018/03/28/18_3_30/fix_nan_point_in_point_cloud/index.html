@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="ROS,PCL," />
+  <meta name="keywords" content="PCL,ROS," />
 
 
 
@@ -98,19 +98,19 @@
 
 
 <meta name="description" content="欢迎访问我的个人博客：zengzeyu.com 前言 点云数据区别于图像数据，不管是二维图像还是三维图像，图像数据都充满整个区域，二维图像中每个像素点都有值，灰度值、RGB值等；三维图像中有体数据（Voxel），根据光线投影算法等，可计算出每个体数据对应值，从而显示于显示器中。点云数据由于其扫描生成数据过程的特性，就决定了其在数据方面与图像数据不同，以机械式激光雷达为例，当出现以下情况时，该位置扫">
-<meta name="keywords" content="ROS,PCL">
+<meta name="keywords" content="PCL,ROS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="激光雷达点云数据内部空点补全算法">
 <meta property="og:url" content="http://zengzeyu.com/2018/03/28/18_3_30/fix_nan_point_in_point_cloud/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
 <meta property="og:description" content="欢迎访问我的个人博客：zengzeyu.com 前言 点云数据区别于图像数据，不管是二维图像还是三维图像，图像数据都充满整个区域，二维图像中每个像素点都有值，灰度值、RGB值等；三维图像中有体数据（Voxel），根据光线投影算法等，可计算出每个体数据对应值，从而显示于显示器中。点云数据由于其扫描生成数据过程的特性，就决定了其在数据方面与图像数据不同，以机械式激光雷达为例，当出现以下情况时，该位置扫">
-<meta property="og:image" content="https://img-blog.csdn.net/20180329094431533?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-3941ede1118e84a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://img-blog.csdn.net/20180329160618551?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
-<meta property="og:updated_time" content="2018-03-29T14:11:54.000Z">
+<meta property="og:updated_time" content="2018-04-02T06:37:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="激光雷达点云数据内部空点补全算法">
 <meta name="twitter:description" content="欢迎访问我的个人博客：zengzeyu.com 前言 点云数据区别于图像数据，不管是二维图像还是三维图像，图像数据都充满整个区域，二维图像中每个像素点都有值，灰度值、RGB值等；三维图像中有体数据（Voxel），根据光线投影算法等，可计算出每个体数据对应值，从而显示于显示器中。点云数据由于其扫描生成数据过程的特性，就决定了其在数据方面与图像数据不同，以机械式激光雷达为例，当出现以下情况时，该位置扫">
-<meta name="twitter:image" content="https://img-blog.csdn.net/20180329094431533?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10028058-3941ede1118e84a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -433,7 +433,7 @@
 <p>本文补全原则基于有序点云（organised）进行处理，非有序点云无法进行处理（unorganised）。<br>以自动驾驶中使用的机械式激光雷达<a href="http://www.robosense.cn/rslidar/RS-LiDAR-16" target="_blank" rel="external">速腾聚创16线激光雷达RS-LiDAR-16</a>为例，其生成的有序点云（organised）点云尺寸为 16 x 2016： 16为激光线数，2016为每一线激光绕中心一周旋转储存的点个数，因此有 16 x 2016 = 32256 个点，而实际得到的点数据基本不可能是32256，必有缺失。</p>
 <h3 id="补全规则"><a href="#补全规则" class="headerlink" title="补全规则"></a>补全规则</h3><p><strong>在每一线激光扫描得到一行点数据中，查找与NAN点最近的点进行补全，如果本行数据全部为NAN（虽然不可能发生），则此行可删除，调整点云尺寸。</strong><br><strong>该规则基于的原则：在同一线激光扫描得到的点中，由于水平方向数据分辨率很高，所以一行数据中每个点与其邻域内点相似。</strong></p>
 <h3 id="算法设计"><a href="#算法设计" class="headerlink" title="算法设计"></a>算法设计</h3><h5 id="算法思路"><a href="#算法思路" class="headerlink" title="算法思路"></a>算法思路</h5><p>为了简化叙述，本文将一线激光扫描得到数据缩小为 360 个点，即一帧点云尺寸变为 16x360。<br>以一线激光扫描数据为例，默认激光旋转方向为顺时针方向，采用线性差值方法进行补全，由于一线激光扫描一圈得到的数据在360°内任意位置都是对偶的，所以在空点附近查找两边非空点，用其值进行补全，具体参考下图示意。<br>图上半部分为一线激光雷达扫描得到数据鸟瞰图，其中黑色方块代表非空点，白色方块代表空点；下半部分为点距离图，根据线性插值方法可以补全非空点。非空点距离计算采用极坐标方式，首先得到线性插值得到的range，再使用当前转角转换到笛卡尔坐标系下，可得到其 x， y 坐标值，z 坐标值也采用同样的插值方法计算。</p>
-<p><img src="https://img-blog.csdn.net/20180329094431533?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3plbmd6ZXl1/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="图"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/10028058-3941ede1118e84a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-29 09:42:08.png"></p>
 <p>其中一个特殊情况：转角为 0° 与转角为 360° 是等效的，在查找过程中，当转角顺时针查找到 360 °时则置为 0°，当转角逆时针查找到 0° 时则置为 360°。</p>
 <h5 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h5><p>根据以上思路，设计算法如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div></pre></td><td class="code"><pre><div class="line">def fix_nan_point(self, in_cloud):</div><div class="line">    #fix edeg nan point 1st</div><div class="line">    in_cloud = self.fix_left_edge_nan_point( in_cloud )</div><div class="line">    in_cloud = self.fix_right_edge_nan_point( in_cloud )</div><div class="line">    #fix centrol nan point</div><div class="line">    for i in range(in_cloud.shape[0]):</div><div class="line">        for j in range(1, in_cloud.shape[1]):</div><div class="line">            if in_cloud[i, j, -1] == -1:</div><div class="line">                nan_size = 1</div><div class="line">                left = j - 1</div><div class="line">                right = j + 1</div><div class="line">                while in_cloud[i, left, -1] == -1:</div><div class="line">                    left -= 1</div><div class="line">                    nan_size += 1</div><div class="line">                while in_cloud[i, right, -1] == -1:</div><div class="line">                    right += 1</div><div class="line">                    nan_size += 1</div><div class="line"></div><div class="line">                height_diff_cell = (in_cloud[i, right, 2] - in_cloud[i, left, 2]) / nan_size</div><div class="line">                range_diff_cell = (in_cloud[i, right, 3] - in_cloud[i, left, 3]) / nan_size</div><div class="line">                in_cloud[i, j, 2] = in_cloud[i, left, 2] + (j - left) * height_diff_cell</div><div class="line">                in_cloud[i, j, 3] = in_cloud[i, left, 3] + (j - left) * range_diff_cell</div><div class="line">                if abs(j - left) &lt; abs(right-j):</div><div class="line">                    in_cloud[i, j, -1] = in_cloud[i, left, -1]</div><div class="line">                else:</div><div class="line">                    in_cloud[i, j, -1] = in_cloud[i, right, -1]</div><div class="line">    return in_cloud</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">def fix_left_edge_nan_point(self, in_cloud):</div><div class="line">    for i in range(in_cloud.shape[0]):</div><div class="line">        if in_cloud[i, 0, -1] == -1:</div><div class="line">            nan_size = 1</div><div class="line">            left = 359</div><div class="line">            right = 1</div><div class="line">            while in_cloud[i,left,-1] == -1:</div><div class="line">                left -= 1</div><div class="line">                nan_size += 1</div><div class="line">            while in_cloud[i,right,-1] == -1:</div><div class="line">                right += 1</div><div class="line">                nan_size +=1</div><div class="line"></div><div class="line">            height_diff_cell = (in_cloud[i, right, 2] - in_cloud[i, left, 2]) / nan_size</div><div class="line">            range_diff_cell = (in_cloud[i, right, 3] - in_cloud[i, left, 3]) / nan_size</div><div class="line">            in_cloud[i, 0, 2] = in_cloud[i, left, 2] + (360 - left) * height_diff_cell</div><div class="line">            in_cloud[i, 0, 3] = in_cloud[i, left, 3] + (360 - left) * range_diff_cell</div><div class="line">            if abs(360 - left) &lt; right:</div><div class="line">                in_cloud[i, 0, -1] = in_cloud[i, left, -1]</div><div class="line">            else:</div><div class="line">                in_cloud[i, 0, -1] = in_cloud[i, right, -1]</div><div class="line">    return in_cloud</div><div class="line"></div><div class="line"></div><div class="line">def fix_right_edge_nan_point(self, in_cloud):</div><div class="line">    for i in range(in_cloud.shape[0]):</div><div class="line">        if in_cloud[i, in_cloud.shape[1]-1, -1] == -1:</div><div class="line">            nan_size = 1</div><div class="line">            left = in_cloud.shape[1]-2</div><div class="line">            right = 0</div><div class="line">            while in_cloud[i,left,-1] == -1:</div><div class="line">                left -= 1</div><div class="line">                nan_size += 1</div><div class="line">            while in_cloud[i,right,-1] == -1:</div><div class="line">                right += 1</div><div class="line">                nan_size +=1</div><div class="line"></div><div class="line">            height_diff_cell = (in_cloud[i, right, 2] - in_cloud[i, left, 2]) / nan_size</div><div class="line">            range_diff_cell = (in_cloud[i, right, 3] - in_cloud[i, left, 3]) / nan_size</div><div class="line">            in_cloud[i, in_cloud.shape[1]-1, 2] = in_cloud[i, left, 2] + (in_cloud.shape[1]-1 - left) * height_diff_cell</div><div class="line">            in_cloud[i, in_cloud.shape[1]-1, 3] = in_cloud[i, left, 3] + (in_cloud.shape[1]-1 - left) * range_diff_cell</div><div class="line">            if abs(in_cloud.shape[1]-1 - left) &lt; right + 1:</div><div class="line">                in_cloud[i, in_cloud.shape[1]-1, -1] = in_cloud[i, left, -1]</div><div class="line">            else:</div><div class="line">                in_cloud[i, in_cloud.shape[1]-1, -1] = in_cloud[i, right, -1]</div><div class="line">    return in_cloud</div></pre></td></tr></table></figure></p>
 <h5 id="算法结果"><a href="#算法结果" class="headerlink" title="算法结果"></a>算法结果</h5><p>下图结果为源数据先经过降采样之后，再进行补全NAN点操作。源数据中的 <strong><em>label</em></strong> 有三个值 [-1, 0, 1]， 经过降采样然后补全操作只剩下 <strong><em>label</em></strong> 为[0， 1] 的点。</p>
@@ -474,9 +474,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/ROS/" rel="tag"># ROS</a>
-          
             <a href="/tags/PCL/" rel="tag"># PCL</a>
+          
+            <a href="/tags/ROS/" rel="tag"># ROS</a>
           
         </div>
       
@@ -489,8 +489,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/24/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/" rel="next" title="CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data">
-                <i class="fa fa-chevron-left"></i> CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data
+              <a href="/2018/03/28/18_3_30/kitti_ground_point_seg/" rel="next" title="KITTI 原始点云数据（PCL）地面点分割">
+                <i class="fa fa-chevron-left"></i> KITTI 原始点云数据（PCL）地面点分割
               </a>
             
           </div>
@@ -499,8 +499,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/03/28/18_3_30/kitti_ground_point_seg/" rel="prev" title="KITTI 原始点云数据（PCL）地面点分割">
-                KITTI 原始点云数据（PCL）地面点分割 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/03/30/18_3_30/pcl_kdtree_and_octree/" rel="prev" title="PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍">
+                PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -573,7 +573,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -584,7 +584,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
