@@ -3,10 +3,9 @@
 
 
     
-    
   <url>
     <loc>http://zengzeyu.com/2018/03/30/18_3_30/pcl_kdtree_and_octree/</loc>
-    <lastmod>2018-04-02T06:40:46.000Z</lastmod>
+    <lastmod>2018-04-07T15:08:47.582Z</lastmod>
     <data>
         <display>
         <title>PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍</title>
@@ -23,6 +22,7 @@
     </data>
     </url>
 
+    
     
   <url>
     <loc>http://zengzeyu.com/2018/03/28/18_3_30/fix_nan_point_in_point_cloud/</loc>
@@ -245,9 +245,9 @@
         <title>FCN-PCL 应用解析</title>
         <pubTime>2018-03-15T15:47:44.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>DL</tag>
+         
+        <tag>PCL</tag>
          
          
            

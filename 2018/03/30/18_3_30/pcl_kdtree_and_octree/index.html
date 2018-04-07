@@ -97,20 +97,20 @@
 
 
 
-<meta name="description" content="欢迎访问我的个人博客：zengzeyu.com 前言 通过雷达、激光扫描、立体摄像机等三维测量设备获取的点运输局，具有数据量打、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。建立空间索引在点云数据处理中已被广泛应用，常见空间索引一">
+<meta name="description" content="欢迎访问我的个人博客：zengzeyu.com 前言 通过雷达、激光扫描、立体摄像机等三维测量设备获取的点云数据，具有数据量大、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。建立空间索引在点云数据处理中已被广泛应用，常见空间索引一">
 <meta name="keywords" content="PCL">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍">
 <meta property="og:url" content="http://zengzeyu.com/2018/03/30/18_3_30/pcl_kdtree_and_octree/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
-<meta property="og:description" content="欢迎访问我的个人博客：zengzeyu.com 前言 通过雷达、激光扫描、立体摄像机等三维测量设备获取的点运输局，具有数据量打、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。建立空间索引在点云数据处理中已被广泛应用，常见空间索引一">
+<meta property="og:description" content="欢迎访问我的个人博客：zengzeyu.com 前言 通过雷达、激光扫描、立体摄像机等三维测量设备获取的点云数据，具有数据量大、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。建立空间索引在点云数据处理中已被广泛应用，常见空间索引一">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-4d7b7c39333666b1.gif?imageMogr2/auto-orient/strip">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-66cd9ff8af223044.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-c98fc8b763769c76.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2018-04-02T06:40:46.000Z">
+<meta property="og:updated_time" content="2018-04-07T15:08:47.582Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍">
-<meta name="twitter:description" content="欢迎访问我的个人博客：zengzeyu.com 前言 通过雷达、激光扫描、立体摄像机等三维测量设备获取的点运输局，具有数据量打、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。建立空间索引在点云数据处理中已被广泛应用，常见空间索引一">
+<meta name="twitter:description" content="欢迎访问我的个人博客：zengzeyu.com 前言 通过雷达、激光扫描、立体摄像机等三维测量设备获取的点云数据，具有数据量大、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。建立空间索引在点云数据处理中已被广泛应用，常见空间索引一">
 <meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10028058-4d7b7c39333666b1.gif?imageMogr2/auto-orient/strip">
 
 
@@ -422,7 +422,7 @@
       
         <p><strong><em>欢迎访问我的个人博客：<a href="zengzeyu.com">zengzeyu.com</a></em></strong></p>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><hr>
-<p>通过雷达、激光扫描、立体摄像机等三维测量设备获取的点运输局，具有数据量打、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。<br>建立空间索引在点云数据处理中已被广泛应用，常见空间索引一般是自顶向下逐级划分空间的各种空间索引结构，比较有代表性的包括 BSP树、 KD树、 KDB树、 R树、 R+树、 CELL树、四叉树和八叉树等索引结构，而在这些结构中KD树和八叉树在3D点云数据组织中应用较为广泛，PCL对上述两者进行了实现。</p>
+<p>通过雷达、激光扫描、立体摄像机等三维测量设备获取的点云数据，具有数据量大、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。<br>建立空间索引在点云数据处理中已被广泛应用，常见空间索引一般是自顶向下逐级划分空间的各种空间索引结构，比较有代表性的包括 BSP树、 KD树、 KDB树、 R树、 R+树、 CELL树、四叉树和八叉树等索引结构，而在这些结构中KD树和八叉树在3D点云数据组织中应用较为广泛，PCL对上述两者进行了实现。</p>
 <h1 id="1-K维树（KD-tree）"><a href="#1-K维树（KD-tree）" class="headerlink" title="1. K维树（KD-tree）"></a>1. K维树（KD-tree）</h1><hr>
 <h3 id="1-1-KD-tree-概念简介"><a href="#1-1-KD-tree-概念简介" class="headerlink" title="1.1 KD-tree 概念简介"></a>1.1 KD-tree 概念简介</h3><p>KD-tree 又称 K 维树是计算机科学中使用的一种数据结构，用来组织表示 K 维空间中点集合。它是一种带有其他约束条件的二分查找树。KD-tree对于区间和近邻搜索十分有用。我们为了达到目的，通常只在三个维度中进行处理，因此所有的 KD-tree 都将是三维 KD-tree。 如下图所示（动图，慢慢看）， KD-tree 的每一级在指定维度上分开所有的子节点。在树的根部所有子节点是以第一个指定的维度上被分开（即如果第一维坐标小于根节点的点它将被分在左边的子树中，如果大于根节点的点它将分在右边的子树中）。</p>
 <p><img src="https://upload-images.jianshu.io/upload_images/10028058-4d7b7c39333666b1.gif?imageMogr2/auto-orient/strip" alt="KDTree-animation.gif"></p>
@@ -432,10 +432,9 @@
 <h5 id="代码解读"><a href="#代码解读" class="headerlink" title="代码解读"></a>代码解读</h5><ul>
 <li><p>设置kdtree搜索对象和输入数据，然后使用随机坐标搜索方式 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">pcl::KdTreeFLANN&lt;pcl::PointXYZ&gt; kdtree;</div><div class="line"></div><div class="line"> kdtree.setInputCloud (cloud);</div><div class="line"></div><div class="line"> pcl::PointXYZ searchPoint;</div><div class="line"></div><div class="line"> searchPoint.x = 1024.0f * rand () / (RAND_MAX + 1.0f);</div><div class="line"> searchPoint.y = 1024.0f * rand () / (RAND_MAX + 1.0f);</div><div class="line"> searchPoint.z = 1024.0f * rand () / (RAND_MAX + 1.0f);</div></pre></td></tr></table></figure>
-<ul>
-<li>设置临近点个数 （10），两个向量来存储搜索到的 K 近邻，两个向量中一个存储搜索到查询点近邻的索引，另一个存储对应近邻的距离平方<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"> // K nearest neighbor search</div><div class="line"></div><div class="line">int K = 10;</div><div class="line"></div><div class="line">std::vector&lt;int&gt; pointIdxNKNSearch(K);</div><div class="line">std::vector&lt;float&gt; pointNKNSquaredDistance(K);</div><div class="line"></div><div class="line">std::cout &lt;&lt; &quot;K nearest neighbor search at (&quot; &lt;&lt; searchPoint.x </div><div class="line">          &lt;&lt; &quot; &quot; &lt;&lt; searchPoint.y </div><div class="line">          &lt;&lt; &quot; &quot; &lt;&lt; searchPoint.z</div><div class="line">          &lt;&lt; &quot;) with K=&quot; &lt;&lt; K &lt;&lt; std::endl;</div></pre></td></tr></table></figure>
 </li>
-</ul>
+<li><p>设置临近点个数 （10），两个向量来存储搜索到的 K 近邻，两个向量中一个存储搜索到查询点近邻的索引，另一个存储对应近邻的距离平方</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"> // K nearest neighbor search</div><div class="line"></div><div class="line">int K = 10;</div><div class="line"></div><div class="line">std::vector&lt;int&gt; pointIdxNKNSearch(K);</div><div class="line">std::vector&lt;float&gt; pointNKNSquaredDistance(K);</div><div class="line"></div><div class="line">std::cout &lt;&lt; &quot;K nearest neighbor search at (&quot; &lt;&lt; searchPoint.x </div><div class="line">          &lt;&lt; &quot; &quot; &lt;&lt; searchPoint.y </div><div class="line">          &lt;&lt; &quot; &quot; &lt;&lt; searchPoint.z</div><div class="line">          &lt;&lt; &quot;) with K=&quot; &lt;&lt; K &lt;&lt; std::endl;</div></pre></td></tr></table></figure>
 </li>
 </ul>
 <h3 id="1-3-KD-tree-算法伪代码"><a href="#1-3-KD-tree-算法伪代码" class="headerlink" title="1.3 KD-tree 算法伪代码"></a>1.3 KD-tree 算法伪代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">function kdtree (list of points pointList, int depth)</div><div class="line">&#123;</div><div class="line">    // Select axis based on depth so that axis cycles through all valid values</div><div class="line">    var int axis := depth mod k;</div><div class="line">        </div><div class="line">    // Sort point list and choose median as pivot element</div><div class="line">    select median by axis from pointList;</div><div class="line">        </div><div class="line">    // Create node and construct subtree</div><div class="line">    node.location := median;</div><div class="line">    node.leftChild := kdtree(points in pointList before median, depth+1);</div><div class="line">    node.rightChild := kdtree(points in pointList after median, depth+1);</div><div class="line">    return node;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
