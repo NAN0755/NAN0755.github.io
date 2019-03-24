@@ -97,15 +97,15 @@
 
 
 
-<meta name="description" content="Try everything fancy!">
+<meta name="description" content="Done is better than perfect!">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Zeyu&#39;s Blog">
 <meta property="og:url" content="http://zengzeyu.com/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
-<meta property="og:description" content="Try everything fancy!">
+<meta property="og:description" content="Done is better than perfect!">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Zeyu&#39;s Blog">
-<meta name="twitter:description" content="Try everything fancy!">
+<meta name="twitter:description" content="Done is better than perfect!">
 
 
 
@@ -193,7 +193,7 @@
       </a>
     </div>
       
-        <p class="site-subtitle">Less is more.</p>
+        <p class="site-subtitle"></p>
       
   </div>
 
@@ -1228,7 +1228,7 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/Effective-c++-1.0/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -1247,7 +1247,7 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/21/18_3_22/Effective-c++-1.0/" itemprop="url">Effective c++ 1.0</a></h1>
+                <a class="post-title-link" href="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" itemprop="url">基于几何特征的地面点云分割</a></h1>
         
 
         <div class="post-meta">
@@ -1282,8 +1282,8 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/c/" itemprop="url" rel="index">
-                    <span itemprop="name">c++</span>
+                  <a href="/categories/ROS/" itemprop="url" rel="index">
+                    <span itemprop="name">ROS</span>
                   </a>
                 </span>
 
@@ -1299,7 +1299,7 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
 
           
           
-             <span id="/2018/03/21/18_3_22/Effective-c++-1.0/" class="leancloud_visitors" data-flag-title="Effective c++ 1.0">
+             <span id="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" class="leancloud_visitors" data-flag-title="基于几何特征的地面点云分割">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1330,11 +1330,18 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
         
           
           欢迎访问我的个人博客： zengzeyu.com
-Tip在针对类中非 public 成员函数编写函数接口时，不应该像 public 成员函数一样不写传参变量。非 public 成员函数传参变量在函数内部被调用时，有利于及时输出数据进行可视化，在调用该非 public 成员函数的函数内部进行调试时，可
+前言
+激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：
+
+水平面校准
+法向量
+栅格高度差
+栅格最低高度以上0.2米
+绝
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/21/18_3_22/Effective-c++-1.0/#more" rel="contents">
+            <a class="btn" href="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1533,7 +1540,7 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/Effective-c++-1.0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -1552,7 +1559,7 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" itemprop="url">基于几何特征的地面点云分割</a></h1>
+                <a class="post-title-link" href="/2018/03/21/18_3_22/Effective-c++-1.0/" itemprop="url">Effective c++ 1.0</a></h1>
         
 
         <div class="post-meta">
@@ -1587,8 +1594,8 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ROS/" itemprop="url" rel="index">
-                    <span itemprop="name">ROS</span>
+                  <a href="/categories/c/" itemprop="url" rel="index">
+                    <span itemprop="name">c++</span>
                   </a>
                 </span>
 
@@ -1604,7 +1611,7 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
 
           
           
-             <span id="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" class="leancloud_visitors" data-flag-title="基于几何特征的地面点云分割">
+             <span id="/2018/03/21/18_3_22/Effective-c++-1.0/" class="leancloud_visitors" data-flag-title="Effective c++ 1.0">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1635,18 +1642,11 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
         
           
           欢迎访问我的个人博客： zengzeyu.com
-前言
-激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：
-
-水平面校准
-法向量
-栅格高度差
-栅格最低高度以上0.2米
-绝
+Tip在针对类中非 public 成员函数编写函数接口时，不应该像 public 成员函数一样不写传参变量。非 public 成员函数传参变量在函数内部被调用时，有利于及时输出数据进行可视化，在调用该非 public 成员函数的函数内部进行调试时，可
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/#more" rel="contents">
+            <a class="btn" href="/2018/03/21/18_3_22/Effective-c++-1.0/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1692,7 +1692,7 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/cnpy_note/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/fcn_alexnet_pcl/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -1711,7 +1711,7 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/15/18_3_15/cnpy_note/" itemprop="url">cnpy 库使用笔记</a></h1>
+                <a class="post-title-link" href="/2018/03/15/18_3_15/fcn_alexnet_pcl/" itemprop="url">FCN-PCL 应用解析</a></h1>
         
 
         <div class="post-meta">
@@ -1746,8 +1746,8 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/categories/DL/" itemprop="url" rel="index">
+                    <span itemprop="name">DL</span>
                   </a>
                 </span>
 
@@ -1763,7 +1763,7 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
 
           
           
-             <span id="/2018/03/15/18_3_15/cnpy_note/" class="leancloud_visitors" data-flag-title="cnpy 库使用笔记">
+             <span id="/2018/03/15/18_3_15/fcn_alexnet_pcl/" class="leancloud_visitors" data-flag-title="FCN-PCL 应用解析">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1793,13 +1793,12 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
       
         
           
-          欢迎访问我的个人博客：zengzeyu.com
-前言
-在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥
+          前言
+FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割（semantic segmentation）论文：Fully Convolutional Networks for Semantic Segmentation。全卷积网络首现于这篇文章。这篇文章
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/15/18_3_15/cnpy_note/#more" rel="contents">
+            <a class="btn" href="/2018/03/15/18_3_15/fcn_alexnet_pcl/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1877,7 +1876,7 @@ KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《
                alt="Zeyu" />
           <p class="site-author-name" itemprop="name">Zeyu</p>
            
-              <p class="site-description motion-element" itemprop="description">Try everything fancy!</p>
+              <p class="site-description motion-element" itemprop="description">Done is better than perfect!</p>
           
         </div>
         <nav class="site-state motion-element">
