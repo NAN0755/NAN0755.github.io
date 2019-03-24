@@ -4,6 +4,25 @@
 
     
   <url>
+    <loc>http://zengzeyu.com/2019/03/24/19_3_24/My-Paper-Lib-2019/</loc>
+    <lastmod>2019-03-24T11:14:42.867Z</lastmod>
+    <data>
+        <display>
+        <title>My Paper Lib 2019</title>
+        <pubTime>2019-03-24T10:59:46.000Z</pubTime>
+        
+        <tag>DL</tag>
+         
+        <tag>Paper</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://zengzeyu.com/2019/03/24/19_3_24/My-Paper-Lib-2018/</loc>
     <lastmod>2019-03-24T11:04:03.440Z</lastmod>
     <data>
@@ -350,11 +369,11 @@
         <title>Caffe源代码学习 — AlexNet(Caffenet.py)</title>
         <pubTime>2018-03-08T15:47:44.000Z</pubTime>
         
-        <tag>Caffe</tag>
-         
         <tag>Python</tag>
          
         <tag>DL</tag>
+         
+        <tag>Caffe</tag>
          
          
            
