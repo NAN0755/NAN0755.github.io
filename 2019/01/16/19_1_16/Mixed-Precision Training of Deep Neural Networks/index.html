@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="DL,Paper," />
 
 
 
@@ -97,15 +97,21 @@
 
 
 
-<meta name="description" content="Done is better than perfect.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Zeyu&#39;s Blog">
-<meta property="og:url" content="http://zengzeyu.com/tags/Personal/index.html">
+<meta name="description" content="By: zengzeyu  2019.01.16  1. Introduction由于FP16的精度损失问题，如果我们在神经网络的训练过程中直接将网络参数以FP16的形式进行计算，可能会出现数值不稳定的情况而导致模型性能下降。 对此，百度和NVIDIA的研究院在Mixed Precision Training这一论文中提出混合精度训练的方法，在充分利用FP16加速运算的优点的同时保证了模型的精度">
+<meta name="keywords" content="DL,Paper">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mixed-Precision Training of Deep Neural Networks">
+<meta property="og:url" content="http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision Training of Deep Neural Networks/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
-<meta property="og:description" content="Done is better than perfect.">
+<meta property="og:description" content="By: zengzeyu  2019.01.16  1. Introduction由于FP16的精度损失问题，如果我们在神经网络的训练过程中直接将网络参数以FP16的形式进行计算，可能会出现数值不稳定的情况而导致模型性能下降。 对此，百度和NVIDIA的研究院在Mixed Precision Training这一论文中提出混合精度训练的方法，在充分利用FP16加速运算的优点的同时保证了模型的精度">
+<meta property="og:image" content="http://kevinlt.top/img/in-post/master_copy.png">
+<meta property="og:image" content="http://kevinlt.top/img/in-post/gradient.png">
+<meta property="og:image" content="http://kevinlt.top/img/in-post/activation_gradients.png">
+<meta property="og:updated_time" content="2019-03-24T11:37:00.231Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zeyu&#39;s Blog">
-<meta name="twitter:description" content="Done is better than perfect.">
+<meta name="twitter:title" content="Mixed-Precision Training of Deep Neural Networks">
+<meta name="twitter:description" content="By: zengzeyu  2019.01.16  1. Introduction由于FP16的精度损失问题，如果我们在神经网络的训练过程中直接将网络参数以FP16的形式进行计算，可能会出现数值不稳定的情况而导致模型性能下降。 对此，百度和NVIDIA的研究院在Mixed Precision Training这一论文中提出混合精度训练的方法，在充分利用FP16加速运算的优点的同时保证了模型的精度">
+<meta name="twitter:image" content="http://kevinlt.top/img/in-post/master_copy.png">
 
 
 
@@ -133,13 +139,13 @@
 
 
 
-  <link rel="canonical" href="http://zengzeyu.com/tags/Personal/"/>
+  <link rel="canonical" href="http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision Training of Deep Neural Networks/"/>
 
 
 
 
 
-  <title>标签: Personal | Zeyu's Blog</title>
+  <title>Mixed-Precision Training of Deep Neural Networks | Zeyu's Blog</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -175,7 +181,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -307,44 +313,194 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h1>Personal<small>标签</small>
-      </h1>
-    </div>
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision Training of Deep Neural Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/MyBlogAvatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Mixed-Precision Training of Deep Neural Networks</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T18:59:46+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/01/16/19_1_16/Mixed-Precision Training of Deep Neural Networks/" class="leancloud_visitors" data-flag-title="Mixed-Precision Training of Deep Neural Networks">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
       
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+      
+        <blockquote>
+<p>By: zengzeyu  2019.01.16</p>
+</blockquote>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>由于FP16的精度损失问题，如果我们在神经网络的训练过程中直接将网络参数以FP16的形式进行计算，可能会出现数值不稳定的情况而导致模型性能下降。 对此，百度和NVIDIA的研究院在<a href="https://arxiv.org/abs/1710.03740" target="_blank" rel="external">Mixed Precision Training</a>这一论文中提出混合精度训练的方法，在充分利用FP16加速运算的优点的同时保证了模型的精度。下面介绍其论文中的主要要点。</p>
+<p>FP32 master copy of weigths</p>
+<p>FP32 master copy即维护一份网络中FP16精度参数的FP32精度的拷贝。 计算过程如下图所示，在前向传播过程中，使用由master copy类型转换得到的FP16精度参数进行运算； 而在反向传播计算完梯度后，将梯度作用到master copy上以在FP32精度上进行参数更新。</p>
+<p><img src="http://kevinlt.top/img/in-post/master_copy.png" alt="FP32 master copy">FP32 master copy</p>
+<p>这么做的主要原因有两个。</p>
+<p>第一是由于若直接在FP16精度下进行参数更新，存在梯度过小而导致更新值为0的情况。 下图是某次模型训练过程汇总网络参数的梯度的分布直方图，有5%的梯度值是分布在小于2-24的区间内的。 若优化器直接将这部分梯度乘上学习率作用到FP16精度参数的更新上，那么更新值将为0。 这将影响到模型的准确率。 但是如果是更新值是作用到FP32精度的master copy上时，则不会出现更新值下溢为0的情况。</p>
+<p>第二是如果参数相较于其更新值过大的话，也可能会由于浮点数加法机制的缘故而导致更新值为0。 在浮点数加法过程中，需要将两数对齐进行运算。 如果参数的大小是其更新值的2048倍或者更大的话，那么更新值的小数位需要右移至少11位才能与前者对齐，这超出了FP16精度的表示范围。 在FP32精度下则一般不会出现这种问题。</p>
+<ol>
+<li><p><img src="http://kevinlt.top/img/in-post/gradient.png" alt="gradient histogram">gradient histogram</p>
+</li>
+<li><p>loss scaling</p>
+<p>loss scaling即将loss值放大，以保证反向传播过程当中梯度落在FP16精度能表示的范围之间。</p>
+<p>下图是Multibox SSD网络在训练过程过程中激活单元梯度的分布情况。其中有67%的梯度落在了小于2-24的范围内，在FP16精度下无法表示。 如果不对梯度进行放大，在FP16精度下对该网络进行训练将导致发散。 对激活梯度进行放大，再对参数梯度缩小相应倍数，即可解决该问题。</p>
+<p><img src="http://kevinlt.top/img/in-post/activation_gradients.png" alt="activation gradients">activation gradients</p>
+<p>根据梯度计算的链式法则，对梯度放大的最简单的方法就是放大loss。 放大因子的大小选择没有固定的标准，对于上述Multibox SSD网络，作者尝试了8-32K的放大因子，均训练成功了。 只要保证放大后的梯度不超过FP16精度的表示上限（65504），选择较大的放大因子并无副作用。[1]</p>
+</li>
+</ol>
+<h2 id="2-Related-Materials"><a href="#2-Related-Materials" class="headerlink" title="2. Related Materials"></a>2. Related Materials</h2><ol>
+<li>Nvidia Reources: <a href="https://github.com/NvidiaResources/nvidia_mixed_precision_training" target="_blank" rel="external">https://github.com/NvidiaResources/nvidia_mixed_precision_training</a></li>
+<li>Nvidia: Mixed-Precision Training of Deep Neural Networks: <a href="https://devblogs.nvidia.com/mixed-precision-training-deep-neural-networks/" target="_blank" rel="external">https://devblogs.nvidia.com/mixed-precision-training-deep-neural-networks/</a></li>
+</ol>
+<h2 id="3-Method"><a href="#3-Method" class="headerlink" title="3. Method"></a>3. Method</h2><h3 id="2-1-直接在python2的pytorch训练框架中修改可实现："><a href="#2-1-直接在python2的pytorch训练框架中修改可实现：" class="headerlink" title="2.1 直接在python2的pytorch训练框架中修改可实现："></a>2.1 直接在python2的pytorch训练框架中修改可实现：</h3><p><a href="https://github.com/suvojit-0x55aa/mixed-precision-pytorch" target="_blank" rel="external">https://github.com/suvojit-0x55aa/mixed-precision-pytorch</a></p>
+<h3 id="2-2-使用Nvidia-apex库"><a href="#2-2-使用Nvidia-apex库" class="headerlink" title="2.2 使用Nvidia apex库"></a>2.2 使用Nvidia apex库</h3><p>库地址：<a href="https://github.com/NVIDIA/apex" target="_blank" rel="external">https://github.com/NVIDIA/apex</a></p>
+<p>Nvidia 官方apex使用教程：<a href="http://on-demand.gputechconf.com/gtc-cn/2018/pdf/CH8302.pdf" target="_blank" rel="external">http://on-demand.gputechconf.com/gtc-cn/2018/pdf/CH8302.pdf</a></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a href="http://kevinlt.top/2018/09/14/mixed_precision_training/" target="_blank" rel="external">混合精度训练</a></li>
+</ol>
 
-      <h2 class="post-title">
+      
+    </div>
+
+    <div>
+      
         
-            <a class="post-title-link" href="/2017/06/26/开篇2017/" itemprop="url">
-              
-                <span itemprop="name">开篇2017</span>
-              
-            </a>
+
+      
+    </div>
+
+    <div>
+      
         
-      </h2>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-06-26T20:01:05+08:00"
-              content="2017-06-26" >
-          06-26
-        </time>
-      </div>
+      
+    </div>
 
-    </header>
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DL/" rel="tag"># DL</a>
+          
+            <a href="/tags/Paper/" rel="tag"># Paper</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/30/18_3_30/pcl_kdtree_and_octree/" rel="next" title="PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍">
+                <i class="fa fa-chevron-left"></i> PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/24/19_3_24/My-Paper-Lib-2018/" rel="prev" title="My Paper Lib 2018">
+                My Paper Lib 2018 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </article>
 
 
-    
-  </div>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -352,6 +508,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -371,8 +531,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/uploads/MyBlogAvatar.png"
@@ -454,6 +623,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Materials"><span class="nav-number">2.</span> <span class="nav-text">2. Related Materials</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Method"><span class="nav-number">3.</span> <span class="nav-text">3. Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-直接在python2的pytorch训练框架中修改可实现："><span class="nav-number">3.1.</span> <span class="nav-text">2.1 直接在python2的pytorch训练框架中修改可实现：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-使用Nvidia-apex库"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 使用Nvidia apex库</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -568,10 +753,10 @@
 
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
@@ -761,26 +946,6 @@
   
 
   
-  
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-          processEscapes: true,
-          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-        }
-      });
-    </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for (i=0; i < all.length; i += 1) {
-          all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-      });
-    </script>
-    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
 
 
