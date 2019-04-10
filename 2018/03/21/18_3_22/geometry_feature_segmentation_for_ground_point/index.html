@@ -81,7 +81,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="PCL,ROS," />
+  <meta name="keywords" content="ROS,PCL," />
 
 
 
@@ -98,7 +98,7 @@
 
 
 <meta name="description" content="欢迎访问我的个人博客： zengzeyu.com 前言 激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：  水平面校准 法向量 栅格高度差 栅格最低高度以上0.2米 绝对高度 平均高度  以上方法基于假设是地面点云所构成的地面为平面，而不是弧面，当然对于有倾斜角度的地">
-<meta name="keywords" content="PCL,ROS">
+<meta name="keywords" content="ROS,PCL">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于几何特征的地面点云分割">
 <meta property="og:url" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/index.html">
@@ -533,9 +533,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/PCL/" rel="tag"># PCL</a>
-          
             <a href="/tags/ROS/" rel="tag"># ROS</a>
+          
+            <a href="/tags/PCL/" rel="tag"># PCL</a>
           
         </div>
       
@@ -548,8 +548,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/21/18_3_22/Effective-c++-1.0/" rel="next" title="Effective c++ 1.0">
-                <i class="fa fa-chevron-left"></i> Effective c++ 1.0
+              <a href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" rel="next" title="KITTI unorganised cloud to organised cloud">
+                <i class="fa fa-chevron-left"></i> KITTI unorganised cloud to organised cloud
               </a>
             
           </div>
@@ -558,8 +558,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" rel="prev" title="KITTI unorganised cloud to organised cloud">
-                KITTI unorganised cloud to organised cloud <i class="fa fa-chevron-right"></i>
+              <a href="/2018/03/21/18_3_22/Effective-c++-1.0/" rel="prev" title="Effective c++ 1.0">
+                Effective c++ 1.0 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -775,6 +775,8 @@
   
 
 
+  
+
 
 
 
@@ -802,6 +804,9 @@
 
   
   <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
 
 
   
