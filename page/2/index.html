@@ -319,7 +319,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -338,7 +338,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/" itemprop="url">点云降采样输入到caffe数据输入层</a></h1>
+                <a class="post-title-link" href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" itemprop="url">KITTI unorganised cloud to organised cloud</a></h1>
         
 
         <div class="post-meta">
@@ -390,7 +390,7 @@
 
           
           
-             <span id="/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/" class="leancloud_visitors" data-flag-title="点云降采样输入到caffe数据输入层">
+             <span id="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" class="leancloud_visitors" data-flag-title="KITTI unorganised cloud to organised cloud">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -420,13 +420,13 @@
       
         
           
-          欢迎访问我的个人博客：zegnzeyu.com
+          欢迎访问我的个人博客： zengzeyu.com
 前言
-KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出尺寸为 HxW = 64x4500， 本文准备复现论文 CNN for Very Fast Ground Segmentati
+KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《KITTI - 二进制点云数据集》。KITTI下载点云数据集为 unorganised ， 这为计算带来了麻烦，本文将无序点云进行排序生成有序点（organiesd）。
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/#more" rel="contents">
+            <a class="btn" href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -624,7 +624,7 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/cpp_string_operation/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/cnpy_note/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -643,7 +643,7 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/15/18_3_15/cpp_string_operation/" itemprop="url">c++ string 操作汇总</a></h1>
+                <a class="post-title-link" href="/2018/03/15/18_3_15/cnpy_note/" itemprop="url">cnpy 库使用笔记</a></h1>
         
 
         <div class="post-meta">
@@ -678,8 +678,8 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index">
-                    <span itemprop="name">C++</span>
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
                   </a>
                 </span>
 
@@ -695,7 +695,7 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
 
           
           
-             <span id="/2018/03/15/18_3_15/cpp_string_operation/" class="leancloud_visitors" data-flag-title="c++ string 操作汇总">
+             <span id="/2018/03/15/18_3_15/cnpy_note/" class="leancloud_visitors" data-flag-title="cnpy 库使用笔记">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -725,12 +725,13 @@ KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出
       
         
           
-          前言
-作为传递信息的载体string数据类型广泛应用于各种编程语言中，尤其在轻量化语言 Python 中发挥的淋漓尽致，通过string传递信息 Python 使各个模块组装在一起完成指定的工作任务，这也是 Python 被称为“胶水语言”的原因。本文着眼于 c++ 中string的应用。首先建议先
+          欢迎访问我的个人博客：zengzeyu.com
+前言
+在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/15/18_3_15/cpp_string_operation/#more" rel="contents">
+            <a class="btn" href="/2018/03/15/18_3_15/cnpy_note/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -928,7 +929,7 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/cnpy_note/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/18_3_15/cpp_string_operation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -947,7 +948,7 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/15/18_3_15/cnpy_note/" itemprop="url">cnpy 库使用笔记</a></h1>
+                <a class="post-title-link" href="/2018/03/15/18_3_15/cpp_string_operation/" itemprop="url">c++ string 操作汇总</a></h1>
         
 
         <div class="post-meta">
@@ -982,8 +983,8 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/categories/C/" itemprop="url" rel="index">
+                    <span itemprop="name">C++</span>
                   </a>
                 </span>
 
@@ -999,7 +1000,7 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
 
           
           
-             <span id="/2018/03/15/18_3_15/cnpy_note/" class="leancloud_visitors" data-flag-title="cnpy 库使用笔记">
+             <span id="/2018/03/15/18_3_15/cpp_string_operation/" class="leancloud_visitors" data-flag-title="c++ string 操作汇总">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1029,13 +1030,12 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
       
         
           
-          欢迎访问我的个人博客：zengzeyu.com
-前言
-在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥
+          前言
+作为传递信息的载体string数据类型广泛应用于各种编程语言中，尤其在轻量化语言 Python 中发挥的淋漓尽致，通过string传递信息 Python 使各个模块组装在一起完成指定的工作任务，这也是 Python 被称为“胶水语言”的原因。本文着眼于 c++ 中string的应用。首先建议先
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/15/18_3_15/cnpy_note/#more" rel="contents">
+            <a class="btn" href="/2018/03/15/18_3_15/cpp_string_operation/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
