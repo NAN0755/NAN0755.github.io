@@ -5,7 +5,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2019/03/24/19_3_24/My-Paper-Lib-2019/</loc>
-    <lastmod>2019-05-03T10:54:56.762Z</lastmod>
+    <lastmod>2019-05-18T12:44:03.223Z</lastmod>
     <data>
         <display>
         <title>My Paper Lib 2019</title>
@@ -24,7 +24,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision%20Training%20of%20Deep%20Neural%20Networks/</loc>
-    <lastmod>2019-03-24T11:37:00.231Z</lastmod>
+    <lastmod>2019-03-24T11:37:02.000Z</lastmod>
     <data>
         <display>
         <title>Mixed-Precision Training of Deep Neural Networks</title>
@@ -43,7 +43,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2019/03/24/19_3_24/My-Paper-Lib-2018/</loc>
-    <lastmod>2019-03-24T11:04:03.440Z</lastmod>
+    <lastmod>2019-03-24T11:04:04.000Z</lastmod>
     <data>
         <display>
         <title>My Paper Lib 2018</title>
@@ -62,7 +62,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/30/18_3_30/pcl_kdtree_and_octree/</loc>
-    <lastmod>2018-04-07T15:08:47.582Z</lastmod>
+    <lastmod>2018-04-07T15:08:48.000Z</lastmod>
     <data>
         <display>
         <title>PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍</title>
@@ -149,7 +149,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/24/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</loc>
-    <lastmod>2018-03-24T15:24:50.391Z</lastmod>
+    <lastmod>2018-03-24T15:24:52.000Z</lastmod>
     <data>
         <display>
         <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</title>
@@ -171,7 +171,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/</loc>
-    <lastmod>2018-03-22T14:47:00.397Z</lastmod>
+    <lastmod>2018-03-22T14:47:02.000Z</lastmod>
     <data>
         <display>
         <title>KITTI unorganised cloud to organised cloud</title>
@@ -193,7 +193,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/</loc>
-    <lastmod>2018-03-22T14:46:50.378Z</lastmod>
+    <lastmod>2018-03-22T14:46:52.000Z</lastmod>
     <data>
         <display>
         <title>基于几何特征的地面点云分割</title>
@@ -215,7 +215,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/21/18_3_22/Effective-c++-1.0/</loc>
-    <lastmod>2018-03-22T14:46:38.103Z</lastmod>
+    <lastmod>2018-03-22T14:46:40.000Z</lastmod>
     <data>
         <display>
         <title>Effective c++ 1.0</title>
@@ -235,7 +235,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2017/06/26/%E5%BC%80%E7%AF%872017/</loc>
-    <lastmod>2018-03-22T14:37:43.125Z</lastmod>
+    <lastmod>2018-03-22T14:37:44.000Z</lastmod>
     <data>
         <display>
         <title>开篇2017</title>
@@ -254,7 +254,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/15/18_3_15/cnpy_note/</loc>
-    <lastmod>2018-03-15T15:26:27.554Z</lastmod>
+    <lastmod>2018-03-15T15:26:28.000Z</lastmod>
     <data>
         <display>
         <title>cnpy 库使用笔记</title>
@@ -274,7 +274,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/15/18_3_15/kitti_bin_to_pcd/</loc>
-    <lastmod>2018-03-15T15:18:53.425Z</lastmod>
+    <lastmod>2018-03-15T15:18:54.000Z</lastmod>
     <data>
         <display>
         <title>KITTI 原始bin格式数据集转PCD格式</title>
@@ -296,7 +296,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/15/18_3_15/fcn_alexnet_pcl/</loc>
-    <lastmod>2018-03-15T15:17:46.719Z</lastmod>
+    <lastmod>2018-03-15T15:17:48.000Z</lastmod>
     <data>
         <display>
         <title>FCN-PCL 应用解析</title>
@@ -318,7 +318,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/15/18_3_15/cpp_string_operation/</loc>
-    <lastmod>2018-03-15T15:16:35.298Z</lastmod>
+    <lastmod>2018-03-15T15:16:36.000Z</lastmod>
     <data>
         <display>
         <title>c++ string 操作汇总</title>
@@ -338,7 +338,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/08/18_3_08/ROS_Node%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%89%93%E6%96%AD%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B/</loc>
-    <lastmod>2018-03-08T23:59:07.739Z</lastmod>
+    <lastmod>2018-03-08T23:59:08.000Z</lastmod>
     <data>
         <display>
         <title>ROS Node 之间通信打断操作实例</title>
@@ -360,7 +360,7 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/08/18_3_08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2018-03-08T14:41:27.547Z</lastmod>
+    <lastmod>2018-03-08T14:41:28.000Z</lastmod>
     <data>
         <display>
         <title>NumPy学习笔记</title>
@@ -382,17 +382,17 @@
     
   <url>
     <loc>http://zengzeyu.com/2018/03/08/18_3_08/Caffe%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B9%8BAlexNet_Caffenet_py/</loc>
-    <lastmod>2018-03-08T14:40:07.834Z</lastmod>
+    <lastmod>2018-03-08T14:40:08.000Z</lastmod>
     <data>
         <display>
         <title>Caffe源代码学习 — AlexNet(Caffenet.py)</title>
         <pubTime>2018-03-08T15:47:44.000Z</pubTime>
         
+        <tag>Caffe</tag>
+         
         <tag>Python</tag>
          
         <tag>DL</tag>
-         
-        <tag>Caffe</tag>
          
          
            
