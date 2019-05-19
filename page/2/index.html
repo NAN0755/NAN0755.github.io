@@ -319,7 +319,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/Effective-c++-1.0/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -338,7 +338,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/21/18_3_22/Effective-c++-1.0/" itemprop="url">Effective c++ 1.0</a></h1>
+                <a class="post-title-link" href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" itemprop="url">KITTI unorganised cloud to organised cloud</a></h1>
         
 
         <div class="post-meta">
@@ -373,8 +373,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/c/" itemprop="url" rel="index">
-                    <span itemprop="name">c++</span>
+                  <a href="/categories/ROS/" itemprop="url" rel="index">
+                    <span itemprop="name">ROS</span>
                   </a>
                 </span>
 
@@ -390,7 +390,7 @@
 
           
           
-             <span id="/2018/03/21/18_3_22/Effective-c++-1.0/" class="leancloud_visitors" data-flag-title="Effective c++ 1.0">
+             <span id="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" class="leancloud_visitors" data-flag-title="KITTI unorganised cloud to organised cloud">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -421,11 +421,12 @@
         
           
           欢迎访问我的个人博客： zengzeyu.com
-Tip在针对类中非 public 成员函数编写函数接口时，不应该像 public 成员函数一样不写传参变量。非 public 成员函数传参变量在函数内部被调用时，有利于及时输出数据进行可视化，在调用该非 public 成员函数的函数内部进行调试时，可
+前言
+KITTI 点云数据集 bin 格式转 pcd 格式请参照本人博客文章： 《KITTI - 二进制点云数据集》。KITTI下载点云数据集为 unorganised ， 这为计算带来了麻烦，本文将无序点云进行排序生成有序点（organiesd）。
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/21/18_3_22/Effective-c++-1.0/#more" rel="contents">
+            <a class="btn" href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1080,7 +1081,7 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/08/18_3_08/Caffe源代码学习之AlexNet_Caffenet_py/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/08/18_3_08/Numpy学习笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -1099,7 +1100,7 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/08/18_3_08/Caffe源代码学习之AlexNet_Caffenet_py/" itemprop="url">Caffe源代码学习 — AlexNet(Caffenet.py)</a></h1>
+                <a class="post-title-link" href="/2018/03/08/18_3_08/Numpy学习笔记/" itemprop="url">NumPy学习笔记</a></h1>
         
 
         <div class="post-meta">
@@ -1134,8 +1135,8 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Caffe/" itemprop="url" rel="index">
-                    <span itemprop="name">Caffe</span>
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
                   </a>
                 </span>
 
@@ -1151,7 +1152,7 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
 
           
           
-             <span id="/2018/03/08/18_3_08/Caffe源代码学习之AlexNet_Caffenet_py/" class="leancloud_visitors" data-flag-title="Caffe源代码学习 — AlexNet(Caffenet.py)">
+             <span id="/2018/03/08/18_3_08/Numpy学习笔记/" class="leancloud_visitors" data-flag-title="NumPy学习笔记">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1181,11 +1182,12 @@ FCN(fully convolutional networks， 全卷积神经网络)的图片语义分割�
       
         
           
-          导言源码位置：caffe/examples/pycaffe/caffenet.py该文件源代码是经典模型AlexNet的Caffe实现，有兴趣的小伙伴去拜读一下论文: ImageNet Classification with Deep Convolutional Neural Networks.pd
+          新建Numpy结构型数据：
+12345import numpy as np student = np.dtype([(&apos;name&apos;,&apos;S20&apos;), (&apos;age&apos;,np.int8), (&apos;marks&apos;, np.float4
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/08/18_3_08/Caffe源代码学习之AlexNet_Caffenet_py/#more" rel="contents">
+            <a class="btn" href="/2018/03/08/18_3_08/Numpy学习笔记/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1388,7 +1390,7 @@ save index： 保存当前帧PCD文
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/08/18_3_08/Numpy学习笔记/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/08/18_3_08/Caffe源代码学习之AlexNet_Caffenet_py/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -1407,7 +1409,7 @@ save index： 保存当前帧PCD文
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/08/18_3_08/Numpy学习笔记/" itemprop="url">NumPy学习笔记</a></h1>
+                <a class="post-title-link" href="/2018/03/08/18_3_08/Caffe源代码学习之AlexNet_Caffenet_py/" itemprop="url">Caffe源代码学习 — AlexNet(Caffenet.py)</a></h1>
         
 
         <div class="post-meta">
@@ -1442,8 +1444,8 @@ save index： 保存当前帧PCD文
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/categories/Caffe/" itemprop="url" rel="index">
+                    <span itemprop="name">Caffe</span>
                   </a>
                 </span>
 
@@ -1459,7 +1461,7 @@ save index： 保存当前帧PCD文
 
           
           
-             <span id="/2018/03/08/18_3_08/Numpy学习笔记/" class="leancloud_visitors" data-flag-title="NumPy学习笔记">
+             <span id="/2018/03/08/18_3_08/Caffe源代码学习之AlexNet_Caffenet_py/" class="leancloud_visitors" data-flag-title="Caffe源代码学习 — AlexNet(Caffenet.py)">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1489,12 +1491,11 @@ save index： 保存当前帧PCD文
       
         
           
-          新建Numpy结构型数据：
-12345import numpy as np student = np.dtype([(&apos;name&apos;,&apos;S20&apos;), (&apos;age&apos;,np.int8), (&apos;marks&apos;, np.float4
+          导言源码位置：caffe/examples/pycaffe/caffenet.py该文件源代码是经典模型AlexNet的Caffe实现，有兴趣的小伙伴去拜读一下论文: ImageNet Classification with Deep Convolutional Neural Networks.pd
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/08/18_3_08/Numpy学习笔记/#more" rel="contents">
+            <a class="btn" href="/2018/03/08/18_3_08/Caffe源代码学习之AlexNet_Caffenet_py/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
