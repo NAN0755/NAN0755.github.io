@@ -1353,7 +1353,7 @@ By: zengzeyu  2019.01.16
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zeyu">
@@ -1372,7 +1372,7 @@ By: zengzeyu  2019.01.16
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" itemprop="url">基于几何特征的地面点云分割</a></h1>
+                <a class="post-title-link" href="/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/" itemprop="url">点云降采样输入到caffe数据输入层</a></h1>
         
 
         <div class="post-meta">
@@ -1424,7 +1424,7 @@ By: zengzeyu  2019.01.16
 
           
           
-             <span id="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/" class="leancloud_visitors" data-flag-title="基于几何特征的地面点云分割">
+             <span id="/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/" class="leancloud_visitors" data-flag-title="点云降采样输入到caffe数据输入层">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1454,19 +1454,13 @@ By: zengzeyu  2019.01.16
       
         
           
-          欢迎访问我的个人博客： zengzeyu.com
+          欢迎访问我的个人博客：zegnzeyu.com
 前言
-激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：
-
-水平面校准
-法向量
-栅格高度差
-栅格最低高度以上0.2米
-绝
+KITTI 数据根据上篇博文 KITTI unorganised cloud to organised cloud 输出尺寸为 HxW = 64x4500， 本文准备复现论文 CNN for Very Fast Ground Segmentati
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/#more" rel="contents">
+            <a class="btn" href="/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>

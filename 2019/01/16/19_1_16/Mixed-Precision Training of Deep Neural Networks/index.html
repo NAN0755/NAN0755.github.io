@@ -104,14 +104,14 @@
 <meta property="og:url" content="http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision Training of Deep Neural Networks/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
 <meta property="og:description" content="By: zengzeyu  2019.01.16  1. Introduction由于FP16的精度损失问题，如果我们在神经网络的训练过程中直接将网络参数以FP16的形式进行计算，可能会出现数值不稳定的情况而导致模型性能下降。 对此，百度和NVIDIA的研究院在Mixed Precision Training这一论文中提出混合精度训练的方法，在充分利用FP16加速运算的优点的同时保证了模型的精度">
-<meta property="og:image" content="http://kevinlt.top/img/in-post/master_copy.png">
-<meta property="og:image" content="http://kevinlt.top/img/in-post/gradient.png">
-<meta property="og:image" content="http://kevinlt.top/img/in-post/activation_gradients.png">
-<meta property="og:updated_time" content="2019-03-24T11:37:02.000Z">
+<meta property="og:image" content="http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision%20Training%20of%20Deep%20Neural%20Networks/img/b89a595f09deb2caf14d44176f931440.png">
+<meta property="og:image" content="http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision%20Training%20of%20Deep%20Neural%20Networks/img/20190628220843.png">
+<meta property="og:image" content="http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision%20Training%20of%20Deep%20Neural%20Networks/img/ssd_ag_log_histo_coarse.png">
+<meta property="og:updated_time" content="2019-06-28T14:09:20.369Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mixed-Precision Training of Deep Neural Networks">
 <meta name="twitter:description" content="By: zengzeyu  2019.01.16  1. Introduction由于FP16的精度损失问题，如果我们在神经网络的训练过程中直接将网络参数以FP16的形式进行计算，可能会出现数值不稳定的情况而导致模型性能下降。 对此，百度和NVIDIA的研究院在Mixed Precision Training这一论文中提出混合精度训练的方法，在充分利用FP16加速运算的优点的同时保证了模型的精度">
-<meta name="twitter:image" content="http://kevinlt.top/img/in-post/master_copy.png">
+<meta name="twitter:image" content="http://zengzeyu.com/2019/01/16/19_1_16/Mixed-Precision%20Training%20of%20Deep%20Neural%20Networks/img/b89a595f09deb2caf14d44176f931440.png">
 
 
 
@@ -404,17 +404,17 @@
 <h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>由于FP16的精度损失问题，如果我们在神经网络的训练过程中直接将网络参数以FP16的形式进行计算，可能会出现数值不稳定的情况而导致模型性能下降。 对此，百度和NVIDIA的研究院在<a href="https://arxiv.org/abs/1710.03740" target="_blank" rel="external">Mixed Precision Training</a>这一论文中提出混合精度训练的方法，在充分利用FP16加速运算的优点的同时保证了模型的精度。下面介绍其论文中的主要要点。</p>
 <p>FP32 master copy of weigths</p>
 <p>FP32 master copy即维护一份网络中FP16精度参数的FP32精度的拷贝。 计算过程如下图所示，在前向传播过程中，使用由master copy类型转换得到的FP16精度参数进行运算； 而在反向传播计算完梯度后，将梯度作用到master copy上以在FP32精度上进行参数更新。</p>
-<p><img src="http://kevinlt.top/img/in-post/master_copy.png" alt="FP32 master copy">FP32 master copy</p>
+<p><img src="./img/b89a595f09deb2caf14d44176f931440.png" alt="FP32 master copy">FP32 master copy</p>
 <p>这么做的主要原因有两个。</p>
 <p>第一是由于若直接在FP16精度下进行参数更新，存在梯度过小而导致更新值为0的情况。 下图是某次模型训练过程汇总网络参数的梯度的分布直方图，有5%的梯度值是分布在小于2-24的区间内的。 若优化器直接将这部分梯度乘上学习率作用到FP16精度参数的更新上，那么更新值将为0。 这将影响到模型的准确率。 但是如果是更新值是作用到FP32精度的master copy上时，则不会出现更新值下溢为0的情况。</p>
 <p>第二是如果参数相较于其更新值过大的话，也可能会由于浮点数加法机制的缘故而导致更新值为0。 在浮点数加法过程中，需要将两数对齐进行运算。 如果参数的大小是其更新值的2048倍或者更大的话，那么更新值的小数位需要右移至少11位才能与前者对齐，这超出了FP16精度的表示范围。 在FP32精度下则一般不会出现这种问题。</p>
 <ol>
-<li><p><img src="http://kevinlt.top/img/in-post/gradient.png" alt="gradient histogram">gradient histogram</p>
+<li><p><img src="./img/20190628220843.png" alt="gradient histogram">gradient histogram</p>
 </li>
 <li><p>loss scaling</p>
 <p>loss scaling即将loss值放大，以保证反向传播过程当中梯度落在FP16精度能表示的范围之间。</p>
 <p>下图是Multibox SSD网络在训练过程过程中激活单元梯度的分布情况。其中有67%的梯度落在了小于2-24的范围内，在FP16精度下无法表示。 如果不对梯度进行放大，在FP16精度下对该网络进行训练将导致发散。 对激活梯度进行放大，再对参数梯度缩小相应倍数，即可解决该问题。</p>
-<p><img src="http://kevinlt.top/img/in-post/activation_gradients.png" alt="activation gradients">activation gradients</p>
+<p><img src="./img/ssd_ag_log_histo_coarse.png" alt="activation gradients">activation gradients</p>
 <p>根据梯度计算的链式法则，对梯度放大的最简单的方法就是放大loss。 放大因子的大小选择没有固定的标准，对于上述Multibox SSD网络，作者尝试了8-32K的放大因子，均训练成功了。 只要保证放大后的梯度不超过FP16精度的表示上限（65504），选择较大的放大因子并无副作用。[1]</p>
 </li>
 </ol>
