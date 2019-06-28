@@ -4,8 +4,138 @@
 
     
   <url>
+    <loc>http://zengzeyu.com/2018/03/30/18_3_30/pcl_kdtree_and_octree/</loc>
+    <lastmod>2019-06-28T16:11:19.126Z</lastmod>
+    <data>
+        <display>
+        <title>PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍</title>
+        <pubTime>2018-03-30T14:55:54.000Z</pubTime>
+        
+        <tag>PCL</tag>
+         
+         
+           
+             
+              <breadCrumb title="PCL" url="http://zengzeyu.com/categories/PCL/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://zengzeyu.com/2018/03/28/18_3_30/fix_nan_point_in_point_cloud/</loc>
+    <lastmod>2019-06-28T15:56:28.131Z</lastmod>
+    <data>
+        <display>
+        <title>激光雷达点云数据内部空点补全</title>
+        <pubTime>2018-03-28T14:55:54.000Z</pubTime>
+        
+        <tag>ROS</tag>
+         
+        <tag>PCL</tag>
+         
+         
+           
+             
+              <breadCrumb title="ROS" url="http://zengzeyu.com/categories/ROS/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://zengzeyu.com/2018/03/28/18_3_30/kitti_ground_point_seg/</loc>
+    <lastmod>2019-06-28T15:52:19.363Z</lastmod>
+    <data>
+        <display>
+        <title>KITTI 原始点云数据（PCL）地面点分割</title>
+        <pubTime>2018-03-28T14:55:54.000Z</pubTime>
+        
+        <tag>ROS</tag>
+         
+        <tag>PCL</tag>
+         
+         
+           
+             
+              <breadCrumb title="ROS" url="http://zengzeyu.com/categories/ROS/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://zengzeyu.com/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/</loc>
+    <lastmod>2019-06-28T15:40:16.601Z</lastmod>
+    <data>
+        <display>
+        <title>点云降采样输入到caffe数据输入层</title>
+        <pubTime>2018-03-21T14:55:54.000Z</pubTime>
+        
+        <tag>ROS</tag>
+         
+        <tag>PCL</tag>
+         
+         
+           
+             
+              <breadCrumb title="ROS" url="http://zengzeyu.com/categories/ROS/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://zengzeyu.com/2018/03/24/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</loc>
+    <lastmod>2019-06-28T15:35:04.888Z</lastmod>
+    <data>
+        <display>
+        <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</title>
+        <pubTime>2018-03-24T14:55:54.000Z</pubTime>
+        
+        <tag>PCL</tag>
+         
+        <tag>CNN</tag>
+         
+         
+           
+             
+              <breadCrumb title="Paper" url="http://zengzeyu.com/categories/Paper/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/</loc>
+    <lastmod>2019-06-28T15:14:00.483Z</lastmod>
+    <data>
+        <display>
+        <title>KITTI unorganised cloud to organised cloud</title>
+        <pubTime>2018-03-21T14:55:54.000Z</pubTime>
+        
+        <tag>ROS</tag>
+         
+        <tag>PCL</tag>
+         
+         
+           
+             
+              <breadCrumb title="ROS" url="http://zengzeyu.com/categories/ROS/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/</loc>
-    <lastmod>2019-06-28T15:10:15.686Z</lastmod>
+    <lastmod>2019-06-28T15:13:11.049Z</lastmod>
     <data>
         <display>
         <title>基于几何特征的地面点云分割</title>
@@ -33,9 +163,9 @@
         <title>FCN-PCL 应用解析</title>
         <pubTime>2018-03-15T15:47:44.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>DL</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -75,11 +205,11 @@
         <title>Caffe源代码学习 — AlexNet(Caffenet.py)</title>
         <pubTime>2018-03-08T15:47:44.000Z</pubTime>
         
+        <tag>Caffe</tag>
+         
         <tag>Python</tag>
          
         <tag>DL</tag>
-         
-        <tag>Caffe</tag>
          
          
            
@@ -144,136 +274,6 @@
          
          
            
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://zengzeyu.com/2018/03/30/18_3_30/pcl_kdtree_and_octree/</loc>
-    <lastmod>2018-04-07T15:08:48.000Z</lastmod>
-    <data>
-        <display>
-        <title>PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍</title>
-        <pubTime>2018-03-30T14:55:54.000Z</pubTime>
-        
-        <tag>PCL</tag>
-         
-         
-           
-             
-              <breadCrumb title="PCL" url="http://zengzeyu.com/categories/PCL/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://zengzeyu.com/2018/03/28/18_3_30/fix_nan_point_in_point_cloud/</loc>
-    <lastmod>2018-04-02T06:37:24.000Z</lastmod>
-    <data>
-        <display>
-        <title>激光雷达点云数据内部空点补全算法</title>
-        <pubTime>2018-03-28T14:55:54.000Z</pubTime>
-        
-        <tag>ROS</tag>
-         
-        <tag>PCL</tag>
-         
-         
-           
-             
-              <breadCrumb title="ROS" url="http://zengzeyu.com/categories/ROS/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://zengzeyu.com/2018/03/28/18_3_30/kitti_ground_point_seg/</loc>
-    <lastmod>2018-04-02T06:36:28.000Z</lastmod>
-    <data>
-        <display>
-        <title>KITTI 原始点云数据（PCL）地面点分割</title>
-        <pubTime>2018-03-28T14:55:54.000Z</pubTime>
-        
-        <tag>ROS</tag>
-         
-        <tag>PCL</tag>
-         
-         
-           
-             
-              <breadCrumb title="ROS" url="http://zengzeyu.com/categories/ROS/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://zengzeyu.com/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/</loc>
-    <lastmod>2018-04-02T06:31:58.000Z</lastmod>
-    <data>
-        <display>
-        <title>点云降采样输入到caffe数据输入层</title>
-        <pubTime>2018-03-21T14:55:54.000Z</pubTime>
-        
-        <tag>ROS</tag>
-         
-        <tag>PCL</tag>
-         
-         
-           
-             
-              <breadCrumb title="ROS" url="http://zengzeyu.com/categories/ROS/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://zengzeyu.com/2018/03/24/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</loc>
-    <lastmod>2018-03-24T15:24:52.000Z</lastmod>
-    <data>
-        <display>
-        <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</title>
-        <pubTime>2018-03-24T14:55:54.000Z</pubTime>
-        
-        <tag>PCL</tag>
-         
-        <tag>CNN</tag>
-         
-         
-           
-             
-              <breadCrumb title="Paper" url="http://zengzeyu.com/categories/Paper/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://zengzeyu.com/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/</loc>
-    <lastmod>2018-03-22T14:47:02.000Z</lastmod>
-    <data>
-        <display>
-        <title>KITTI unorganised cloud to organised cloud</title>
-        <pubTime>2018-03-21T14:55:54.000Z</pubTime>
-        
-        <tag>ROS</tag>
-         
-        <tag>PCL</tag>
-         
-         
-           
-             
-              <breadCrumb title="ROS" url="http://zengzeyu.com/categories/ROS/"/>
-          
         </display>
     </data>
     </url>

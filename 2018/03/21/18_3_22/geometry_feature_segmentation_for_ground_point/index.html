@@ -104,22 +104,22 @@
 <meta property="og:url" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
 <meta property="og:description" content="欢迎访问我的个人博客： zengzeyu.com 前言 激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：  水平面校准 法向量 栅格高度差 栅格最低高度以上0.2米 绝对高度 平均高度  以上方法基于假设是地面点云所构成的地面为平面，而不是弧面，当然对于有倾斜角度的地">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-8fbf0adb43fb73a9.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-7a000d1ce9475827.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-f045d011c812ae05.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-d1c1dc002a216fae.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-b1bd69d9d7e04181.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-3f9f58ddc8d145b9.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-350e221b7d7b3bcd.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-b59b735d90d94aa3.png">
-<meta property="og:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-2d8f34015aa60324.png">
-<meta property="og:updated_time" content="2019-06-28T15:10:15.686Z">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-8fbf0adb43fb73a9.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-7a000d1ce9475827.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-f045d011c812ae05.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-d1c1dc002a216fae.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-b1bd69d9d7e04181.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-3f9f58ddc8d145b9.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-350e221b7d7b3bcd.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-b59b735d90d94aa3.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-2d8f34015aa60324.png">
+<meta property="og:updated_time" content="2019-06-28T15:13:11.049Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于几何特征的地面点云分割">
 <meta name="twitter:description" content="欢迎访问我的个人博客： zengzeyu.com 前言 激光雷达扫描得到的点云含有大部分地面点，这对后续障碍物点云的分类、识别和跟踪带来麻烦，所以需要首先滤波滤掉。传统的基于几何特征的滤波是最基本最简单的方法，目前本文尝试的有如下几种：  水平面校准 法向量 栅格高度差 栅格最低高度以上0.2米 绝对高度 平均高度  以上方法基于假设是地面点云所构成的地面为平面，而不是弧面，当然对于有倾斜角度的地">
-<meta name="twitter:image" content="http://zengzeyu.com/2018/03/21/18_3_22/geometry_feature_segmentation_for_ground_point/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png">
+<meta name="twitter:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png">
 
 
 
@@ -451,7 +451,7 @@
 <p><strong>1. 分割出大致地面点</strong><br>这一步可使用栅格高度差、绝对高度、法向量等方法来进行分割，目的只需要找到大部分地面点即可，不用进行精确的分割。本文通过法向量进行分割找到地面点。</p>
 <p><strong>2. 找到地点所在平面</strong><br>通过PCL自带函数进行处理。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">bool estimateGroundPlane(PointCloudXYZI::Ptr &amp;in_cloud, PointCloudXYZI::Ptr &amp;out_cloud,</div><div class="line">                                   visualization_msgs::MarkerPtr &amp;plane_marker, const float in_distance_thre)</div><div class="line">&#123;</div><div class="line">    //plane segmentation</div><div class="line">    pcl::SACSegmentation&lt;pcl::PointXYZI&gt; plane_seg;</div><div class="line">    pcl::PointIndices::Ptr plane_inliers ( new pcl::PointIndices );</div><div class="line">    pcl::ModelCoefficients::Ptr plane_coefficients ( new pcl::ModelCoefficients );</div><div class="line">    plane_seg.setOptimizeCoefficients (true);</div><div class="line">    plane_seg.setModelType ( pcl::SACMODEL_PLANE );</div><div class="line">    plane_seg.setMethodType ( pcl::SAC_RANSAC );</div><div class="line">    plane_seg.setDistanceThreshold ( in_distance_thre );</div><div class="line">    plane_seg.setInputCloud ( in_cloud );</div><div class="line">    plane_seg.segment ( *plane_inliers, *plane_coefficients );</div><div class="line">    return true;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>通过上述代码找到平面之后，确定平面法向量就可以找到其到 <strong><em>z</em></strong> 轴的变换矩阵 <strong><em>T</em></strong> 。</p>
-<p><strong>3. 通过变换矩阵校准平面</strong><br>将原始点云与变换矩阵 <strong><em>T</em></strong> 作点积就可得到校准后点云。<br><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png" alt="校准点云(白色点为校准前点云，绿色点为校准后点云)"><br>从图左下方可观察到校准后点云与原始点云有一定距离，说明激光雷达在采集数据时，其 <strong><em>z</em></strong> 轴与地面法向量不平行，而且这种情况随时都在发生。自动驾驶车辆行驶过程中，路面随时都有小的颠簸，偶尔还会有较大颠簸，如通过城市道路中的减速带，转弯时速度过大等等情况。所以校准点云是很有必要的。</p>
+<p><strong>3. 通过变换矩阵校准平面</strong><br>将原始点云与变换矩阵 <strong><em>T</em></strong> 作点积就可得到校准后点云。<br><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png" alt="校准点云(白色点为校准前点云，绿色点为校准后点云)"><br>从图左下方可观察到校准后点云与原始点云有一定距离，说明激光雷达在采集数据时，其 <strong><em>z</em></strong> 轴与地面法向量不平行，而且这种情况随时都在发生。自动驾驶车辆行驶过程中，路面随时都有小的颠簸，偶尔还会有较大颠簸，如通过城市道路中的减速带，转弯时速度过大等等情况。所以校准点云是很有必要的。</p>
 <h3 id="1-2-栅格高度差方法"><a href="#1-2-栅格高度差方法" class="headerlink" title="1.2 栅格高度差方法"></a>1.2 栅格高度差方法</h3><hr>
 <h4 id="方法过程：-1"><a href="#方法过程：-1" class="headerlink" title="方法过程："></a>方法过程：</h4><ol>
 <li>根据栅格尺寸生成栅格</li>
@@ -459,8 +459,8 @@
 <li>比较 <strong><em>h</em></strong> 与预设高度差阈值 <strong><em>threshold</em></strong> 大小，对栅格进行分类</li>
 <li>根据栅格分类，对栅格内点进行分类</li>
 </ol>
-<h4 id="方法结果"><a href="#方法结果" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png" alt="鸟瞰图"></p>
-<p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-8fbf0adb43fb73a9.png" alt="右视图"></p>
+<h4 id="方法结果"><a href="#方法结果" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png" alt="鸟瞰图"></p>
+<p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-8fbf0adb43fb73a9.png" alt="右视图"></p>
 <h4 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h4><p>依据对每个栅格的高度差的大小进行分类，栅格高度差方法依赖于点云数据。栅格内地面点高度差特征符合栅格高度差方法，但是对于高平台仍然符合该特征，所以对于进行栅格话之后的高平台点仍然被分类为地面点。但是，该方法的分类出的地面点包含真实的地面点。</p>
 <h3 id="1-3-法向量方法"><a href="#1-3-法向量方法" class="headerlink" title="1.3 法向量方法"></a>1.3 法向量方法</h3><hr>
 <p>法向量方法基于假设为计算得到的地面点法向量为竖直向上或向下，即地面点法向量值为 <strong>（0, 0, 1）</strong> 或 <strong>（0, 0, -1）</strong> 。</p>
@@ -468,8 +468,8 @@
 <li>计算点法向量</li>
 <li>设定法向量阈值 <strong><em>threshold</em></strong> 进行点分类</li>
 </ol>
-<h4 id="方法结果-1"><a href="#方法结果-1" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-7a000d1ce9475827.png" alt="鸟瞰图"></p>
-<p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-f045d011c812ae05.png" alt="右视图"></p>
+<h4 id="方法结果-1"><a href="#方法结果-1" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-7a000d1ce9475827.png" alt="鸟瞰图"></p>
+<p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-f045d011c812ae05.png" alt="右视图"></p>
 <h4 id="结果分析-1"><a href="#结果分析-1" class="headerlink" title="结果分析"></a>结果分析</h4><p>根据法向量方法的假设，一定要先对点云进行校正，如果不进行校正，那么很可能出现某一帧没有地面点被分割出来的极端情况（激光雷达倾斜角度过大）。法向量方法与高度差方法结果类似，对于平台类型障碍物生成的点无法有效区分。所以可以看到右视图中有部分店漂浮与真实地面点上方。</p>
 <h3 id="1-4-栅格最低高度以上0-2米方法"><a href="#1-4-栅格最低高度以上0-2米方法" class="headerlink" title="1.4 栅格最低高度以上0.2米方法"></a>1.4 栅格最低高度以上0.2米方法</h3><hr>
 <p>栅格最低高度以上 <strong>0.2</strong> 米方法中的数值 <strong>0.2</strong> 可在 <strong>0.2</strong> 附近进行选取，有论文设置为 <strong>0.15</strong> 。此方法与栅格高度差方法类似，也是基于栅格内点的高度信息来进行点分类。不过该方法并没有对栅格进行地面栅格或障碍物栅格分类，而在每个栅格内进行点的分类，最后将所有栅格内的点汇总得到地面点。</p>
@@ -478,8 +478,8 @@
 <li>找到栅格内最低点，并储存其高度 <strong><em>h</em></strong></li>
 <li>找到栅格内点高度小于 <strong><em>h + 0.2</em></strong>，分类为地面点</li>
 </ol>
-<h4 id="方法结果-2"><a href="#方法结果-2" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-d1c1dc002a216fae.png" alt="鸟瞰图"></p>
-<p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-b1bd69d9d7e04181.png" alt="右视图"></p>
+<h4 id="方法结果-2"><a href="#方法结果-2" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-d1c1dc002a216fae.png" alt="鸟瞰图"></p>
+<p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-b1bd69d9d7e04181.png" alt="右视图"></p>
 <h4 id="结果分析-2"><a href="#结果分析-2" class="headerlink" title="结果分析"></a>结果分析</h4><p>栅格最低高度以上0.2米方法依赖于栅格内的最低点选取，当最地点正好是真实地面点时，结果较为正确，反之则不然。与栅格高度差方法类似，该方法对悬浮物无法处理。</p>
 <h3 id="1-5-绝对高度方法"><a href="#1-5-绝对高度方法" class="headerlink" title="1.5 绝对高度方法"></a>1.5 绝对高度方法</h3><hr>
 <p>绝对高度方法根据校准后点云高度进行分割，通过设定阈值将点云分为地面点和障碍物点。</p>
@@ -487,8 +487,8 @@
 <li>校准点云</li>
 <li>根据高度阈值 <strong><em>threshold</em></strong> 对点进行分类</li>
 </ol>
-<h4 id="方法结果-3"><a href="#方法结果-3" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-3f9f58ddc8d145b9.png" alt="鸟瞰图"></p>
-<p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-350e221b7d7b3bcd.png" alt="右视图"></p>
+<h4 id="方法结果-3"><a href="#方法结果-3" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-3f9f58ddc8d145b9.png" alt="鸟瞰图"></p>
+<p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-350e221b7d7b3bcd.png" alt="右视图"></p>
 <h4 id="结果分析-3"><a href="#结果分析-3" class="headerlink" title="结果分析"></a>结果分析</h4><p>绝对高度方法必须对校准点云进行操作，根据校准后点云通过设定高度阈值进行分类。从鸟瞰图可看出，远处有一部分地面点被分割为障碍物点，从结果右视图可看出，该方法对悬浮物可很好处理。</p>
 <h3 id="1-6-平均高度方法"><a href="#1-6-平均高度方法" class="headerlink" title="1.6 平均高度方法"></a>1.6 平均高度方法</h3><hr>
 <p>平均高度方法是对预处理后已经包含大部分地面点进行的处理，而不能单独进行使用。本文采用<strong>栅格最低点高度以上 <em>0.2</em> 米</strong>方法作为预处理，其他地面点预处理也可。该方法基于假设为，预处理分割后得到点中地面点为绝大部分点，从而可根据平均高度作为进一步滤波。</p>
@@ -497,8 +497,8 @@
 <li>计算 <strong>过程 1.</strong> 得到地面点的平均高度 <strong><em>h</em></strong></li>
 <li>以 <strong><em>h</em></strong> 为阈值再进行分割得到地面点</li>
 </ol>
-<h4 id="方法结果-4"><a href="#方法结果-4" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-b59b735d90d94aa3.png" alt="鸟瞰图"></p>
-<p><img src="images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-2d8f34015aa60324.png" alt="右视图"></p>
+<h4 id="方法结果-4"><a href="#方法结果-4" class="headerlink" title="方法结果"></a>方法结果</h4><p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-b59b735d90d94aa3.png" alt="鸟瞰图"></p>
+<p><img src="/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-2d8f34015aa60324.png" alt="右视图"></p>
 <h4 id="结果分析-4"><a href="#结果分析-4" class="headerlink" title="结果分析"></a>结果分析</h4><p>平均高度方法作为其他方法的一个小的补充，可对分割出的点悬浮物点进行进一步滤波。但对当大平台场景无法处理。</p>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><hr>
 <p>本文对基于几何特征方法 <strong>水平面校准方法</strong>、<strong>法向量方法</strong>、<strong>栅格高度差方法</strong>、<strong>栅格最低高度以上0.2米方法</strong>、<strong>绝对高度方法</strong>、<strong>平均高度方法</strong> 等方法进行了分别分析，对各自方法优缺点进行了探讨。各个方法可以进行合理组合来达到地面点分割效果。<br>这些方法可作为机器学习方法的数据集生成，为机器学习方法做好数据准备。</p>
@@ -548,8 +548,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" rel="next" title="KITTI unorganised cloud to organised cloud">
-                <i class="fa fa-chevron-left"></i> KITTI unorganised cloud to organised cloud
+              <a href="/2018/03/15/18_3_15/fcn_alexnet_pcl/" rel="next" title="FCN-PCL 应用解析">
+                <i class="fa fa-chevron-left"></i> FCN-PCL 应用解析
               </a>
             
           </div>
@@ -558,8 +558,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/03/21/18_3_30/down_sample_for_caffe_data_layer/" rel="prev" title="点云降采样输入到caffe数据输入层">
-                点云降采样输入到caffe数据输入层 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/03/21/18_3_22/Effective-c++-1.0/" rel="prev" title="Effective c++ 1.0">
+                Effective c++ 1.0 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

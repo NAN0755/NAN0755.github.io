@@ -104,17 +104,17 @@
 <meta property="og:url" content="http://zengzeyu.com/2018/03/24/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
 <meta property="og:description" content="前言 本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。 地面点分割方法 训练数据说明 首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 64x4500，本文每一帧数据为 64x360 ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 1° 的归类分为">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-9f36bdbffa079ed2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-2733dbe408f56512.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-816d4607cb5d3875.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-5119dbf286402ffb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-6bba27cb72e18258.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-3875bce36b9f2a46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2018-03-24T15:24:52.000Z">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/10028058-9f36bdbffa079ed2.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/10028058-2733dbe408f56512.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/10028058-816d4607cb5d3875.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/10028058-5119dbf286402ffb.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/10028058-6bba27cb72e18258.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/10028058-3875bce36b9f2a46.png">
+<meta property="og:updated_time" content="2019-06-28T15:35:04.888Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data">
 <meta name="twitter:description" content="前言 本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。 地面点分割方法 训练数据说明 首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 64x4500，本文每一帧数据为 64x360 ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 1° 的归类分为">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10028058-9f36bdbffa079ed2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://zengzeyu.com/images/18_3_24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/10028058-9f36bdbffa079ed2.png">
 
 
 
@@ -430,20 +430,20 @@
 <p>首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 <strong>64x4500</strong>，本文每一帧数据为 <strong>64x360</strong> ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 <strong>1°</strong> 的归类分为 <strong>360</strong> 份，每一份点云的信息提取某一个点或者平均信息作为点代表，代表点的特征和 <strong><em>label</em></strong> 填入格子中生成CNN所需训练数据。每个点 <strong><em>label</em></strong> 进行二分类，分为地面点和分地面点。点特征包括 <strong><em>P = [Px, Py, Pz, Pi, Pr]</em></strong> (<strong><em>[ 坐标x， 坐标y， 坐标z， 反射强度intensity， 距离range ]</em></strong>)。</p>
 <h2 id="A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）"><a href="#A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）" class="headerlink" title="A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）"></a>A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）</h2><hr>
 <p>为了将稀疏的3D点云数据应用的2D的CNN中，本文将其编码为2D的多信号通道数据储存在矩阵 <strong><em>M</em></strong> 中，如下图所示。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-9f36bdbffa079ed2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-9f36bdbffa079ed2.png" alt="image.png"></p>
 <p>矩阵M尺寸为 <strong><em>64x360</em></strong> ，降采样过程中，对一个格子内多个点进行平均取值作为代表。同时为了简化数据，<strong><em>[x,z]</em></strong> 计算得到的值代表距离，因为本文默认 <strong><em>Y</em></strong> 轴为高度方向，所以 <strong><em>x， z</em></strong> 值为对偶，可以采取此种方式进行简化数据。对于空格子，则从临近格子进行线性插值来生成该格子内值。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-2733dbe408f56512.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-2733dbe408f56512.png" alt="image.png"></p>
 <h2 id="B-训练数据集（Training-Dataset）"><a href="#B-训练数据集（Training-Dataset）" class="headerlink" title="B. 训练数据集（Training Dataset）"></a>B. 训练数据集（Training Dataset）</h2><hr>
 <p>训练数据集的重要性不容多说，本文自行开发了基于人工种子点选取的点云分割工具（semiautomatic tool for ground annotation，原理参考图像中的<a href="https://blog.csdn.net/shenziheng1/article/details/50878911" target="_blank" rel="external">区域增长算法</a>，只不过此处将点之间距离作为判断条件代替灰度值，同时发现当上下限为<strong><em>[0.03, 0.07]米</em></strong>时分割效果最好。选取了KITTI不同场景下共252帧点云作为人工分割数据，将分割好的数据按照<strong><em>7:3</em></strong>比例分为<strong><em>[训练集，评价集]</em></strong>。<br>由于上面得到的数据量太少，所以本文又通过其他一些方法对剩下的19k帧数据，生成了训练所需数据集，基与点云特征有：最低高度，高度变化值，两线激光点云之间的距离和高度差。本文也尝试过自动生成数据（artificial 3D LiDAR data），但是效果较差。</p>
 <h2 id="C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）"><a href="#C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）" class="headerlink" title="C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）"></a>C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）</h2><hr>
 <p>因为生成的训练数据较少，所以只采用浅层的CNN网络结构（shallow CNN architectures），类型为全卷积（fully convolutional）。卷积层和反卷积层都包含非线性的ReLU神经元（ReLU non-linearities），采用梯度下降方法进行训练。网络结构如下图所示：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-816d4607cb5d3875.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-816d4607cb5d3875.png" alt="image.png"></p>
 <p>上文 <strong>A.</strong> 中得到的矩阵 <strong><em>M</em></strong> 作为网络输入，因为是逐点（pixel）进行分类，所以网络的输出尺寸与输入尺寸相同，根据分类： <strong><em>ground = 1</em></strong>，其余点根据softmax函数概率映射进行输出。反卷积层（Deconvolutional<br>layers，广泛应用于语义分割（semantic segmentation）领域）在本文提出的4个网络结构中的中3个都有应用，其中包括效果最好的 <strong><em>L05+deconv</em></strong> （上图中第一个）。</p>
 <p>CNN的输入数据先要进行归一化（normalize）和剪裁（rescale），高度方面KITTI数据集将 <strong>3m</strong> 以上的数据进行了滤波处理，深度 <strong><em>d</em></strong> 通道方面则使用 <strong><em>log</em></strong> 进行归一化处理。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-5119dbf286402ffb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-6bba27cb72e18258.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-5119dbf286402ffb.png" alt="image.png"></p>
+<p><img src="/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-6bba27cb72e18258.png" alt="image.png"></p>
 <h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><hr>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-3875bce36b9f2a46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-3875bce36b9f2a46.png" alt="image.png"></p>
 <p><strong>以上。</strong></p>
 <hr>
 <p>参考文献：<a href="https://arxiv.org/pdf/1709.02128v1.pdf" target="_blank" rel="external">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data.PDF</a></p>
@@ -492,8 +492,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/21/18_3_22/Effective-c++-1.0/" rel="next" title="Effective c++ 1.0">
-                <i class="fa fa-chevron-left"></i> Effective c++ 1.0
+              <a href="/2018/03/21/18_3_22/kitti_unorganised_point_to_organised_cloud/" rel="next" title="KITTI unorganised cloud to organised cloud">
+                <i class="fa fa-chevron-left"></i> KITTI unorganised cloud to organised cloud
               </a>
             
           </div>

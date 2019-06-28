@@ -104,17 +104,17 @@
 <meta property="og:url" content="http://zengzeyu.com/2018/03/28/18_3_30/kitti_ground_point_seg/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
 <meta property="og:description" content="欢迎访问我的个人博客网站：zengzeyu.com 前言 自动驾驶系统中，对激光雷达获取的点云数据进行地面点分割是第一步，地面点分割结果的好坏直接影响聚类，识别和追踪效果。在对地面点分割过程中，前人尝试了许多方法，部分方法结果请参考本人博文《基于几何特征的地面点云分割》。所以，地面点分割是自动驾驶激光雷达点云处理永恒的话题。目前，基于几何特征的地面点分割都基于各自的前提假设，大多数的原理是根据地面">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-f14bf66059d90048.gif?imageMogr2/auto-orient/strip">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-1616a85fc81e6b83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-c02548c179e73e41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-5388648e2db90935.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-a7d779ef26a1b105.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/10028058-53efb931098d3835.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2018-04-02T06:36:28.000Z">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/kitti_ground_point_seg/10028058-f14bf66059d90048.gif">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/kitti_ground_point_seg/10028058-1616a85fc81e6b83.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/kitti_ground_point_seg/10028058-c02548c179e73e41.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/kitti_ground_point_seg/10028058-5388648e2db90935.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/kitti_ground_point_seg/10028058-a7d779ef26a1b105.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/kitti_ground_point_seg/10028058-53efb931098d3835.png">
+<meta property="og:updated_time" content="2019-06-28T15:52:19.363Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="KITTI 原始点云数据（PCL）地面点分割">
 <meta name="twitter:description" content="欢迎访问我的个人博客网站：zengzeyu.com 前言 自动驾驶系统中，对激光雷达获取的点云数据进行地面点分割是第一步，地面点分割结果的好坏直接影响聚类，识别和追踪效果。在对地面点分割过程中，前人尝试了许多方法，部分方法结果请参考本人博文《基于几何特征的地面点云分割》。所以，地面点分割是自动驾驶激光雷达点云处理永恒的话题。目前，基于几何特征的地面点分割都基于各自的前提假设，大多数的原理是根据地面">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/10028058-f14bf66059d90048.gif?imageMogr2/auto-orient/strip">
+<meta name="twitter:image" content="http://zengzeyu.com/images/18_3_30/kitti_ground_point_seg/10028058-f14bf66059d90048.gif">
 
 
 
@@ -424,31 +424,30 @@
 
       
         <p><strong><em>欢迎访问我的个人博客网站：<a href="https://zengzeyu.com">zengzeyu.com</a></em></strong></p>
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><hr>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><hr>
 <p>自动驾驶系统中，对激光雷达获取的点云数据进行地面点分割是第一步，地面点分割结果的好坏直接影响聚类，识别和追踪效果。在对地面点分割过程中，前人尝试了许多方法，部分方法结果请参考本人博文<strong>《基于几何特征的地面点云分割》</strong>。所以，地面点分割是自动驾驶激光雷达点云处理永恒的话题。目前，基于几何特征的地面点分割都基于各自的前提假设，大多数的原理是根据地面点与非地面点的特征不同而进行区分，如法向量、高度、高度差等。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-f14bf66059d90048.gif?imageMogr2/auto-orient/strip" alt="点运数据"></p>
+<p><img src="/images/18_3_30/kitti_ground_point_seg/10028058-f14bf66059d90048.gif" alt="点运数据"></p>
 <p>本文利用现有的<a href="http://www.cvlibs.net/datasets/kitti/eval_depth.php?benchmark=depth_completion" target="_blank" rel="external">KITTI点云数据</a>进行地面点分割，通过不同方法组合，试验出结果相对较好的方法，并予以结果显示。</p>
-<h1 id="地面点分割"><a href="#地面点分割" class="headerlink" title="地面点分割"></a>地面点分割</h1><hr>
-<h3 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h3><p>本文相关的一些工作，请参考本博客前博文：</p>
+<h2 id="地面点分割"><a href="#地面点分割" class="headerlink" title="地面点分割"></a>地面点分割</h2><h3 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h3><p>本文相关的一些工作，请参考本博客前博文：</p>
 <pre><code>1.  《KITTI 原始bin数据转pcd数据》
 2.  《KITTI 无序点云数据转有序点云数据》
 3.  《基于几何特征的地面点云分割》
-</code></pre><h3 id="地面点分割流程"><a href="#地面点分割流程" class="headerlink" title="地面点分割流程"></a>地面点分割流程</h3><h5 id="算法流程："><a href="#算法流程：" class="headerlink" title="算法流程："></a>算法流程：</h5><pre><code>1. 法向量分割
+</code></pre><h3 id="地面点分割流程"><a href="#地面点分割流程" class="headerlink" title="地面点分割流程"></a>地面点分割流程</h3><h4 id="算法流程："><a href="#算法流程：" class="headerlink" title="算法流程："></a>算法流程：</h4><pre><code>1. 法向量分割
 2. 平均高度分割
 3. 校准平面
 4. 栅格内高度差分割
 5. 平均高度分割
 </code></pre><h5 id="部分代码："><a href="#部分代码：" class="headerlink" title="部分代码："></a>部分代码：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">void KittiPCL::generateGroundCloud(PointCloudXYZI::Ptr &amp;out_cloud, visualization_msgs::MarkerPtr &amp;plane_marker)</div><div class="line">&#123;</div><div class="line">    PointCloudXYZI::Ptr temp_cloud_1 ( new PointCloudXYZI );</div><div class="line">    PointCloudXYZI::Ptr temp_cloud_2 ( new PointCloudXYZI );</div><div class="line">    *temp_cloud_1 = *kitti_organised_cloud_ptr_;</div><div class="line">    // calibration</div><div class="line">    this-&gt;filtCloudWithNormalZ( temp_cloud_1, temp_cloud_2 );</div><div class="line">    this-&gt;filtWithAverageHeight( temp_cloud_2, kitti_organised_cloud_ptr_, temp_cloud_1 );</div><div class="line">    this-&gt;estimateGroundPlane( temp_cloud_1, transform_cloud_ptr_, plane_marker );</div><div class="line">    // grid</div><div class="line">    this-&gt;generateGridMap( transform_cloud_ptr_, temp_cloud_2, 75.0f, 0.2f );</div><div class="line">    this-&gt;computePtsCloudFeature(transform_cloud_ptr_);</div><div class="line">    *out_cloud = *temp_cloud_2;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="试验结果"><a href="#试验结果" class="headerlink" title="试验结果"></a>试验结果</h1><hr>
-<p>为了客观合理展示试验结果，选取了直道路和十字路口的点云进行分割结果展示。<br>同时，统计时间，在 <em>Release</em> 模式下，处理一帧平均耗时 <strong>130ms</strong>。 </p>
+<h2 id="试验结果"><a href="#试验结果" class="headerlink" title="试验结果"></a>试验结果</h2><hr>
+<p>为了客观合理展示试验结果，S选取了直道路和十字路口的点云进行分割结果展示。<br>同时，统计时间，在 <em>Release</em> 模式下，处理一帧平均耗时 <strong>130ms</strong>。 </p>
 <blockquote>
 <p>平台配置：<br>CPU: Intel® Xeon(R) CPU E3-1230 v3 @ 3.30GHz × 8<br>GPU: GeForce GT 730/PCIe/SSE2<br>System: 64-bit</p>
 </blockquote>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-1616a85fc81e6b83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-28 16:02:53.png"></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-c02548c179e73e41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-28 16:04:27.png"></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-5388648e2db90935.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-28 16:05:02.png"></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-a7d779ef26a1b105.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-28 16:05:52.png"></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/10028058-53efb931098d3835.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Screenshot from 2018-03-28 16:08:50.png"></p>
+<p><img src="/images/18_3_30/kitti_ground_point_seg/10028058-1616a85fc81e6b83.png" alt="Screenshot from 2018-03-28 16:02:53.png"></p>
+<p><img src="/images/18_3_30/kitti_ground_point_seg/10028058-c02548c179e73e41.png" alt="Screenshot from 2018-03-28 16:04:27.png"></p>
+<p><img src="/images/18_3_30/kitti_ground_point_seg/10028058-5388648e2db90935.png" alt="Screenshot from 2018-03-28 16:05:02.png"></p>
+<p><img src="/images/18_3_30/kitti_ground_point_seg/10028058-a7d779ef26a1b105.png" alt="Screenshot from 2018-03-28 16:05:52.png"></p>
+<p><img src="/images/18_3_30/kitti_ground_point_seg/10028058-53efb931098d3835.png" alt="Screenshot from 2018-03-28 16:08:50.png"></p>
 <p><strong>最后一张图片右上方，可发现有大块地面点未被分割出来，原因是该十字路口地面不平，本文算法还无法适用于这种情况，后续需要改进。</strong></p>
 <p>以上。</p>
 <hr>
@@ -506,8 +505,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/03/28/18_3_30/fix_nan_point_in_point_cloud/" rel="prev" title="激光雷达点云数据内部空点补全算法">
-                激光雷达点云数据内部空点补全算法 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/03/28/18_3_30/fix_nan_point_in_point_cloud/" rel="prev" title="激光雷达点云数据内部空点补全">
+                激光雷达点云数据内部空点补全 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -657,7 +656,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#地面点分割"><span class="nav-number">2.</span> <span class="nav-text">地面点分割</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#相关工作"><span class="nav-number">2.0.1.</span> <span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#地面点分割流程"><span class="nav-number">2.0.2.</span> <span class="nav-text">地面点分割流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#算法流程："><span class="nav-number">2.0.2.0.1.</span> <span class="nav-text">算法流程：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#部分代码："><span class="nav-number">2.0.2.0.2.</span> <span class="nav-text">部分代码：</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#试验结果"><span class="nav-number">3.</span> <span class="nav-text">试验结果</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#地面点分割"><span class="nav-number">2.</span> <span class="nav-text">地面点分割</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#相关工作"><span class="nav-number">2.1.</span> <span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#地面点分割流程"><span class="nav-number">2.2.</span> <span class="nav-text">地面点分割流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#算法流程："><span class="nav-number">2.2.1.</span> <span class="nav-text">算法流程：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#部分代码："><span class="nav-number">2.2.1.1.</span> <span class="nav-text">部分代码：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#试验结果"><span class="nav-number">3.</span> <span class="nav-text">试验结果</span></a></li></ol></div>
             
 
           </div>
