@@ -115,7 +115,7 @@
 <meta property="og:image" content="http://zengzeyu.com/images/19_7_14/PointNet//QQ截图20190714180316.png">
 <meta property="og:image" content="http://zengzeyu.com/images/19_7_14/PointNet//QQ截图20190714180556.png">
 <meta property="og:image" content="http://zengzeyu.com/images/19_7_14/PointNet//QQ截图20190714183205.png">
-<meta property="og:updated_time" content="2019-07-14T10:37:03.039Z">
+<meta property="og:updated_time" content="2019-07-14T10:47:58.080Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈PointNet和PointNet++网络及其应用">
 <meta name="twitter:description" content="Author: zengzeyuDate: 2019.07.14  前言PointNet 和 PointNet++ 网络由 Charles R. Qi 于2017年提出，分别发表于CVPR 2017和NIPS 2017会议上。PointNet++ 是 PoinNet 的升级版，也更复杂，两篇论文的现在都可检索，且分别作为一个章节被写入了 Qi 的博士论文中，如果想更加具体地理解各个细节，可从博士">
@@ -419,7 +419,7 @@
 <h2 id="2-应用场景"><a href="#2-应用场景" class="headerlink" title="2. 应用场景"></a>2. 应用场景</h2><p>从PointNet的结构可以看出，由于没有local context信息，因此对复杂的点云没办法处理，也是PointNet结尾总结的future work，即在PointNet++中进行了升级。由于使用了max-pooling这个具有强对偶性和特征筛选的操作，使得PointNet只能处理较为简单的点云，这些点云都有一个特征：<strong>属于同一物体或者处于某个局部空间内</strong>。在点云中属于同一个物体和处于某一局部空间内可看作等价。因此，从PointNet的应用目的角度，使用PointNet的点云分割和检测网络主要有以下两种：</p>
 <ul>
 <li>放在网络前部，作为局部点云特征提取器（feature extractor）</li>
-<li>放在网络候补，作为具体任务的refine，如局部点云语义分割或3D BBox等目标的回归</li>
+<li>放在网络后部，作为具体任务的refine或语义分割，如局部点云语义分割或3D BBox等目标的回归</li>
 </ul>
 <p>至于为什么使用PointNet而不是使用PointNet++，从结构上可以看出PointNet++会有一个邻域中心和邻域点云索引的过程，会使速度下降严重，另外从本节第一段话也得知，对于局部点云这些简单的数据组成，使用PointNet也足够胜任。下面将就PointNet和PointNet++作为不同任务，简单罗列下提到的Paper中的使用。</p>
 <h3 id="2-1-特征提取器"><a href="#2-1-特征提取器" class="headerlink" title="2.1 特征提取器"></a>2.1 特征提取器</h3><p>Motivation：特征提取器（feature extractor）有别于人工特征设计，特征提取器的目的是在特征构建层面，使用网络让其自行学习一些人工无法构建的特征，从而提升特征的表达，最终达到提升网络性能的目的。说句题外话，人工构建特征都是基于人的先验知识来构建的特征，比如说点的数目，最大高度等等，这些具有强人类先验知识特征构建便于人类理解，但是对于数据表达来说，在这个过程丢失了很多信息。因此，我们希望送进网络的是raw data，网络能自行的学习特征。</p>
