@@ -4,6 +4,52 @@
 
     
   <url>
+    <loc>http://zengzeyu.com/2020/07/09/20_07_09/tensorrt_02_introduction/</loc>
+    <lastmod>2020-07-09T11:56:41.933Z</lastmod>
+    <data>
+        <display>
+        <title>TensorRT 教程（二）：TensorRT 简介</title>
+        <pubTime>2020-07-09T11:15:02.000Z</pubTime>
+        
+        <tag>DL</tag>
+         
+        <tag>CV</tag>
+         
+        <tag>TensorRT</tag>
+         
+        <tag>Model Deployment</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://zengzeyu.com/2020/07/09/20_07_09/tensorrt_01_installation/</loc>
+    <lastmod>2020-07-09T11:54:22.770Z</lastmod>
+    <data>
+        <display>
+        <title>TensorRT 教程（一）：安装TensorRT</title>
+        <pubTime>2020-07-09T11:13:01.000Z</pubTime>
+        
+        <tag>DL</tag>
+         
+        <tag>CV</tag>
+         
+        <tag>TensorRT</tag>
+         
+        <tag>Model Deployment</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://zengzeyu.com/2019/06/29/19_6_29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93%20-%20%E5%89%AF%E6%9C%AC/</loc>
     <lastmod>2020-07-09T09:26:18.929Z</lastmod>
     <data>
@@ -51,9 +97,9 @@
         
         <tag>DL</tag>
          
-        <tag>Point Cloud</tag>
-         
         <tag>CV</tag>
+         
+        <tag>Point Cloud</tag>
          
         <tag>PointNet</tag>
          
@@ -286,9 +332,9 @@
         <title>FCN-PCL 应用解析</title>
         <pubTime>2018-03-15T15:47:44.000Z</pubTime>
         
-        <tag>PCL</tag>
-         
         <tag>DL</tag>
+         
+        <tag>PCL</tag>
          
          
            
@@ -328,11 +374,11 @@
         <title>Caffe源代码学习 — AlexNet(Caffenet.py)</title>
         <pubTime>2018-03-08T15:47:44.000Z</pubTime>
         
-        <tag>Caffe</tag>
-         
         <tag>Python</tag>
          
         <tag>DL</tag>
+         
+        <tag>Caffe</tag>
          
          
            
