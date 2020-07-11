@@ -106,7 +106,7 @@
 <meta property="og:description" content="By: zengzeyu Date: 2020.02.10  1. TensorRT 库构成以编译后源码压缩包安装方式进行安装的TensorRT库主要有以下文件夹：123456├── data├── doc├── include  # 所有头文件，可以查看所有函数的接口和说明├── lib      # 所有动态链接库.so文件├── python   # python API 例子└── sa">
 <meta property="og:image" content="http://zengzeyu.com/images/20_07_09/fit1.png">
 <meta property="og:image" content="http://zengzeyu.com/images/20_07_09/fit2.png">
-<meta property="og:updated_time" content="2020-07-09T11:56:41.933Z">
+<meta property="og:updated_time" content="2020-07-11T00:19:10.266Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TensorRT 教程（二）：TensorRT 简介">
 <meta name="twitter:description" content="By: zengzeyu Date: 2020.02.10  1. TensorRT 库构成以编译后源码压缩包安装方式进行安装的TensorRT库主要有以下文件夹：123456├── data├── doc├── include  # 所有头文件，可以查看所有函数的接口和说明├── lib      # 所有动态链接库.so文件├── python   # python API 例子└── sa">
@@ -434,18 +434,10 @@
 <h2 id="3-TRT是如何工作的？"><a href="#3-TRT是如何工作的？" class="headerlink" title="3. TRT是如何工作的？"></a>3. TRT是如何工作的？</h2><p>TRT 内部有一整套流程来帮助加速 inference，大致内容已经在2.2节中有阐述，有兴趣可看原英文说明。对此，我们并不关心，因为所有这些方法都在未开源的代码中，也没办法自己 hack，所以开始进行 build 之后，我们所有能做的只是等TRT model 的生成。</p>
 <h2 id="4-TRT能做些什么？"><a href="#4-TRT能做些什么？" class="headerlink" title="4. TRT能做些什么？"></a>4. TRT能做些什么？</h2><p>总的来说，TRT 可以在4个方面帮助开发者进行工作：导入，校准，生成和部署（import, calibration, generate and deploy）模型。</p>
 <ol>
-<li><p>导入模型参数</p>
-<p>TRT可以直接定义模型，但是我们通常并不这么做，因为对于现有深度学习训练框架，如Pytorch和TensorFlow，我们通常使用对应的parser直接获得所需的模型结构和参数，然后进行下一步。TRT包括的parser有如下：Caffe， UFF，ONNX。</p>
-</li>
-<li><p>配置optimization profile</p>
-<p>例如是否配置layer的动态输入输出。</p>
-</li>
-<li><p>builder</p>
-<p>从我的角度理解，builder更像是一个外部的配置管理，包括模型的运行资源和INT8等配置。</p>
-</li>
-<li><p>engine</p>
-<p>通过builder生成的TRT engine就是我们最终需要的文件，这个文件可以在inference阶段直接载入之后进行运行。</p>
-</li>
+<li>导入模型参数<br>TRT可以直接定义模型，但是我们通常并不这么做，因为对于现有深度学习训练框架，如Pytorch和TensorFlow，我们通常使用对应的parser直接获得所需的模型结构和参数，然后进行下一步。TRT包括的parser有如下：Caffe， UFF，ONNX。</li>
+<li>配置optimization profile<br>例如是否配置layer的动态输入输出。</li>
+<li>builder<br>从我的角度理解，builder更像是一个外部的配置管理，包括模型的运行资源和INT8等配置。</li>
+<li>engine<br>通过builder生成的TRT engine就是我们最终需要的文件，这个文件可以在inference阶段直接载入之后进行运行。</li>
 </ol>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了TRT库的组成，工作流程和工作原理。</p>
 <p>下一篇文章开始，我们将以Pytorch训练得到的Mask RCNN为例，将TRT的工作流程展开讲解，方便对各个细节进行研究。</p>

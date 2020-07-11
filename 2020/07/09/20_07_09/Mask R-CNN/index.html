@@ -108,7 +108,7 @@
 <meta property="og:image" content="http://zengzeyu.com/images/20_07_09/Screenshot%20from%202020-07-09%2011-57-52.png">
 <meta property="og:image" content="http://zengzeyu.com/images/20_07_09/Screenshot%20from%202020-07-09%2014-32-36.png">
 <meta property="og:image" content="http://zengzeyu.com/images/20_07_09/v2-2b71b622dc1a698b204ed43eca746519_1440w.jpg">
-<meta property="og:updated_time" content="2020-07-09T09:23:46.202Z">
+<meta property="og:updated_time" content="2020-07-11T00:14:30.840Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mask R-CNN 网络结构详解">
 <meta name="twitter:description" content="Author: zengzeyuDate: 2020.07.09  AbstractMask R-CNN 作为经典的two-stage目标检测模型被广泛使用，相关的讲解论文已经有很多，本文将着重在结合实际代码模型结构以及 layer 方面的讲解，这样会对模型有更加清晰的认识。本文以 Detectron2 mask_rcnn_R_50_FPN_1x.yaml 默认 config 生成的 Mask">
@@ -408,10 +408,10 @@
 <ol>
 <li><code>convolutional bakcbone</code>: 用于提取 image feature，生成 feature map，例如 FPN</li>
 <li><code>RPN</code>： 从 feature map 中生成 objects proposals</li>
-<li>box head：预测 box 的分类和回归</li>
-<li>mask head：预测 pixel mask</li>
+<li><code>box head</code>：预测 box 的分类和回归</li>
+<li><code>mask head</code>：预测 pixel mask</li>
 </ol>
-<h2 id="2-Convolutional-Backbone"><a href="#2-Convolutional-Backbone" class="headerlink" title="2. Convolutional Backbone"></a>2. Convolutional Backbone</h2><p>特征提取网络可使用任何能提取 image feature 的网络，本文以 FPN 为例。FPN 全称 feature pyramid network，即特征金字塔网络，其结构如下图所示。</p>
+<h2 id="2-Convolutional-Backbone"><a href="#2-Convolutional-Backbone" class="headerlink" title="2. Convolutional Backbone"></a>2. Convolutional Backbone</h2><p>特征提取网络可使用任何能提取 image feature 的网络，本文以 FPN 为例。FPN 全称 Feature Pyramid Network，即特征金字塔网络，其结构如下图所示。</p>
 <p><img src="/images/20_07_09/Screenshot from 2020-07-09 11-57-52.png" alt=""></p>
 <p>Detectron2 生成的以 ResNet50 为 backbone 的 FPN 具体参数如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">FPN(</div><div class="line">  (fpn_lateral2): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))</div><div class="line">  (fpn_output2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</div><div class="line">  (fpn_lateral3): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))</div><div class="line">  (fpn_output3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</div><div class="line">  (fpn_lateral4): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1))</div><div class="line">  (fpn_output4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</div><div class="line">  (fpn_lateral5): Conv2d(2048, 256, kernel_size=(1, 1), stride=(1, 1))</div><div class="line">  (fpn_output5): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))</div><div class="line">  (top_block): LastLevelMaxPool()</div><div class="line">  (bottom_up): ResNet50 #   for simplification </div><div class="line">)</div></pre></td></tr></table></figure>
@@ -427,7 +427,7 @@
 <li><code>(objectness_logits): Conv2d(256, 3, kernel_size=(1, 1), stride=(1, 1))</code>： 3 代表anchor数目</li>
 <li><code>(anchor_deltas): Conv2d(256, 12, kernel_size=(1, 1), stride=(1, 1))</code>： 12 = 3*4，3代表anchor数目，4代表box的 x, y, w, h 相对于 anchor 的偏移量</li>
 </ul>
-<h2 id="4-Box-Branch"><a href="#4-Box-Branch" class="headerlink" title="4. Box Branch"></a>4. Box Branch</h2><p>Box branch 为对box的分类和回归任务，其具体配置如下：</p>
+<h2 id="4-Box-Branch"><a href="#4-Box-Branch" class="headerlink" title="4. Box Branch"></a>4. Box Branch</h2><p>Box branch 为对 box 的分类和回归任务，其具体配置如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">(box_pooler): ROIPooler(</div><div class="line">      (level_poolers): ModuleList(</div><div class="line">        (0): ROIAlign(output_size=(7, 7), spatial_scale=0.25, sampling_ratio=0, aligned=True)</div><div class="line">        (1): ROIAlign(output_size=(7, 7), spatial_scale=0.125, sampling_ratio=0, aligned=True)</div><div class="line">        (2): ROIAlign(output_size=(7, 7), spatial_scale=0.0625, sampling_ratio=0, aligned=True)</div><div class="line">        (3): ROIAlign(output_size=(7, 7), spatial_scale=0.03125, sampling_ratio=0, aligned=True)</div><div class="line">      )</div><div class="line">    )</div><div class="line">    (box_head): FastRCNNConvFCHead(</div><div class="line">      (fc1): Linear(in_features=12544, out_features=1024, bias=True)</div><div class="line">      (fc2): Linear(in_features=1024, out_features=1024, bias=True)</div><div class="line">    )</div><div class="line">    (box_predictor): FastRCNNOutputLayers(</div><div class="line">      (cls_score): Linear(in_features=1024, out_features=81, bias=True)</div><div class="line">      (bbox_pred): Linear(in_features=1024, out_features=320, bias=True)</div><div class="line">    )</div></pre></td></tr></table></figure>
 <h3 id="4-1-ROIAlign"><a href="#4-1-ROIAlign" class="headerlink" title="4.1 ROIAlign"></a>4.1 ROIAlign</h3><p>Faster R-CNN 采用的是 ROI Pooling 从 feature map 中提取特征，但是由于 ROI Pooling 本身存在精度问题，导致特征没法对齐，所以 Mask R-CNN 中 RPN 之后的取特征操作采用了 ROI Align。关于 ROI Pooling 和 ROI Align 的具体区别请细读Mask R-CNN原文。</p>
 <ul>
