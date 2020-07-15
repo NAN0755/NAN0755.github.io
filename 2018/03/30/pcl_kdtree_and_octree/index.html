@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zengzeyu.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":true,"nav":null,"activeClass":"valine"},"algolia":{"appID":"IEEVBE18SX","apiKey":"2ed347de4115ebbf86b2fdb5ed80c2c3","indexName":"my_blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="通过雷达、激光扫描、立体摄像机等三维测量设备获取的点云数据，具有数据量大、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍">
+<meta property="og:url" content="http://zengzeyu.com/2018/03/30/pcl_kdtree_and_octree/index.html">
+<meta property="og:site_name" content="Zeyu&#39;s Blog">
+<meta property="og:description" content="通过雷达、激光扫描、立体摄像机等三维测量设备获取的点云数据，具有数据量大、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/pcl_kdtree_and_octree/10028058-4d7b7c39333666b1.gif">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/pcl_kdtree_and_octree/10028058-66cd9ff8af223044.png">
+<meta property="og:image" content="http://zengzeyu.com/images/18_3_30/pcl_kdtree_and_octree/10028058-c98fc8b763769c76.png">
+<meta property="article:published_time" content="2018-03-30T14:55:54.000Z">
+<meta property="article:modified_time" content="2020-07-15T05:01:39.843Z">
+<meta property="article:author" content="Zeyu">
+<meta property="article:tag" content="PCL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zengzeyu.com/images/18_3_30/pcl_kdtree_and_octree/10028058-4d7b7c39333666b1.gif">
+
+<link rel="canonical" href="http://zengzeyu.com/2018/03/30/pcl_kdtree_and_octree/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍 | Zeyu's Blog</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-172735623-1',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5bb12350481c6ccda395fbe33bd0dc13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Zeyu's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Zeyu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">25</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/30/pcl_kdtree_and_octree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/bear.jpg">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="Done is better than perfect.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-03-30 22:55:54" itemprop="dateCreated datePublished" datetime="2018-03-30T22:55:54+08:00">2018-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-15 13:01:39" itemprop="dateModified" datetime="2020-07-15T13:01:39+08:00">2020-07-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/PCL/" itemprop="url" rel="index"><span itemprop="name">PCL</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2018/03/30/pcl_kdtree_and_octree/" class="post-meta-item leancloud_visitors" data-flag-title="PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2018/03/30/pcl_kdtree_and_octree/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2018/03/30/pcl_kdtree_and_octree/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>通过雷达、激光扫描、立体摄像机等三维测量设备获取的点云数据，具有数据量大、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。<a id="more"></a><br>建立空间索引在点云数据处理中已被广泛应用，常见空间索引一般是自顶向下逐级划分空间的各种空间索引结构，比较有代表性的包括 BSP树、 KD树、 KDB树、 R树、 R+树、 CELL树、四叉树和八叉树等索引结构，而在这些结构中KD树和八叉树在3D点云数据组织中应用较为广泛，PCL对上述两者进行了实现。</p>
+<h2 id="1-K维树（KD-tree）"><a href="#1-K维树（KD-tree）" class="headerlink" title="1.K维树（KD-tree）"></a>1.K维树（KD-tree）</h2><h3 id="1-1-KD-tree-概念简介"><a href="#1-1-KD-tree-概念简介" class="headerlink" title="1.1 KD-tree 概念简介"></a>1.1 KD-tree 概念简介</h3><p>KD-tree 又称 K 维树是计算机科学中使用的一种数据结构，用来组织表示 K 维空间中点集合。它是一种带有其他约束条件的二分查找树。KD-tree对于区间和近邻搜索十分有用。我们为了达到目的，通常只在三个维度中进行处理，因此所有的 KD-tree 都将是三维 KD-tree。 如下图所示（动图，慢慢看）， KD-tree 的每一级在指定维度上分开所有的子节点。在树的根部所有子节点是以第一个指定的维度上被分开（即如果第一维坐标小于根节点的点它将被分在左边的子树中，如果大于根节点的点它将分在右边的子树中）。</p>
+<p><img data-src="/images/18_3_30/pcl_kdtree_and_octree/10028058-4d7b7c39333666b1.gif" alt="KDTree-animation.gif"></p>
+<p>树的每一级都在下一个维度上分开，所有其他的维度用完之后就回到第一个维度，建立 KD-tree 最高效的方法是像快速分类一样使用分割法，把指定维度的值放在根上，在该维度上包含较小数值的在左子树，较大的在右子树。然后分别在左边和右边的子树上重复这个过程，直到用户准备分类的最后一个树仅仅由一个元素组成。</p>
+<p><img data-src="/images/18_3_30/pcl_kdtree_and_octree/10028058-66cd9ff8af223044.png" alt="Screenshot from 2018-03-30 11:51:38.png"></p>
+<h3 id="1-2-PCL中KD-tree使用"><a href="#1-2-PCL中KD-tree使用" class="headerlink" title="1.2 PCL中KD-tree使用"></a>1.2 PCL中KD-tree使用</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pcl/point_cloud.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pcl/kdtree/kdtree_flann.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span></span><br><span class="line">main (<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span><br><span class="line">&#123;</span><br><span class="line">  srand (time (<span class="literal">NULL</span>));</span><br><span class="line"></span><br><span class="line">  pcl::PointCloud&lt;pcl::PointXYZ&gt;::<span class="function">Ptr <span class="title">cloud</span> <span class="params">(<span class="keyword">new</span> pcl::PointCloud&lt;pcl::PointXYZ&gt;)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Generate pointcloud data</span></span><br><span class="line">  cloud-&gt;<span class="built_in">width</span> = <span class="number">1000</span>;</span><br><span class="line">  cloud-&gt;<span class="built_in">height</span> = <span class="number">1</span>;</span><br><span class="line">  cloud-&gt;points.resize (cloud-&gt;<span class="built_in">width</span> * cloud-&gt;<span class="built_in">height</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; cloud-&gt;points.<span class="built_in">size</span> (); ++i)</span><br><span class="line">  &#123;</span><br><span class="line">    cloud-&gt;points[i].x = <span class="number">1024.0f</span> * rand () / (RAND_MAX + <span class="number">1.0f</span>);</span><br><span class="line">    cloud-&gt;points[i].y = <span class="number">1024.0f</span> * rand () / (RAND_MAX + <span class="number">1.0f</span>);</span><br><span class="line">    cloud-&gt;points[i].z = <span class="number">1024.0f</span> * rand () / (RAND_MAX + <span class="number">1.0f</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  pcl::KdTreeFLANN&lt;pcl::PointXYZ&gt; kdtree;</span><br><span class="line"></span><br><span class="line">  kdtree.setInputCloud (cloud);</span><br><span class="line"></span><br><span class="line">  pcl::PointXYZ searchPoint;</span><br><span class="line"></span><br><span class="line">  searchPoint.x = <span class="number">1024.0f</span> * rand () / (RAND_MAX + <span class="number">1.0f</span>);</span><br><span class="line">  searchPoint.y = <span class="number">1024.0f</span> * rand () / (RAND_MAX + <span class="number">1.0f</span>);</span><br><span class="line">  searchPoint.z = <span class="number">1024.0f</span> * rand () / (RAND_MAX + <span class="number">1.0f</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// K nearest neighbor search</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> K = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">pointIdxNKNSearch</span><span class="params">(K)</span></span>;</span><br><span class="line">  <span class="function"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">float</span>&gt; <span class="title">pointNKNSquaredDistance</span><span class="params">(K)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"K nearest neighbor search at ("</span> &lt;&lt; searchPoint.x </span><br><span class="line">            &lt;&lt; <span class="string">" "</span> &lt;&lt; searchPoint.y </span><br><span class="line">            &lt;&lt; <span class="string">" "</span> &lt;&lt; searchPoint.z</span><br><span class="line">            &lt;&lt; <span class="string">") with K="</span> &lt;&lt; K &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( kdtree.nearestKSearch (searchPoint, K, pointIdxNKNSearch, pointNKNSquaredDistance) &gt; <span class="number">0</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; pointIdxNKNSearch.<span class="built_in">size</span> (); ++i)</span><br><span class="line">      <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"    "</span>  &lt;&lt;   cloud-&gt;points[ pointIdxNKNSearch[i] ].x </span><br><span class="line">                &lt;&lt; <span class="string">" "</span> &lt;&lt; cloud-&gt;points[ pointIdxNKNSearch[i] ].y </span><br><span class="line">                &lt;&lt; <span class="string">" "</span> &lt;&lt; cloud-&gt;points[ pointIdxNKNSearch[i] ].z </span><br><span class="line">                &lt;&lt; <span class="string">" (squared distance: "</span> &lt;&lt; pointNKNSquaredDistance[i] &lt;&lt; <span class="string">")"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Neighbors within radius search</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; pointIdxRadiusSearch;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">float</span>&gt; pointRadiusSquaredDistance;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">float</span> radius = <span class="number">256.0f</span> * rand () / (RAND_MAX + <span class="number">1.0f</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Neighbors within radius search at ("</span> &lt;&lt; searchPoint.x </span><br><span class="line">            &lt;&lt; <span class="string">" "</span> &lt;&lt; searchPoint.y </span><br><span class="line">            &lt;&lt; <span class="string">" "</span> &lt;&lt; searchPoint.z</span><br><span class="line">            &lt;&lt; <span class="string">") with radius="</span> &lt;&lt; radius &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( kdtree.radiusSearch (searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) &gt; <span class="number">0</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; pointIdxRadiusSearch.<span class="built_in">size</span> (); ++i)</span><br><span class="line">      <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"    "</span>  &lt;&lt;   cloud-&gt;points[ pointIdxRadiusSearch[i] ].x </span><br><span class="line">                &lt;&lt; <span class="string">" "</span> &lt;&lt; cloud-&gt;points[ pointIdxRadiusSearch[i] ].y </span><br><span class="line">                &lt;&lt; <span class="string">" "</span> &lt;&lt; cloud-&gt;points[ pointIdxRadiusSearch[i] ].z </span><br><span class="line">                &lt;&lt; <span class="string">" (squared distance: "</span> &lt;&lt; pointRadiusSquaredDistance[i] &lt;&lt; <span class="string">")"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="代码解读"><a href="#代码解读" class="headerlink" title="代码解读"></a>代码解读</h4><ul>
+<li>设置kdtree搜索对象和输入数据，然后使用随机坐标搜索方式 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pcl::KdTreeFLANN&lt;pcl::PointXYZ&gt; kdtree;</span><br><span class="line"></span><br><span class="line"> kdtree.setInputCloud (cloud);</span><br><span class="line"></span><br><span class="line"> pcl::PointXYZ searchPoint;</span><br><span class="line"></span><br><span class="line"> searchPoint.x &#x3D; 1024.0f * rand () &#x2F; (RAND_MAX + 1.0f);</span><br><span class="line"> searchPoint.y &#x3D; 1024.0f * rand () &#x2F; (RAND_MAX + 1.0f);</span><br><span class="line"> searchPoint.z &#x3D; 1024.0f * rand () &#x2F; (RAND_MAX + 1.0f);</span><br></pre></td></tr></table></figure></li>
+<li>设置临近点个数 （10），两个向量来存储搜索到的 K 近邻，两个向量中一个存储搜索到查询点近邻的索引，另一个存储对应近邻的距离平方<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> &#x2F;&#x2F; K nearest neighbor search</span><br><span class="line"></span><br><span class="line">int K &#x3D; 10;</span><br><span class="line"></span><br><span class="line">std::vector&lt;int&gt; pointIdxNKNSearch(K);</span><br><span class="line">std::vector&lt;float&gt; pointNKNSquaredDistance(K);</span><br><span class="line"></span><br><span class="line">std::cout &lt;&lt; &quot;K nearest neighbor search at (&quot; &lt;&lt; searchPoint.x </span><br><span class="line">          &lt;&lt; &quot; &quot; &lt;&lt; searchPoint.y </span><br><span class="line">          &lt;&lt; &quot; &quot; &lt;&lt; searchPoint.z</span><br><span class="line">          &lt;&lt; &quot;) with K&#x3D;&quot; &lt;&lt; K &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ul>
+<h3 id="1-3-KD-tree-算法伪代码"><a href="#1-3-KD-tree-算法伪代码" class="headerlink" title="1.3 KD-tree 算法伪代码"></a>1.3 KD-tree 算法伪代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">function kdtree (list of points pointList, int depth)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F; Select axis based on depth so that axis cycles through all valid values</span><br><span class="line">    var int axis :&#x3D; depth mod k;</span><br><span class="line">        </span><br><span class="line">    &#x2F;&#x2F; Sort point list and choose median as pivot element</span><br><span class="line">    select median by axis from pointList;</span><br><span class="line">        </span><br><span class="line">    &#x2F;&#x2F; Create node and construct subtree</span><br><span class="line">    node.location :&#x3D; median;</span><br><span class="line">    node.leftChild :&#x3D; kdtree(points in pointList before median, depth+1);</span><br><span class="line">    node.rightChild :&#x3D; kdtree(points in pointList after median, depth+1);</span><br><span class="line">    return node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-八叉树（octree）"><a href="#2-八叉树（octree）" class="headerlink" title="2. 八叉树（octree）"></a>2. 八叉树（octree）</h2><h3 id="2-1-octree-概念简介"><a href="#2-1-octree-概念简介" class="headerlink" title="2.1 octree 概念简介"></a>2.1 octree 概念简介</h3><p>八叉树结构是由 Hunter 博士于1978年首次提出的一种数据模型。八叉树结构通过对三维空间的几何实体进行体元剖分，每个体元具有相同的时间和空间复杂度，通过循环递归的划分方法对大小为( 2 <em>n</em> x 2 <em>n</em> x 2 <em>n</em> ) 的三维空间的几何对象进行剖分，从而构成一个具有根节点的方向图。在八叉树结构中如果被划分的体元具有相同的属性，则该体元构成一个叶节点；否则继续对该体元剖分成8个子立方体，依次递剖分，对于( 2 <em>n</em> x 2 <em>n</em> x 2 <em>n</em> ) 大小的空间对象，最多剖分 <em>n</em> 次，如下图所示。</p>
+<p><img data-src="/images/18_3_30/pcl_kdtree_and_octree/10028058-c98fc8b763769c76.png" alt="Octree2.png"></p>
+<h3 id="2-2-PCL中octree-在压缩点云数据方面应用"><a href="#2-2-PCL中octree-在压缩点云数据方面应用" class="headerlink" title="2.2 PCL中octree 在压缩点云数据方面应用"></a>2.2 PCL中octree 在压缩点云数据方面应用</h3><p>点云由海量的数据集组成，这些数据通过距离、颜色、法线等附加信息来描述空间三维点。此外，点云能以非常高的速率被创建出来，因此需要占用相当大的存储资源，一旦点云需要存储或者通过速率受限制的通信信道进行传输，提供针对这种数据的压缩方法就变得十分有用。PCL库提供了点云压缩功能，它允许编码压缩所有类型的点云，包括无序点云，它具有无参考点和变化的点尺寸、分辨率、分布密度和点顺序等结构特征。而且，底层的 octree 数据结构允许从几个输入源高效地合并点云数据。<br>下面解释单个点云和点云数据流是如何高效压缩的，在给出的例子中用PCL点云压缩技术来压缩用 OpenNIGrabber 抓取到的点云。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;pcl&#x2F;point_cloud.h&gt;</span><br><span class="line">#include &lt;pcl&#x2F;point_types.h&gt;</span><br><span class="line">#include &lt;pcl&#x2F;io&#x2F;openni_grabber.h&gt;</span><br><span class="line">#include &lt;pcl&#x2F;visualization&#x2F;cloud_viewer.h&gt;</span><br><span class="line"></span><br><span class="line">#include &lt;pcl&#x2F;compression&#x2F;octree_pointcloud_compression.h&gt;</span><br><span class="line"></span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;sstream&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">#ifdef WIN32</span><br><span class="line"># define sleep(x) Sleep((x)*1000)</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">class SimpleOpenNIViewer</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">  SimpleOpenNIViewer () :</span><br><span class="line">    viewer (&quot; Point Cloud Compression Example&quot;)</span><br><span class="line">  &#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  void</span><br><span class="line">  cloud_cb_ (const pcl::PointCloud&lt;pcl::PointXYZRGBA&gt;::ConstPtr &amp;cloud)</span><br><span class="line">  &#123;</span><br><span class="line">    if (!viewer.wasStopped ())</span><br><span class="line">    &#123;</span><br><span class="line">      &#x2F;&#x2F; stringstream to store compressed point cloud</span><br><span class="line">      std::stringstream compressedData;</span><br><span class="line">      &#x2F;&#x2F; output pointcloud</span><br><span class="line">      pcl::PointCloud&lt;pcl::PointXYZRGBA&gt;::Ptr cloudOut (new pcl::PointCloud&lt;pcl::PointXYZRGBA&gt; ());</span><br><span class="line">    </span><br><span class="line">      &#x2F;&#x2F; compress point cloud</span><br><span class="line">      PointCloudEncoder-&gt;encodePointCloud (cloud, compressedData);</span><br><span class="line">    </span><br><span class="line">      &#x2F;&#x2F; decompress point cloud</span><br><span class="line">      PointCloudDecoder-&gt;decodePointCloud (compressedData, cloudOut);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      &#x2F;&#x2F; show decompressed point cloud</span><br><span class="line">      viewer.showCloud (cloudOut);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  void</span><br><span class="line">  run ()</span><br><span class="line">  &#123;</span><br><span class="line"></span><br><span class="line">    bool showStatistics &#x3D; true;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; for a full list of profiles see: &#x2F;io&#x2F;include&#x2F;pcl&#x2F;compression&#x2F;compression_profiles.h</span><br><span class="line">    pcl::io::compression_Profiles_e compressionProfile &#x3D; pcl::io::MED_RES_ONLINE_COMPRESSION_WITH_COLOR;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; instantiate point cloud compression for encoding and decoding</span><br><span class="line">    PointCloudEncoder &#x3D; new pcl::io::OctreePointCloudCompression&lt;pcl::PointXYZRGBA&gt; (compressionProfile, showStatistics);</span><br><span class="line">    PointCloudDecoder &#x3D; new pcl::io::OctreePointCloudCompression&lt;pcl::PointXYZRGBA&gt; ();</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; create a new grabber for OpenNI devices</span><br><span class="line">    pcl::Grabber* interface &#x3D; new pcl::OpenNIGrabber ();</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; make callback function from member function</span><br><span class="line">    boost::function&lt;void</span><br><span class="line">    (const pcl::PointCloud&lt;pcl::PointXYZRGBA&gt;::ConstPtr&amp;)&gt; f &#x3D; boost::bind (&amp;SimpleOpenNIViewer::cloud_cb_, this, _1);</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; connect callback function for desired signal. In this case its a point cloud with color values</span><br><span class="line">    boost::signals2::connection c &#x3D; interface-&gt;registerCallback (f);</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; start receiving point clouds</span><br><span class="line">    interface-&gt;start ();</span><br><span class="line">    </span><br><span class="line">    while (!viewer.wasStopped ())</span><br><span class="line">    &#123;</span><br><span class="line">      sleep (1);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    interface-&gt;stop ();</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; delete point cloud compression instances</span><br><span class="line">    delete (PointCloudEncoder);</span><br><span class="line">    delete (PointCloudDecoder);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  pcl::visualization::CloudViewer viewer;</span><br><span class="line"></span><br><span class="line">  pcl::io::OctreePointCloudCompression&lt;pcl::PointXYZRGBA&gt;* PointCloudEncoder;</span><br><span class="line">  pcl::io::OctreePointCloudCompression&lt;pcl::PointXYZRGBA&gt;* PointCloudDecoder;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int</span><br><span class="line">main (int argc, char **argv)</span><br><span class="line">&#123;</span><br><span class="line">  SimpleOpenNIViewer v;</span><br><span class="line">  v.run ();</span><br><span class="line"></span><br><span class="line">  return (0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-3-octree算法-Matlab-伪代码"><a href="#2-3-octree算法-Matlab-伪代码" class="headerlink" title="2.3 octree算法 Matlab 伪代码"></a>2.3 octree算法 Matlab 伪代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">function [binDepths,binParents,binCorners,pointBins] &#x3D; OcTree(points)</span><br><span class="line"></span><br><span class="line">binDepths &#x3D; [0]     % Initialize an array of bin depths with this single base-level bin</span><br><span class="line">binParents &#x3D; [0]    % This base level bin is not a child of other bins</span><br><span class="line">binCorners &#x3D; [min(points) max(points)] % It surrounds all points in XYZ space</span><br><span class="line">pointBins(:) &#x3D; 1    % Initially, all points are assigned to this first bin</span><br><span class="line">divide(1)           % Begin dividing this first bin</span><br><span class="line"></span><br><span class="line">function divide(binNo)</span><br><span class="line">​    </span><br><span class="line">% If this bin meets any exit conditions, do not divide it any further.</span><br><span class="line">binPointCount &#x3D; nnz(pointBins&#x3D;&#x3D;binNo)</span><br><span class="line">binEdgeLengths &#x3D; binCorners(binNo,1:3) - binCorners(binNo,4:6)</span><br><span class="line">binDepth &#x3D; binDepths(binNo)</span><br><span class="line">exitConditionsMet &#x3D; binPointCount&lt;value || min(binEdgeLengths)&lt;value || binDepth&gt;value</span><br><span class="line">if exitConditionsMet</span><br><span class="line">    return; % Exit recursive function</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">% Otherwise, split this bin into 8 new sub-bins with a new division point</span><br><span class="line">newDiv &#x3D; (binCorners(binNo,1:3) + binCorners(binNo,4:6)) &#x2F; 2</span><br><span class="line">for i &#x3D; 1:8</span><br><span class="line">    newBinNo &#x3D; length(binDepths) + 1</span><br><span class="line">    binDepths(newBinNo) &#x3D; binDepths(binNo) + 1</span><br><span class="line">    binParents(newBinNo) &#x3D; binNo</span><br><span class="line">    binCorners(newBinNo) &#x3D; [one of the 8 pairs of the newDiv with minCorner or maxCorner]</span><br><span class="line">    oldBinMask &#x3D; pointBins&#x3D;&#x3D;binNo</span><br><span class="line">    % Calculate which points in pointBins&#x3D;&#x3D;binNo now belong in newBinNo </span><br><span class="line">    pointBins(newBinMask) &#x3D; newBinNo</span><br><span class="line">    % Recursively divide this newly created bin</span><br><span class="line">    divide(newBinNo)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+
+<p>以上。</p>
+<hr>
+<p>参考文献：</p>
+<ol>
+<li><a href="https://book.douban.com/subject/20283456/" target="_blank" rel="noopener">点云库PCL学习教程</a></li>
+<li><a href="https://en.wikipedia.org/wiki/K-d_tree" target="_blank" rel="noopener">k-d tree wiki</a></li>
+<li><a href="http://pointclouds.org/documentation/tutorials/kdtree_search.php#kdtree-search" target="_blank" rel="noopener">PCL官方KD-tree使用教程</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PCL/" rel="tag"># PCL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/03/28/fix_nan_point_in_point_cloud/" rel="prev" title="激光雷达点云数据内部空点补全">
+      <i class="fa fa-chevron-left"></i> 激光雷达点云数据内部空点补全
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/16/Mixed-Precision%20Training%20of%20Deep%20Neural%20Networks/" rel="next" title="Mixed-Precision Training of Deep Neural Networks">
+      Mixed-Precision Training of Deep Neural Networks <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-K维树（KD-tree）"><span class="nav-text">1.K维树（KD-tree）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-KD-tree-概念简介"><span class="nav-text">1.1 KD-tree 概念简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-PCL中KD-tree使用"><span class="nav-text">1.2 PCL中KD-tree使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#代码解读"><span class="nav-text">代码解读</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-KD-tree-算法伪代码"><span class="nav-text">1.3 KD-tree 算法伪代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-八叉树（octree）"><span class="nav-text">2. 八叉树（octree）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-octree-概念简介"><span class="nav-text">2.1 octree 概念简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-PCL中octree-在压缩点云数据方面应用"><span class="nav-text">2.2 PCL中octree 在压缩点云数据方面应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-octree算法-Matlab-伪代码"><span class="nav-text">2.3 octree算法 Matlab 伪代码</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zeyu"
+      src="/images/bear.jpg">
+  <p class="site-author-name" itemprop="name">Zeyu</p>
+  <div class="site-description" itemprop="description">Done is better than perfect.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zeyu-hello" title="GitHub → https://github.com/zeyu-hello" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zengzeyu@hotmail.com" title="E-mail → mailto:zengzeyu@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="id-card"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zeyu</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz',
+      appKey     : 'BdWgkDuuoBKUAUvH1b0e3RJF',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

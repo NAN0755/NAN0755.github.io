@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zengzeyu.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":true,"nav":null,"activeClass":"valine"},"algolia":{"appID":"IEEVBE18SX","apiKey":"2ed347de4115ebbf86b2fdb5ed80c2c3","indexName":"my_blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在自动驾驶领域，传感器与主机通过网线连接，实现二者的实时通信。同时，在接收到雷达数据之后，后台处理系统到前端用户显示界面，也需要通过上述方法进行通信，因为后台处理系统一般都不自带显示器，例如PX-2，TX2等平台就提供网线接口。本文以16线激光雷达生成数据，处理后台系统处理后点云为例，进行分割分类数据传输到前端用户界面进行显示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="boost serialize(序列化)和boost deserialize(反序列化)类对象型数据并通过socket网络传输">
+<meta property="og:url" content="http://zengzeyu.com/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/index.html">
+<meta property="og:site_name" content="Zeyu&#39;s Blog">
+<meta property="og:description" content="在自动驾驶领域，传感器与主机通过网线连接，实现二者的实时通信。同时，在接收到雷达数据之后，后台处理系统到前端用户显示界面，也需要通过上述方法进行通信，因为后台处理系统一般都不自带显示器，例如PX-2，TX2等平台就提供网线接口。本文以16线激光雷达生成数据，处理后台系统处理后点云为例，进行分割分类数据传输到前端用户界面进行显示。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-29T11:12:00.000Z">
+<meta property="article:modified_time" content="2020-07-15T04:38:56.171Z">
+<meta property="article:author" content="Zeyu">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://zengzeyu.com/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>boost serialize(序列化)和boost deserialize(反序列化)类对象型数据并通过socket网络传输 | Zeyu's Blog</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-172735623-1',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5bb12350481c6ccda395fbe33bd0dc13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Zeyu's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Zeyu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">25</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/bear.jpg">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="Done is better than perfect.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          boost serialize(序列化)和boost deserialize(反序列化)类对象型数据并通过socket网络传输
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-29 19:12:00" itemprop="dateCreated datePublished" datetime="2019-06-29T19:12:00+08:00">2019-06-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-15 12:38:56" itemprop="dateModified" datetime="2020-07-15T12:38:56+08:00">2020-07-15</time>
+              </span>
+
+          
+            <span id="/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/" class="post-meta-item leancloud_visitors" data-flag-title="boost serialize(序列化)和boost deserialize(反序列化)类对象型数据并通过socket网络传输" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在自动驾驶领域，传感器与主机通过网线连接，实现二者的实时通信。同时，在接收到雷达数据之后，后台处理系统到前端用户显示界面，也需要通过上述方法进行通信，因为后台处理系统一般都不自带显示器，例如PX-2，TX2等平台就提供网线接口。<br>本文以<a href="http://robosense.cn/rslidar/RS-LiDAR-16" target="_blank" rel="noopener">16线激光雷达</a>生成数据，处理后台系统处理后点云为例，进行分割分类数据传输到前端用户界面进行显示。<a id="more"></a><br>主要用到了以下两个方面：</p>
+<ul>
+<li>boost::serialize 和 boost::deserialize 函数</li>
+<li>socket sendto() 和 recvfrom() 函数</li>
+</ul>
+<p>本文首先介绍<strong>不使用boost序列化</strong>方法进行传输方法，之后再介绍<strong>boost序列化</strong>方法进行数据传输的方法。主要梳理boost::serialize(序列化)和boost::deserialize(反序列化)相关内容，socket部分稍作介绍。关于二者的相关知识链接，请参阅底部参考文献。</p>
+<h2 id="1-非序列化数据传输方法"><a href="#1-非序列化数据传输方法" class="headerlink" title="1. 非序列化数据传输方法"></a>1. 非序列化数据传输方法</h2><h3 id="1-1-数据类格式"><a href="#1-1-数据类格式" class="headerlink" title="1.1 数据类格式"></a>1.1 数据类格式</h3><p>非序列化数据传输方法中数据类表示如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">CommunicationMsg</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    Header header;</span><br><span class="line">    PoseMsg pose;</span><br><span class="line">    <span class="keyword">char</span> perceptions[<span class="number">20000</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>header</code> 和 <code>pose</code>为另外的数据类，<code>perceptions</code>为<code>char</code>型数据容器。在非序列化方法下，将<code>CommunicationMsg</code>通过<code>socket</code>进行传输时，必须保证接收端的<code>CommunicationMsg</code>也必须为同样的数据顺序格式，即<code>header</code>、<code>pose</code>和<code>perceptions</code>三者顺序以及结构必须保持一致。</p>
+<h3 id="1-2-发送端代码"><a href="#1-2-发送端代码" class="headerlink" title="1.2 发送端代码"></a>1.2 发送端代码</h3><p>非序列化发送端代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">sendMsg</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;PerceptOutput&gt; &amp;datas, <span class="keyword">const</span> Header &amp;header, <span class="keyword">const</span> PoseMsg &amp;pose)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  CommunicationMsg send_msg;</span><br><span class="line">  send_msg.header = header;</span><br><span class="line">  send_msg.pose = pose;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;PerceptResultMsg&gt; msgs = convertToMsg(datas);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// origin send</span></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> tmp_string = toString(msgs);</span><br><span class="line">  send_msg.header.length = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(tmp_string.<span class="built_in">size</span>());</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(tmp_string.<span class="built_in">size</span>()); ++i)</span><br><span class="line">  &#123;</span><br><span class="line">      send_msg.perceptions[i] = tmp_string[i];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">char</span> pot[<span class="number">20480</span>];</span><br><span class="line">  <span class="built_in">memset</span>(pot, <span class="number">0</span>, <span class="keyword">sizeof</span>(pot));</span><br><span class="line">  <span class="built_in">memcpy</span>(pot, &amp;send_msg, <span class="keyword">sizeof</span>(send_msg));</span><br><span class="line">  sendto(sender_sockfd_, pot, <span class="keyword">sizeof</span>(pot), <span class="number">0</span>, (struct sockaddr *) &amp;sender_dest_addr_, <span class="keyword">sizeof</span>(sender_dest_addr_));</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到上述代码中的<code>pot</code>变量为固定长度<code>20480</code>，<code>20480</code>这个数字是根据自己的数据长度来定，唯一的原则就是要保证所要发送的数据长度必须小于该数大小。这里就体现出非序列化方法中固定数组长度<strong>弊端</strong>：</p>
+<ol>
+<li><strong>数据小于该数组长度时，造成网络带宽的浪费；</strong></li>
+<li><strong>数据大于该数组长度时，造成数据溢出。</strong></li>
+</ol>
+<h3 id="1-3-接收端代码"><a href="#1-3-接收端代码" class="headerlink" title="1.3 接收端代码"></a>1.3 接收端代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">receMsg</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;PerceptResultMsg&gt; &amp;msgs, Header &amp;header, PoseMsg &amp;pose)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> cli_ip[INET_ADDRSTRLEN] = <span class="string">""</span>;<span class="comment">//INET_ADDRSTRLEN=16</span></span><br><span class="line">  <span class="keyword">socklen_t</span> cliaddr_len = <span class="keyword">sizeof</span>(receiver_dest_addr_);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">char</span> recv_buf[<span class="number">50000</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  <span class="keyword">int</span> recv_len = recvfrom(receiver_sockfd_, recv_buf, <span class="keyword">sizeof</span>(recv_buf), <span class="number">0</span>, (struct sockaddr *) &amp;receiver_dest_addr_, &amp;cliaddr_len);</span><br><span class="line">  inet_ntop(AF_INET, &amp;receiver_dest_addr_.sin_addr, cli_ip, INET_ADDRSTRLEN);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/// origin receive </span></span><br><span class="line">  CommunicationMsg *tmp_msg = <span class="keyword">new</span> CommunicationMsg;</span><br><span class="line">  tmp_msg = (CommunicationMsg *) recv_buf;</span><br><span class="line">  <span class="keyword">int</span> str_len = tmp_msg-&gt;header.length;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> tmp_str;</span><br><span class="line">  tmp_str.resize(str_len);</span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; str_len; ++i)</span><br><span class="line">  &#123;</span><br><span class="line">      tmp_str[i] = tmp_msg-&gt;perceptions[i];</span><br><span class="line">  &#125;</span><br><span class="line">  msgs = toData(tmp_str);</span><br><span class="line">  header = tmp_msg-&gt;header;</span><br><span class="line">  pose = tmp_msg-&gt;pose;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接收端代码中<code>recv_buf</code>固定大小为<code>50000</code>，由于数据在完全接收之前不知道数据长度为多少，所以必须使用更大的数组容器来盛放接收数据。此处，能想到的可以讲数据长度变量和数据本身分开成两次先后接收，可以先接收到数据长度，然后使用该长度去接收数据，不过这样使得操作更加麻烦，可能用更加智能的方法，本文未涉及。<br>接收端将接收到的数据通过此行代码<code>  tmp_msg = (CommunicationMsg *) recv_buf;</code>进行强制类型转换，该方法监督粗暴，但后患无穷，具体会导致哪些不容易发现的bug，本文未进行深究，但此方法在使用中也是可行方案之一。这个方法依据数据在数组中的放置方式，完全按照该类结构来储存，所以可以采用此方法。此方法属于C/C++语言的自带特性中的强制类型转换应用。</p>
+<h2 id="2-boost-serialize-（序列化）-和-boost-deserialize-（反序列化）"><a href="#2-boost-serialize-（序列化）-和-boost-deserialize-（反序列化）" class="headerlink" title="2. boost serialize （序列化） 和 boost deserialize （反序列化）"></a>2. boost serialize （序列化） 和 boost deserialize （反序列化）</h2><p>对于发送和接收消息，我觉得可以通过举一个例子来形象的理解：谍战中的密码报文发送与接收。当友军持有相同的密码解读字典时，发送密码一方通过将需要发送的信息，通过查询密码字典翻译为密码，然后通过发报机发送出去，接收一方首先记录下接收到的信息，然后在通过查询密码字典将信息翻译出来，从而得到真实的信息。只要理解了上面的原理，将该模型抽象出来，就会在生活中发现许多相似的场景：理解相同语言人之间的对话，收音机调到某一频率收听节目，与黄金等值的货币之间的兑换等等。这就是 boost 序列化的最形象的理解。</p>
+<h3 id="2-1-类对象数据序列化"><a href="#2-1-类对象数据序列化" class="headerlink" title="2.1 类对象数据序列化"></a>2.1 类对象数据序列化</h3><p>数据格式的序列化可分为：XML格式，文本格式（text）和二进制格式（binary）。二进制格式虽然在传输过程中速度会更快，但是会破坏类对象型数据数据结构，所以不采用此方法。文本格式是最容易理解和输出可是化的格式，所见即所得，所以本文采用此格式进行数据传输。<br>使用文本格式序列化须包含以下头文件：<code>#include &lt;boost/archive/text_iarchive.hpp&gt;</code>和<code>#include &lt;boost/archive/text_oarchive.hpp&gt;</code>。另外，boost自带对STL库的数据支持，例如本文使用到的对<code>std::vector</code>支持，需要包含头文件<code>#include &lt;boost/serialization/vector.hpp&gt;</code>。<br>类对象数据是否侵入式序列化有两种方式：侵入式序列化（intrusive）和非侵入式序列化（non-intrusive）。</p>
+<p>关于二者的介绍，[参考文献1]中进行了详细描述。本文将以第1章中数据为例，使用侵入式序列化进行简单的介绍。</p>
+<p><strong>侵入式序列化</strong></p>
+<p>侵入式序列化操作相关代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;PerceptResultMsg&gt; pcep_msg;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Archive&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">serialize</span><span class="params">(Archive &amp; ar, <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> version)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ar &amp; a;</span><br><span class="line">    ar &amp; b;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以本文数据类型为例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//boost</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/archive/text_iarchive.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/archive/text_oarchive.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;boost/serialization/vector.hpp&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// header</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Header</span>&#123;</span></span><br><span class="line"><span class="comment">//public:</span></span><br><span class="line"><span class="comment">//    Header() &#123;&#125;</span></span><br><span class="line"><span class="comment">//    Header( unsigned short int&amp; in_head, unsigned short int&amp; in_object_num, unsigned int&amp; in_length,</span></span><br><span class="line"><span class="comment">//             unsigned long int&amp; in_frame_id, unsigned long int&amp; in_timestamp):</span></span><br><span class="line"><span class="comment">//            head(in_head), object_num(in_object_num), length(in_length), frame_id(in_frame_id), timestamp(in_timestamp)&#123;&#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">boost</span>:</span>:serialization::access;</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Archive</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">void</span> <span class="title">serialize</span>(<span class="title">Archive</span>&amp; <span class="title">ar</span>, <span class="title">const</span> <span class="title">unsigned</span> <span class="title">int</span> <span class="title">version</span>)</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        ar &amp; head;</span><br><span class="line">        ar &amp; object_num;</span><br><span class="line">        ar &amp; length;</span><br><span class="line">        ar &amp; frame_id;</span><br><span class="line">        ar &amp; timestamp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">unsigned</span> short <span class="keyword">int</span> head;</span><br><span class="line">  <span class="keyword">unsigned</span> short <span class="keyword">int</span> object_num;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> length;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">int</span> frame_id;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">int</span> timestamp;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">CommunicationMsg</span>&#123;</span></span><br><span class="line">    <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">boost</span>:</span>:serialization::access;</span><br><span class="line">    Header header;</span><br><span class="line">    PoseMsg pose;</span><br><span class="line"><span class="comment">//    char perceptions[20000];</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// intrusive</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;PerceptResultMsg&gt; pcep_msg;</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Archive&gt;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">serialize</span><span class="params">(Archive &amp; ar, <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> version)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ar &amp; header;</span><br><span class="line">        ar &amp; pose;</span><br><span class="line">        ar &amp; pcep_msg;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>既然是“侵入式”，那么就要对原有数据类进行更改，上述代码中的更改将<code>std::vector&lt;PerceptResultMsg&gt; pcep_msg</code>替代原有<code>char perceptions[20000]</code>为容器。对于侵入式序列化的类数据每一个数据成员，同样要进行侵入式序列化处理，因为boost serialize只对其支持的数据结构（基本数据类型和STL库里的数据类型）进行序列化操作，对于用户自定义的类型数据，无法自动进行序列化处理。代码中以<code>struct header</code>子数据成员为例进行了侵入式序列化操作。</p>
+<h3 id="2-2-序列化操作代码"><a href="#2-2-序列化操作代码" class="headerlink" title="2.2 序列化操作代码"></a>2.2 序列化操作代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">std::string Serialize(const CommunicationMsg &amp;msg)</span><br><span class="line">&#123;</span><br><span class="line">  std::ostringstream archiveStream;</span><br><span class="line">  boost::archive::text_oarchive archive(archiveStream);</span><br><span class="line">  archive &lt;&lt; msg;</span><br><span class="line">  return archiveStream.str();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将<code>CommunicationMsg</code>类型对象传入该函数可得到<code>string</code>类型数据传输流，用以 socket 通信。</p>
+<h3 id="2-3-接收端反序列化"><a href="#2-3-接收端反序列化" class="headerlink" title="2.3 接收端反序列化"></a>2.3 接收端反序列化</h3><p>为了反序列化出原有<code>CommunicationMsg</code>类型数据对象，那么定义声明<code>CommunicationMsg</code>类型文件必须在接收端同样有一份，这样反序列化操作才能根据该文件得出经 socket 传输过来的数据属于哪个变量。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">CommunicationMsg <span class="title">DeSerialize</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    CommunicationMsg msg;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">istringstream</span> <span class="title">archiveStream</span><span class="params">(message)</span></span>;</span><br><span class="line">    boost::<span class="function">archive::text_iarchive <span class="title">archive</span><span class="params">(archiveStream)</span></span>;</span><br><span class="line">    archive &gt;&gt; msg;</span><br><span class="line">    <span class="keyword">return</span> msg;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-socket-通信"><a href="#3-socket-通信" class="headerlink" title="3. socket 通信"></a>3. socket 通信</h2><p>基于 socket 的通信，本文使用了以下两个函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sendto(sender_sockfd_, pot_1, <span class="keyword">sizeof</span>(pot_1), <span class="number">0</span>, (struct sockaddr *) &amp;sender_dest_addr_, <span class="keyword">sizeof</span>(sender_dest_addr_));</span><br><span class="line"></span><br><span class="line">recvfrom(receiver_sockfd_, recv_buf, <span class="keyword">sizeof</span>(recv_buf), <span class="number">0</span>, (struct sockaddr *) &amp;receiver_dest_addr_, &amp;cliaddr_len);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-序列化数据发送端代码"><a href="#3-1-序列化数据发送端代码" class="headerlink" title="3.1 序列化数据发送端代码"></a>3.1 序列化数据发送端代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">sendMsg</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;PerceptOutput&gt; &amp;datas, <span class="keyword">const</span> Header &amp;header, <span class="keyword">const</span> PoseMsg &amp;pose)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  CommunicationMsg send_msg;</span><br><span class="line">  send_msg.header = header;</span><br><span class="line">  send_msg.pose = pose;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;PerceptResultMsg&gt; msgs = convertToMsg(datas);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// serialize send</span></span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        send_msg.pcep_msg.resize( msgs.<span class="built_in">size</span>() );</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; msgs.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            send_msg.pcep_msg[i] = msgs[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> send_str = <span class="keyword">this</span>-&gt;Serialize( send_msg );</span><br><span class="line">        <span class="keyword">char</span> pot_1[send_str.length()];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; send_str.length(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            pot_1[i] = send_str.c_str()[i];</span><br><span class="line">        &#125;</span><br><span class="line">        sendto(sender_sockfd_, pot_1, <span class="keyword">sizeof</span>(pot_1), <span class="number">0</span>, (struct sockaddr *) &amp;sender_dest_addr_, <span class="keyword">sizeof</span>(sender_dest_addr_));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> ( <span class="built_in">std</span>::exception&amp; e )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; e.what() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至于为什么使用异常处理模块，考虑到偶尔有无法序列化的对象，防止程序崩溃继续运行的手段，对于某一帧点云数据无法传输序列化，通过异常处理手段来跳过是可以忍受的。反序列化端接收代码同样如此。</p>
+<h3 id="3-2-序列化数据接收端代码"><a href="#3-2-序列化数据接收端代码" class="headerlink" title="3.2 序列化数据接收端代码"></a>3.2 序列化数据接收端代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">receMsg</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;PerceptResultMsg&gt; &amp;msgs, Header &amp;header, PoseMsg &amp;pose)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> cli_ip[INET_ADDRSTRLEN] = <span class="string">""</span>;<span class="comment">//INET_ADDRSTRLEN=16</span></span><br><span class="line">  <span class="keyword">socklen_t</span> cliaddr_len = <span class="keyword">sizeof</span>(receiver_dest_addr_);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">char</span> recv_buf[<span class="number">50000</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  <span class="keyword">int</span> recv_len = recvfrom(receiver_sockfd_, recv_buf, <span class="keyword">sizeof</span>(recv_buf), <span class="number">0</span>, (struct sockaddr *) &amp;receiver_dest_addr_, &amp;cliaddr_len);</span><br><span class="line">  inet_ntop(AF_INET, &amp;receiver_dest_addr_.sin_addr, cli_ip, INET_ADDRSTRLEN);</span><br><span class="line"><span class="comment">/// ---------- boost deserialize ---------------</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> rec_str;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; recv_len; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        rec_str += recv_buf[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">          CommunicationMsg boost_msg;</span><br><span class="line">          boost_msg = <span class="keyword">this</span>-&gt;Deserialize( rec_str );</span><br><span class="line">          <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"boost_msg.pcep_msg.size(): "</span> &lt;&lt; boost_msg.pcep_msg.<span class="built_in">size</span>() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">          header = boost_msg.header;</span><br><span class="line">          pose = boost_msg.pose;</span><br><span class="line">          msgs = boost_msg.pcep_msg;</span><br><span class="line">      &#125;</span><br><span class="line">  <span class="keyword">catch</span> ( <span class="built_in">std</span>::exception&amp; e )</span><br><span class="line">      &#123;</span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; e.what() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">      &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>此次小的更新虽然只是一个很小部分代码更新，对于整体性能影响也不大，顶多对网络带宽占用率有一点降低，提升一点传输速度，但是在此处花费的时间将近一周，实在不应该。个人觉得应该学到的更多的是找到问题，解决问题的能力。对于调试大型工程代码有了一点自己的认识，从未接触过的领域，可以触类旁通的去理解，但实际问题还是需要实际的知识和工具来解决，不要局限在仅有的知识储备上来看问题，容易闭门造车。</p>
+<p>以上。</p>
+<hr>
+<p>参考文献：</p>
+<ol>
+<li><a href="https://blog.csdn.net/zj510/article/details/8105408" target="_blank" rel="noopener">Boost - 序列化 (Serialization)</a></li>
+<li><a href="https://www.boost.org/doc/libs/1_65_1/libs/serialization/doc/tutorial.html" target="_blank" rel="noopener">boost::serialize 官方教程</a></li>
+<li><a href="https://blog.csdn.net/dugaoda/article/details/51005335" target="_blank" rel="noopener">使用boost库序列化传输对象</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/06/29/YOLO/" rel="prev" title="YOLO系列论文翻译">
+      <i class="fa fa-chevron-left"></i> YOLO系列论文翻译
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/29/My-Paper-Lib-2019/" rel="next" title="My Paper Lib 2019">
+      My Paper Lib 2019 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-非序列化数据传输方法"><span class="nav-text">1. 非序列化数据传输方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-数据类格式"><span class="nav-text">1.1 数据类格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-发送端代码"><span class="nav-text">1.2 发送端代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-接收端代码"><span class="nav-text">1.3 接收端代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-boost-serialize-（序列化）-和-boost-deserialize-（反序列化）"><span class="nav-text">2. boost serialize （序列化） 和 boost deserialize （反序列化）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-类对象数据序列化"><span class="nav-text">2.1 类对象数据序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-序列化操作代码"><span class="nav-text">2.2 序列化操作代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-接收端反序列化"><span class="nav-text">2.3 接收端反序列化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-socket-通信"><span class="nav-text">3. socket 通信</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-序列化数据发送端代码"><span class="nav-text">3.1 序列化数据发送端代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-序列化数据接收端代码"><span class="nav-text">3.2 序列化数据接收端代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后记"><span class="nav-text">后记</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zeyu"
+      src="/images/bear.jpg">
+  <p class="site-author-name" itemprop="name">Zeyu</p>
+  <div class="site-description" itemprop="description">Done is better than perfect.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zeyu-hello" title="GitHub → https://github.com/zeyu-hello" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zengzeyu@hotmail.com" title="E-mail → mailto:zengzeyu@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="id-card"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zeyu</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz',
+      appKey     : 'BdWgkDuuoBKUAUvH1b0e3RJF',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

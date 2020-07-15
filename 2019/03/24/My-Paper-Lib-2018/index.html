@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zengzeyu.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":true,"nav":null,"activeClass":"valine"},"algolia":{"appID":"IEEVBE18SX","apiKey":"2ed347de4115ebbf86b2fdb5ed80c2c3","indexName":"my_blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="This is my 2018 paper lib.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="My Paper Lib 2018">
+<meta property="og:url" content="http://zengzeyu.com/2019/03/24/My-Paper-Lib-2018/index.html">
+<meta property="og:site_name" content="Zeyu&#39;s Blog">
+<meta property="og:description" content="This is my 2018 paper lib.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-03-24T10:59:46.000Z">
+<meta property="article:modified_time" content="2020-07-15T04:40:20.519Z">
+<meta property="article:author" content="Zeyu">
+<meta property="article:tag" content="DL">
+<meta property="article:tag" content="Paper">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://zengzeyu.com/2019/03/24/My-Paper-Lib-2018/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>My Paper Lib 2018 | Zeyu's Blog</title>
+  
+    <script>
+      function sendPageView() {
+        if (CONFIG.hostname !== location.hostname) return;
+        var uid = localStorage.getItem('uid') || (Math.random() + '.' + Math.random());
+        localStorage.setItem('uid', uid);
+        navigator.sendBeacon('https://www.google-analytics.com/collect', new URLSearchParams({
+          v  : 1,
+          tid: 'UA-172735623-1',
+          cid: uid,
+          t  : 'pageview',
+          dp : encodeURIComponent(location.pathname)
+        }));
+      }
+      document.addEventListener('pjax:complete', sendPageView);
+      sendPageView();
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?5bb12350481c6ccda395fbe33bd0dc13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Zeyu's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Zeyu's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">19</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">25</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2019/03/24/My-Paper-Lib-2018/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/bear.jpg">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="Done is better than perfect.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          My Paper Lib 2018
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-24 18:59:46" itemprop="dateCreated datePublished" datetime="2019-03-24T18:59:46+08:00">2019-03-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-15 12:40:20" itemprop="dateModified" datetime="2020-07-15T12:40:20+08:00">2020-07-15</time>
+              </span>
+
+          
+            <span id="/2019/03/24/My-Paper-Lib-2018/" class="post-meta-item leancloud_visitors" data-flag-title="My Paper Lib 2018" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/03/24/My-Paper-Lib-2018/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/03/24/My-Paper-Lib-2018/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>This is my 2018 paper lib. <a id="more"></a></p>
+<table>
+<thead>
+<tr>
+<th>paper</th>
+<th>source</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>O-CNN : Octree-based Convolutional Neural Networks for 3D Shape Analysis</td>
+<td><a href="https://arxiv.org/pdf/1712.01537.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/Microsoft/O-CNN" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>OctNet: Learning Deep 3D Representations at High Resolutions</td>
+<td><a href="http://www.cvlibs.net/publications/Riegler2017CVPR.pdf" target="_blank" rel="noopener">PDF</a>/<a href="https://www.youtube.com/watch?v=qYyephF2BBw" target="_blank" rel="noopener">video</a>/<a href="https://github.com/griegler/octnet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Parallel Separable 3D Convolution for Video and Volumetric Data Understanding</td>
+<td><a href="https://arxiv.org/pdf/1809.04096.pdf" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>PIXOR : Real-time 3D Object Detection from Point Clouds</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Yang_PIXOR_Real-Time_3D_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/overfitover/pixor_pytorch" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>PointCNN</td>
+<td><a href="https://arxiv.org/pdf/1801.07791.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/yangyanli/PointCNN" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>PointNet : Deep Learning on Point Sets for 3D Classification and Segmentation</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Qi_PointNet_Deep_Learning_CVPR_2017_paper.pdf" target="_blank" rel="noopener">PDF</a>/<a href="https://www.youtube.com/watch?v=Cge-hot0Oc0" target="_blank" rel="noopener">video</a>/<a href="https://github.com/charlesq34/pointnet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>PointNet ++ : Deep Hierarchical Feature Learning on Point Sets in a Metric Space</td>
+<td><a href="https://arxiv.org/pdf/1706.02413.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/charlesq34/pointnet2" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Receptive Field Block Net for Accurate and Fast Object Detection</td>
+<td><a href="https://arxiv.org/pdf/1711.07767.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/ruinmessi/RFBNet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Deep Residual Learning for Image Recognition(ResNet)</td>
+<td><a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf" target="_blank" rel="noopener">PDF</a>/<a href="https://www.youtube.com/watch?v=C6tLw-rPQ2o" target="_blank" rel="noopener">video</a>/code</td>
+</tr>
+<tr>
+<td>Rethinking Atrous Convolution for Semantic Image Segmentation</td>
+<td><a href="https://arxiv.org/pdf/1706.05587" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>Rich feature hierarchies for accurate object detection and semantic segmentation</td>
+<td><a href="https://arxiv.org/pdf/1311.2524" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>Sparse 3D convolutional neural networks</td>
+<td><a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Liu_Sparse_Convolutional_Neural_2015_CVPR_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>SPLATNet : Sparse Lattice Networks for Point Cloud Processing</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Su_SPLATNet_Sparse_Lattice_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/NVlabs/splatnet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>SqueezeSeg: Convolutional Neural Nets with Recurrent CRF for Real-Time Road-Object Segmentation from 3D LiDAR Point Cloud</td>
+<td><a href="https://arxiv.org/pdf/1710.07368" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/BichenWuUCB/SqueezeSeg" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>The Devil of Face Recognition is in the Noise</td>
+<td><a href="http://openaccess.thecvf.com/content_ECCV_2018/papers/Liren_Chen_The_Devil_of_ECCV_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>Understanding Convolution for Semantic Segmentation</td>
+<td><a href="https://arxiv.org/pdf/1702.08502" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/TuSimple/TuSimple-DUC" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>V-Net : Fully Convolutional Neural Networks for Volumetric Medical Image Segmentation</td>
+<td><a href="https://arxiv.org/pdf/1606.04797" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/mattmacy/vnet.pytorch" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2018/CameraReady/3333.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/qianguih/voxelnet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Xception: Deep Learning with Depthwise Separable Convolutions</td>
+<td><a href="https://arxiv.org/pdf/1610.02357" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>PointFusion : Deep Sensor Fusion for 3D Bounding Box Estimation</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Xu_PointFusion_Deep_Sensor_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Efficient Convolutions for Real-Time Semantic Segmentation of 3D Point Clouds</td>
+<td><a href="http://www.cs.toronto.edu/~wenjie/papers/3dv18.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Exploring Spatial Context for 3D Semantic Segmentation of Point Clouds</td>
+<td><a href="https://arxiv.org/pdf/1802.01500" target="_blank" rel="noopener">PDF</a>/<a href="https://www.youtube.com/watch?v=w--rpu2-HFs" target="_blank" rel="noopener">video</a>/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Factorized Convolutional Neural Networks</td>
+<td><a href="http://openaccess.thecvf.com/content_ICCV_2017_workshops/papers/w10/Wang_Factorized_Convolutional_Neural_ICCV_2017_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Fast Bilateral Solver for Semantic Video Segmentation</td>
+<td><a href="https://web.stanford.edu/class/cs331b/2016/projects/wang_kao.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Fast LIDAR-based Road Detection Using Fully Convolutional Neural Networks</td>
+<td><a href="https://arxiv.org/pdf/1703.03613" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>FishNet : A Versatile Backbone for Image , Region , and Pixel Level Prediction</td>
+<td><a href="https://papers.nips.cc/paper/7356-fishnet-a-versatile-backbone-for-image-region-and-pixel-level-prediction.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/kevin-ssy/FishNet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Flattened Convolutional Neural Networks for Feedforward Acceleration</td>
+<td><a href="https://arxiv.org/pdf/1412.5474" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/jhjin/flattened-cnn" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Focal Loss for Dense Object Detection</td>
+<td><a href="https://arxiv.org/pdf/1708.02002" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/unsky/focal-loss" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Frustum PointNets for 3D Object Detection from RGB-D Data</td>
+<td><a href="https://arxiv.org/pdf/1711.08488" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/charlesq34/frustum-pointnets" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Full-Resolution Residual Networks for Semantic Segmentation in Street Scenes</td>
+<td><a href="">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Fully Convolutional Networks for Semantic Segmentation</td>
+<td><a href="https://people.eecs.berkeley.edu/~jonlong/long_shelhamer_fcn.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Fully-Convolutional Point Networks for Large-Scale Point Clouds</td>
+<td><a href="https://arxiv.org/pdf/1808.06840" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/drethage/fully-convolutional-point-network" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Fast R-CNN</td>
+<td><a href="https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Girshick_Fast_R-CNN_ICCV_2015_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/rbgirshick/fast-rcnn" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Going Deeper with Convolutions（GoogLeNet）</td>
+<td><a href="https://arxiv.org/pdf/1409.4842.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Ground Estimation and Point Cloud Segmentation using SpatioTemporal Conditional Random Field</td>
+<td><a href="https://hal.inria.fr/hal-01579095/document" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>HDNET : Exploiting HD Maps for 3D Object Detection</td>
+<td><a href="http://proceedings.mlr.press/v87/yang18b/yang18b.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Inception-V4, Inception-ResNet ad the Impact of Residual Connections on Learning</td>
+<td><a href="https://arxiv.org/pdf/1602.07261" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Instance-aware Semantic Segmentation via Multi-task Network Cascades</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2016/papers/Dai_Instance-Aware_Semantic_Segmentation_CVPR_2016_paper.pdf" target="_blank" rel="noopener">PDF</a>/<a href="https://www.youtube.com/watch?v=bUjyXASy_Jo" target="_blank" rel="noopener">video</a>/<a href="https://github.com/daijifeng001/MNC" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Joint 3D Proposal Generation and Object Detection from View Aggregation(AVOD)</td>
+<td><a href="https://arxiv.org/pdf/1712.02294" target="_blank" rel="noopener">PDF</a>/<a href="https://www.youtube.com/watch?v=Q1f-s6_yHtw" target="_blank" rel="noopener">video</a>/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Large-scale Point Cloud Semantic Segmentation with Superpoint Graphs</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Landrieu_Large-Scale_Point_Cloud_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/loicland/superpoint_graph" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Learning 3D Shape Completion from Laser Scan Data with Weak Supervision</td>
+<td><a href="http://www.cvlibs.net/publications/Stutz2018CVPR.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/davidstutz/cvpr2018-shape-completion" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Learning a Real-Time 3D Point Cloud Obstacle Discriminator via Bootstrapping</td>
+<td><a href="https://www.velodynelidar.com/lidar/hdlpressroom/pdf/papers/journal_papers/Learning%20a%20Real-Time%203D%20Point%20Cloud%20Obstacle%20Discriminator%20via%20Bootstrapping.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Learning Spatio-Temporal Representation with Pseudo-3D Residual Networks</td>
+<td><a href="http://openaccess.thecvf.com/content_ICCV_2017/papers/Qiu_Learning_Spatio-Temporal_Representation_ICCV_2017_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/ZhaofanQiu/pseudo-3d-residual-networks" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Multi-Task Learning Using Uncertainty to Weigh Losses for Scene Geometry and Semantics</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Kendall_Multi-Task_Learning_Using_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Multi-View 3D Object Detection Network for Autonomous Driving</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Chen_Multi-View_3D_Object_CVPR_2017_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/bostondiditeam/MV3D" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Not All Pixels Are Equal : Difficulty-Aware Semantic Segmentation via Deep Layer Cascade</td>
+<td><a href="https://arxiv.org/pdf/1704.01344" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/liuziwei7/region-conv" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>3D Fully Convolutional Network for Vehicle Detection in Point Cloud</td>
+<td><a href="https://arxiv.org/pdf/1611.08069" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>3D Semantic Segmentation with Submanifold Sparse Convolutional Networks</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Graham_3D_Semantic_Segmentation_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>3D U-Net: Learning Dense Volumetric Segmentation from Sparse Annotation</td>
+<td><a href="https://arxiv.org/pdf/1606.06650" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/shiba24/3d-unet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Deconvolutional Networks for Point-Cloud Vehicle Detection and Tracking in Driving Scenarios</td>
+<td><a href="https://upcommons.upc.edu/bitstream/handle/2117/114460/1906-Deconvolutional-Networks-for-Point-Cloud-Vehicle-Detection-and-Tracking-in-Driving-Scenarios.pdf;jsessionid=60063FD0E6A7237ADDA02C102C9C9A5B?sequence=1" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour</td>
+<td><a href="https://arxiv.org/pdf/1706.02677.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Acquisition of Localization Confidence for Accurate Object Detection(IouNet)</td>
+<td><a href="http://openaccess.thecvf.com/content_ECCV_2018/papers/Borui_Jiang_Acquisition_of_Localization_ECCV_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>A Hybrid Conditional Random Field for Estimating the Underlying Ground Surface from Airborne LiDAR Data</td>
+<td><a href="https://www.cs.ubc.ca/~murphyk/Papers/tgars2009.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Batch Normalization : Accelerating Deep Network Training by Reducing Internal Covariate Shift</td>
+<td><a href="https://arxiv.org/pdf/1502.03167.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>BiSeNet : Bilateral Segmentation Network for Real-time Semantic Segmentation</td>
+<td><a href="https://arxiv.org/pdf/1808.00897" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</td>
+<td><a href="https://arxiv.org/pdf/1709.02128" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Complex-YOLO: An Euler-Region-Proposal for Real-time 3D Object Detection on Point Clouds</td>
+<td><a href="https://arxiv.org/pdf/1803.06199" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/AI-liu/Complex-YOLO" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>CornerNet: Detecting Objects as Paired Keypoints</td>
+<td><a href="https://arxiv.org/pdf/1808.01244" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/princeton-vl/CornerNet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Conditional Random Fields Meet Deep Neural Networks for Semantic Segmentation</td>
+<td><a href="http://www.robots.ox.ac.uk/~tvg/publications/2017/CRFMeetCNN4SemanticSegmentation.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Decoupled Networks</td>
+<td><a href="http://wyliu.com/papers/LiuCVPR18_DCNets.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Deep Feature Pyramid Reconfiguration for Object Detection</td>
+<td><a href="http://openaccess.thecvf.com/content_ECCV_2018/papers/Tao_Kong_Deep_Feature_Pyramid_ECCV_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>DropBlock : A regularization method for convolutional networks</td>
+<td><a href="https://papers.nips.cc/paper/8271-dropblock-a-regularization-method-for-convolutional-networks.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>RoarNet: A Robust 3D Object Detection based on RegiOn Approximation Refinement</td>
+<td><a href="">PDF</a>/<a href="https://www.youtube.com/watch?v=ZmnhvLlJ6qg">video</a>/<a href="https://arxiv.org/pdf/1811.03818" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Dropout: A simple way to prevent neural networks from overfitting</td>
+<td><a href="http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>SECOND: Sparsely Embedded Convolutional Detection</td>
+<td><a href="https://www.mdpi.com/1424-8220/18/10/3337/pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks</td>
+<td><a href="https://arxiv.org/pdf/1506.01497.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Bag of Tricks for Image Classification with Convolutional Neural Networks</td>
+<td><a href="https://arxiv.org/pdf/1812.01187" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Deformable ConvNets v2: More Deformable, Better Results</td>
+<td><a href="https://arxiv.org/pdf/1811.11168" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Non-local Neural Networks</td>
+<td><a href="https://arxiv.org/pdf/1711.07971" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>PointPillars: Fast Encoders for Object Detection from Point Clouds</td>
+<td><a href="https://arxiv.org/pdf/1812.05784" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Box2Pix : Single-Shot Instance Segmentation by Assigning Pixels to Object Boxes</td>
+<td><a href="https://lmb.informatik.uni-freiburg.de/Publications/2018/UB18/paper-box2pix.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>IPOD: Intensive Point-based Object Detector for Point Cloud</td>
+<td><a href="https://arxiv.org/pdf/1812.05276" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Densely connected convolutional networks</td>
+<td><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Huang_Densely_Connected_Convolutional_CVPR_2017_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>SqueezeSegV2: Improved Model Structure and Unsupervised Domain Adaptation for Road-Object Segmentation from a LiDAR Point Cloud</td>
+<td><a href="https://arxiv.org/pdf/1809.08495" target="_blank" rel="noopener">PDF</a>/<a href="https://www.youtube.com/watch?v=ZitFO1_YpNM" target="_blank" rel="noopener">video</a>/<a href="">code</a></td>
+</tr>
+<tr>
+<td>SSD: Single Shot MultiBox Detector</td>
+<td><a href="https://www.cs.unc.edu/~wliu/papers/ssd.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>Residual Networks Behave Like Ensembles of Relatively Shallow Networks</td>
+<td><a href="https://arxiv.org/pdf/1605.06431" target="_blank" rel="noopener">PDF</a>/<a href="https://www.youtube.com/watch?v=5wku9_vMxsA" target="_blank" rel="noopener">video</a>/code</td>
+</tr>
+<tr>
+<td>Single-Shot Refinement Neural Network for Object Detection (RefineDet)</td>
+<td><a href="https://arxiv.org/pdf/1711.06897" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/sfzhang15/RefineDet" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>MIXED PRECISION TRAINING</td>
+<td><a href="https://arxiv.org/pdf/1710.03740" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/suvojit-0x55aa/mixed-precision-pytorch" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Gradient Harmonized Single-stage Detector</td>
+<td><a href="https://arxiv.org/pdf/1811.05181" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/libuyu/GHM_Detection" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>Gather-Excite: Exploiting Feature Context in Convolutional Neural Networks</td>
+<td><a href="https://arxiv.org/pdf/1810.12348" target="_blank" rel="noopener">PDF</a>/video/<a href="">code</a></td>
+</tr>
+<tr>
+<td>GradNorm: Gradient Normalization for Adaptive Loss Balancing in Deep Multitask Networks</td>
+<td><a href="https://arxiv.org/pdf/1711.02257.pdf" target="_blank" rel="noopener">PDF</a>/<a href="https://vimeo.com/287812909" target="_blank" rel="noopener">video</a>/<a href="https://github.com/ignaciorlando/pytorch-grad-norm" target="_blank" rel="noopener">code</a></td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DL/" rel="tag"># DL</a>
+              <a href="/tags/Paper/" rel="tag"># Paper</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/01/16/Mixed-Precision%20Training%20of%20Deep%20Neural%20Networks/" rel="prev" title="Mixed-Precision Training of Deep Neural Networks">
+      <i class="fa fa-chevron-left"></i> Mixed-Precision Training of Deep Neural Networks
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/29/YOLO/" rel="next" title="YOLO系列论文翻译">
+      YOLO系列论文翻译 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zeyu"
+      src="/images/bear.jpg">
+  <p class="site-author-name" itemprop="name">Zeyu</p>
+  <div class="site-description" itemprop="description">Done is better than perfect.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zeyu-hello" title="GitHub → https://github.com/zeyu-hello" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zengzeyu@hotmail.com" title="E-mail → mailto:zengzeyu@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-mail</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="id-card"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zeyu</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":true};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz',
+      appKey     : 'BdWgkDuuoBKUAUvH1b0e3RJF',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
