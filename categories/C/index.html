@@ -23,14 +23,14 @@
   <meta name="description" content="Done is better than perfect.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Zeyu&#39;s Blog">
-<meta property="og:url" content="http://zengzeyu.com/categories/c/index.html">
+<meta property="og:url" content="http://zengzeyu.com/categories/C/index.html">
 <meta property="og:site_name" content="Zeyu&#39;s Blog">
 <meta property="og:description" content="Done is better than perfect.">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Zeyu">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://zengzeyu.com/categories/c/">
+<link rel="canonical" href="http://zengzeyu.com/categories/C/">
 
 
 <script id="page-configurations">
@@ -43,7 +43,7 @@
   };
 </script>
 
-  <title>分类: c++ | Zeyu's Blog</title>
+  <title>分类: C++ | Zeyu's Blog</title>
   
     <script>
       function sendPageView() {
@@ -215,7 +215,7 @@
   <div class="post-block">
     <div class="posts-collapse">
       <div class="collection-title">
-        <h2 class="collection-header">c++
+        <h2 class="collection-header">C++
           <small>分类</small>
         </h2>
       </div>
@@ -230,15 +230,15 @@
 
       <div class="post-meta">
         <time itemprop="dateCreated"
-              datetime="2018-03-21T22:55:54+08:00"
-              content="2018-03-21">
-          03-21
+              datetime="2018-03-15T23:47:44+08:00"
+              content="2018-03-15">
+          03-15
         </time>
       </div>
 
       <div class="post-title">
-          <a class="post-title-link" href="/2018/03/21/Effective-c++-1.0/" itemprop="url">
-            <span itemprop="name">Effective c++ 1.0</span>
+          <a class="post-title-link" href="/2018/03/15/cpp_string_operation/" itemprop="url">
+            <span itemprop="name">c++ string 操作汇总</span>
           </a>
       </div>
 
@@ -425,9 +425,14 @@
                 console.error('Failed to save visitor count', error);
               });
           } else {
-              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
-              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
-            
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
           }
         })
         .catch(error => {
@@ -454,7 +459,7 @@
         });
     }
 
-    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":true};
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":false};
     function fetchData(api_server) {
       var Counter = (method, url, data) => {
         return fetch(`${api_server}/1.1${url}`, {
@@ -592,5 +597,4 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
 </script>
 
 </body>
-</html>
 </html>

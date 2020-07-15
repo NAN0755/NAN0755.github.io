@@ -235,8 +235,8 @@
       </div>
 
       <div class="post-title">
-          <a class="post-title-link" href="/2018/03/15/fcn_alexnet_pcl/" itemprop="url">
-            <span itemprop="name">FCN-PCL 应用解析</span>
+          <a class="post-title-link" href="/2018/03/15/cpp_string_operation/" itemprop="url">
+            <span itemprop="name">c++ string 操作汇总</span>
           </a>
       </div>
 
@@ -275,8 +275,8 @@
       </div>
 
       <div class="post-title">
-          <a class="post-title-link" href="/2018/03/08/Caffe%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B9%8BAlexNet_Caffenet_py/" itemprop="url">
-            <span itemprop="name">Caffe源代码学习 — AlexNet(Caffenet.py)</span>
+          <a class="post-title-link" href="/2018/03/08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url">
+            <span itemprop="name">NumPy学习笔记</span>
           </a>
       </div>
 
@@ -295,8 +295,8 @@
       </div>
 
       <div class="post-title">
-          <a class="post-title-link" href="/2018/03/08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url">
-            <span itemprop="name">NumPy学习笔记</span>
+          <a class="post-title-link" href="/2018/03/08/Caffe%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B9%8BAlexNet_Caffenet_py/" itemprop="url">
+            <span itemprop="name">Caffe源代码学习 — AlexNet(Caffenet.py)</span>
           </a>
       </div>
 
@@ -510,9 +510,14 @@
                 console.error('Failed to save visitor count', error);
               });
           } else {
-              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
-              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
-            
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
           }
         })
         .catch(error => {
@@ -539,7 +544,7 @@
         });
     }
 
-    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":true};
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":false};
     function fetchData(api_server) {
       var Counter = (method, url, data) => {
         return fetch(`${api_server}/1.1${url}`, {

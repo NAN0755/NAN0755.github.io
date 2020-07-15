@@ -255,8 +255,8 @@
       </div>
 
       <div class="post-title">
-          <a class="post-title-link" href="/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/" itemprop="url">
-            <span itemprop="name">boost serialize(序列化)和boost deserialize(反序列化)类对象型数据并通过socket网络传输</span>
+          <a class="post-title-link" href="/2019/06/29/YOLO/" itemprop="url">
+            <span itemprop="name">YOLO系列论文翻译</span>
           </a>
       </div>
 
@@ -275,8 +275,8 @@
       </div>
 
       <div class="post-title">
-          <a class="post-title-link" href="/2019/06/29/YOLO/" itemprop="url">
-            <span itemprop="name">YOLO系列论文翻译</span>
+          <a class="post-title-link" href="/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/" itemprop="url">
+            <span itemprop="name">boost serialize(序列化)和boost deserialize(反序列化)类对象型数据并通过socket网络传输</span>
           </a>
       </div>
 
@@ -464,9 +464,14 @@
                 console.error('Failed to save visitor count', error);
               });
           } else {
-              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
-              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
-            
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
           }
         })
         .catch(error => {
@@ -493,7 +498,7 @@
         });
     }
 
-    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":true};
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":false};
     function fetchData(api_server) {
       var Counter = (method, url, data) => {
         return fetch(`${api_server}/1.1${url}`, {

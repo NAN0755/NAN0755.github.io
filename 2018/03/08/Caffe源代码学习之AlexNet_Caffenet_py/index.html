@@ -30,9 +30,9 @@
 <meta property="article:published_time" content="2018-03-08T15:47:44.000Z">
 <meta property="article:modified_time" content="2020-07-15T04:59:59.154Z">
 <meta property="article:author" content="Zeyu">
+<meta property="article:tag" content="Caffe">
 <meta property="article:tag" content="Python">
 <meta property="article:tag" content="DL">
-<meta property="article:tag" content="Caffe">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://zengzeyu.com/2018/03/08/Caffe%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B9%8BAlexNet_Caffenet_py/">
@@ -391,9 +391,9 @@
 
       <footer class="post-footer">
           <div class="post-tags">
+              <a href="/tags/Caffe/" rel="tag"># Caffe</a>
               <a href="/tags/Python/" rel="tag"># Python</a>
               <a href="/tags/DL/" rel="tag"># DL</a>
-              <a href="/tags/Caffe/" rel="tag"># Caffe</a>
           </div>
 
         
@@ -402,12 +402,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2018/03/08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="prev" title="NumPy学习笔记">
-      <i class="fa fa-chevron-left"></i> NumPy学习笔记
+    <a href="/2017/06/26/%E5%BC%80%E7%AF%872017/" rel="prev" title="开篇2017">
+      <i class="fa fa-chevron-left"></i> 开篇2017
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/03/08/ROS_Node%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%89%93%E6%96%AD%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B/" rel="next" title="ROS Node 之间通信打断操作实例">
-      ROS Node 之间通信打断操作实例 <i class="fa fa-chevron-right"></i>
+    <a href="/2018/03/08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="NumPy学习笔记">
+      NumPy学习笔记 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -591,9 +591,14 @@
                 console.error('Failed to save visitor count', error);
               });
           } else {
-              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
-              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
-            
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
           }
         })
         .catch(error => {
@@ -620,7 +625,7 @@
         });
     }
 
-    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":true};
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":false};
     function fetchData(api_server) {
       var Counter = (method, url, data) => {
         return fetch(`${api_server}/1.1${url}`, {

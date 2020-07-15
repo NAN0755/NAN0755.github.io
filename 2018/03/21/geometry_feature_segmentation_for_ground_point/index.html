@@ -41,8 +41,8 @@
 <meta property="article:published_time" content="2018-03-21T14:55:54.000Z">
 <meta property="article:modified_time" content="2020-07-15T04:53:59.329Z">
 <meta property="article:author" content="Zeyu">
-<meta property="article:tag" content="ROS">
 <meta property="article:tag" content="PCL">
+<meta property="article:tag" content="ROS">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zengzeyu.com/images/18_3_22/geometry_feature_segmentation_for_ground_point/10028058-a89ad85720742b69.png">
 
@@ -387,8 +387,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/ROS/" rel="tag"># ROS</a>
               <a href="/tags/PCL/" rel="tag"># PCL</a>
+              <a href="/tags/ROS/" rel="tag"># ROS</a>
           </div>
 
         
@@ -397,12 +397,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2018/03/21/kitti_unorganised_point_to_organised_cloud/" rel="prev" title="KITTI unorganised cloud to organised cloud">
-      <i class="fa fa-chevron-left"></i> KITTI unorganised cloud to organised cloud
+    <a href="/2018/03/15/fcn_alexnet_pcl/" rel="prev" title="FCN-PCL 应用解析">
+      <i class="fa fa-chevron-left"></i> FCN-PCL 应用解析
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/03/21/Effective-c++-1.0/" rel="next" title="Effective c++ 1.0">
-      Effective c++ 1.0 <i class="fa fa-chevron-right"></i>
+    <a href="/2018/03/21/down_sample_for_caffe_data_layer/" rel="next" title="点云降采样输入到caffe数据输入层">
+      点云降采样输入到caffe数据输入层 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -586,9 +586,14 @@
                 console.error('Failed to save visitor count', error);
               });
           } else {
-              leancloudSelector(url).innerText = 'Counter not initialized! More info at console err msg.';
-              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
-            
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
           }
         })
         .catch(error => {
@@ -615,7 +620,7 @@
         });
     }
 
-    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":true};
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"g992xG0S8k31XQHoAEAhRQbE-gzGzoHsz","app_key":"BdWgkDuuoBKUAUvH1b0e3RJF","server_url":null,"security":false};
     function fetchData(api_server) {
       var Counter = (method, url, data) => {
         return fetch(`${api_server}/1.1${url}`, {
