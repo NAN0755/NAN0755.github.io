@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</title>
+    <url>/2018/03/24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</url>
+    <content><![CDATA[<p>本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。<a id="more"></a></p>
+<h1 id="地面点分割方法"><a href="#地面点分割方法" class="headerlink" title="地面点分割方法"></a>地面点分割方法</h1><hr>
+<h2 id="训练数据说明"><a href="#训练数据说明" class="headerlink" title="训练数据说明"></a>训练数据说明</h2><hr>
+<p>首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 <strong>64x4500</strong>，本文每一帧数据为 <strong>64x360</strong> ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 <strong>1°</strong> 的归类分为 <strong>360</strong> 份，每一份点云的信息提取某一个点或者平均信息作为点代表，代表点的特征和 <strong><em>label</em></strong> 填入格子中生成CNN所需训练数据。每个点 <strong><em>label</em></strong> 进行二分类，分为地面点和分地面点。点特征包括 <strong><em>P = [Px, Py, Pz, Pi, Pr]</em></strong> (<strong><em>[ 坐标x， 坐标y， 坐标z， 反射强度intensity， 距离range ]</em></strong>)。</p>
+<h2 id="A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）"><a href="#A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）" class="headerlink" title="A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）"></a>A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）</h2><hr>
+<p>为了将稀疏的3D点云数据应用的2D的CNN中，本文将其编码为2D的多信号通道数据储存在矩阵 <strong><em>M</em></strong> 中，如下图所示。</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-9f36bdbffa079ed2.png)</p>
+<p>矩阵M尺寸为 <strong><em>64x360</em></strong> ，降采样过程中，对一个格子内多个点进行平均取值作为代表。同时为了简化数据，*<strong>[x,z]*** 计算得到的值代表距离，因为本文默认 *</strong>Y*** 轴为高度方向，所以 <strong><em>x， z</em></strong> 值为对偶，可以采取此种方式进行简化数据。对于空格子，则从临近格子进行线性插值来生成该格子内值。</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-2733dbe408f56512.png)</p>
+<h2 id="B-训练数据集（Training-Dataset）"><a href="#B-训练数据集（Training-Dataset）" class="headerlink" title="B. 训练数据集（Training Dataset）"></a>B. 训练数据集（Training Dataset）</h2><hr>
+<p>训练数据集的重要性不容多说，本文自行开发了基于人工种子点选取的点云分割工具（semiautomatic tool for ground annotation，原理参考图像中的<a href="https://blog.csdn.net/shenziheng1/article/details/50878911" target="_blank" rel="noopener">区域增长算法</a>，只不过此处将点之间距离作为判断条件代替灰度值，同时发现当上下限为*<strong>[0.03, 0.07]米**<em>时分割效果最好。选取了KITTI不同场景下共252帧点云作为人工分割数据，将分割好的数据按照</em></strong>7:3*<strong>比例分为**<em>[训练集，评价集]</em></strong>。<br>由于上面得到的数据量太少，所以本文又通过其他一些方法对剩下的19k帧数据，生成了训练所需数据集，基与点云特征有：最低高度，高度变化值，两线激光点云之间的距离和高度差。本文也尝试过自动生成数据（artificial 3D LiDAR data），但是效果较差。</p>
+<h2 id="C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）"><a href="#C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）" class="headerlink" title="C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）"></a>C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）</h2><hr>
+<p>因为生成的训练数据较少，所以只采用浅层的CNN网络结构（shallow CNN architectures），类型为全卷积（fully convolutional）。卷积层和反卷积层都包含非线性的ReLU神经元（ReLU non-linearities），采用梯度下降方法进行训练。网络结构如下图所示：</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-816d4607cb5d3875.png)</p>
+<p>上文 <strong>A.</strong> 中得到的矩阵 <strong><em>M</em></strong> 作为网络输入，因为是逐点（pixel）进行分类，所以网络的输出尺寸与输入尺寸相同，根据分类： <strong><em>ground = 1</em></strong>，其余点根据softmax函数概率映射进行输出。反卷积层（Deconvolutional<br>layers，广泛应用于语义分割（semantic segmentation）领域）在本文提出的4个网络结构中的中3个都有应用，其中包括效果最好的 <strong><em>L05+deconv</em></strong> （上图中第一个）。</p>
+<p>CNN的输入数据先要进行归一化（normalize）和剪裁（rescale），高度方面KITTI数据集将 <strong>3m</strong> 以上的数据进行了滤波处理，深度 <strong><em>d</em></strong> 通道方面则使用 <strong><em>log</em></strong> 进行归一化处理。</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-5119dbf286402ffb.png)</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-6bba27cb72e18258.png)</p>
+<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><hr>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-3875bce36b9f2a46.png)</p>
+<p><strong>以上。</strong></p>
+<hr>
+<p>参考文献：<a href="https://arxiv.org/pdf/1709.02128v1.pdf" target="_blank" rel="noopener">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data.PDF</a></p>
+<p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
+]]></content>
+      <categories>
+        <category>Paper</category>
+      </categories>
+      <tags>
+        <tag>CNN</tag>
+        <tag>PCL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Caffe源代码学习 — AlexNet(Caffenet.py)</title>
     <url>/2018/03/08/Caffe%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B9%8BAlexNet_Caffenet_py/</url>
     <content><![CDATA[<p>源码位置：<code>caffe/examples/pycaffe/caffenet.py</code><br>该文件源代码是经典模型AlexNet的Caffe实现，有兴趣的小伙伴去拜读一下论文: <a href="http://xanadu.cs.sjsu.edu/~drtylin/classes/cs267_old/ImageNet%20DNN%20NIPS2012(2).pdf" target="_blank" rel="noopener">ImageNet Classification with Deep Convolutional Neural Networks</a>.<a id="more"></a></p>
@@ -104,42 +140,6 @@
       </tags>
   </entry>
   <entry>
-    <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</title>
-    <url>/2018/03/24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</url>
-    <content><![CDATA[<p>本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。<a id="more"></a></p>
-<h1 id="地面点分割方法"><a href="#地面点分割方法" class="headerlink" title="地面点分割方法"></a>地面点分割方法</h1><hr>
-<h2 id="训练数据说明"><a href="#训练数据说明" class="headerlink" title="训练数据说明"></a>训练数据说明</h2><hr>
-<p>首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 <strong>64x4500</strong>，本文每一帧数据为 <strong>64x360</strong> ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 <strong>1°</strong> 的归类分为 <strong>360</strong> 份，每一份点云的信息提取某一个点或者平均信息作为点代表，代表点的特征和 <strong><em>label</em></strong> 填入格子中生成CNN所需训练数据。每个点 <strong><em>label</em></strong> 进行二分类，分为地面点和分地面点。点特征包括 <strong><em>P = [Px, Py, Pz, Pi, Pr]</em></strong> (<strong><em>[ 坐标x， 坐标y， 坐标z， 反射强度intensity， 距离range ]</em></strong>)。</p>
-<h2 id="A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）"><a href="#A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）" class="headerlink" title="A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）"></a>A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）</h2><hr>
-<p>为了将稀疏的3D点云数据应用的2D的CNN中，本文将其编码为2D的多信号通道数据储存在矩阵 <strong><em>M</em></strong> 中，如下图所示。</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-9f36bdbffa079ed2.png)</p>
-<p>矩阵M尺寸为 <strong><em>64x360</em></strong> ，降采样过程中，对一个格子内多个点进行平均取值作为代表。同时为了简化数据，*<strong>[x,z]*** 计算得到的值代表距离，因为本文默认 *</strong>Y*** 轴为高度方向，所以 <strong><em>x， z</em></strong> 值为对偶，可以采取此种方式进行简化数据。对于空格子，则从临近格子进行线性插值来生成该格子内值。</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-2733dbe408f56512.png)</p>
-<h2 id="B-训练数据集（Training-Dataset）"><a href="#B-训练数据集（Training-Dataset）" class="headerlink" title="B. 训练数据集（Training Dataset）"></a>B. 训练数据集（Training Dataset）</h2><hr>
-<p>训练数据集的重要性不容多说，本文自行开发了基于人工种子点选取的点云分割工具（semiautomatic tool for ground annotation，原理参考图像中的<a href="https://blog.csdn.net/shenziheng1/article/details/50878911" target="_blank" rel="noopener">区域增长算法</a>，只不过此处将点之间距离作为判断条件代替灰度值，同时发现当上下限为*<strong>[0.03, 0.07]米**<em>时分割效果最好。选取了KITTI不同场景下共252帧点云作为人工分割数据，将分割好的数据按照</em></strong>7:3*<strong>比例分为**<em>[训练集，评价集]</em></strong>。<br>由于上面得到的数据量太少，所以本文又通过其他一些方法对剩下的19k帧数据，生成了训练所需数据集，基与点云特征有：最低高度，高度变化值，两线激光点云之间的距离和高度差。本文也尝试过自动生成数据（artificial 3D LiDAR data），但是效果较差。</p>
-<h2 id="C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）"><a href="#C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）" class="headerlink" title="C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）"></a>C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）</h2><hr>
-<p>因为生成的训练数据较少，所以只采用浅层的CNN网络结构（shallow CNN architectures），类型为全卷积（fully convolutional）。卷积层和反卷积层都包含非线性的ReLU神经元（ReLU non-linearities），采用梯度下降方法进行训练。网络结构如下图所示：</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-816d4607cb5d3875.png)</p>
-<p>上文 <strong>A.</strong> 中得到的矩阵 <strong><em>M</em></strong> 作为网络输入，因为是逐点（pixel）进行分类，所以网络的输出尺寸与输入尺寸相同，根据分类： <strong><em>ground = 1</em></strong>，其余点根据softmax函数概率映射进行输出。反卷积层（Deconvolutional<br>layers，广泛应用于语义分割（semantic segmentation）领域）在本文提出的4个网络结构中的中3个都有应用，其中包括效果最好的 <strong><em>L05+deconv</em></strong> （上图中第一个）。</p>
-<p>CNN的输入数据先要进行归一化（normalize）和剪裁（rescale），高度方面KITTI数据集将 <strong>3m</strong> 以上的数据进行了滤波处理，深度 <strong><em>d</em></strong> 通道方面则使用 <strong><em>log</em></strong> 进行归一化处理。</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-5119dbf286402ffb.png)</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-6bba27cb72e18258.png)</p>
-<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><hr>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-3875bce36b9f2a46.png)</p>
-<p><strong>以上。</strong></p>
-<hr>
-<p>参考文献：<a href="https://arxiv.org/pdf/1709.02128v1.pdf" target="_blank" rel="noopener">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data.PDF</a></p>
-<p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
-]]></content>
-      <categories>
-        <category>Paper</category>
-      </categories>
-      <tags>
-        <tag>CNN</tag>
-        <tag>PCL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Effective c++ 1.0</title>
     <url>/2018/03/21/Effective-c++-1.0/</url>
     <content><![CDATA[<p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong> <a id="more"></a></p>
@@ -182,170 +182,6 @@
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
 <li><a href="http://kevinlt.top/2018/09/14/mixed_precision_training/" target="_blank" rel="noopener">混合精度训练</a></li>
 </ol>
-]]></content>
-      <tags>
-        <tag>DL</tag>
-        <tag>Paper</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>My Paper Lib 2019</title>
-    <url>/2019/06/29/My-Paper-Lib-2019/</url>
-    <content><![CDATA[<p>This is my 2019 paper lib. <a id="more"></a></p>
-<table>
-<thead>
-<tr>
-<th>No.</th>
-<th>PAPER</th>
-<th>SOURCE</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>Visualizing the Loss Landscape of Neural Nets</td>
-<td><a href="https://arxiv.org/pdf/1712.09913" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/tomgoldstein/loss-landscape" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>2</td>
-<td>3D Backbone Network for 3D Object Detection</td>
-<td><a href="https://arxiv.org/pdf/1901.08373" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>3</td>
-<td>PersonLab : Person Pose Estimation and Instance Segmentation with a Bottom-Up , Part-Based , Geometric Embedding Model</td>
-<td><a href="https://eccv2018.org/openaccess/content_ECCV_2018/papers/George_Papandreou_PersonLab_Person_Pose_ECCV_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/octiapp/KerasPersonLab" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>4</td>
-<td>DeeperLab : Single-Shot Image Parser</td>
-<td><a href="https://arxiv.org/pdf/1902.05093" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>5</td>
-<td>Multi-Task Learning as Multi-Objective Optimization</td>
-<td><a href="https://arxiv.org/pdf/1810.04650" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/IntelVCL/MultiObjectiveOptimization" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>6</td>
-<td>Rethinking on Multi-Stage Networks for Human Pose Estimation</td>
-<td><a href="https://arxiv.org/pdf/1901.00148" target="_blank" rel="noopener">PDF</a>/<a href="">video</a>/<a href="">code</a></td>
-</tr>
-<tr>
-<td>7</td>
-<td>RePr: Improved Training of Convolutional Filters</td>
-<td><a href="https://arxiv.org/pdf/1811.07275" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td></td>
-<td>——— Date: 03-24 ———-</td>
-<td></td>
-</tr>
-<tr>
-<td>8</td>
-<td>Group Normalization</td>
-<td><a href="https://arxiv.org/pdf/1803.08494" target="_blank" rel="noopener">PDF</a>/video/<a href="https://pytorch.org/docs/stable/nn.html#groupnorm" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>9</td>
-<td>Weight Standardization</td>
-<td><a href="https://arxiv.org/pdf/1903.10520" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/joe-siyuan-qiao/WeightStandardization" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>10</td>
-<td>Pruning Filters for Efficient ConvNets</td>
-<td><a href="https://arxiv.org/pdf/1608.08710" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>11</td>
-<td>High Performance Convolutional Neural Networks for Document Processing</td>
-<td><a href="https://hal.inria.fr/inria-00112631/document" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>12</td>
-<td>Group normalization</td>
-<td><a href="https://arxiv.org/pdf/1803.08494" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>13</td>
-<td>Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks(DCGAN)</td>
-<td><a href="https://arxiv.org/pdf/1511.06434" target="_blank" rel="noopener">PDF</a>/video/<a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>14</td>
-<td>Generative Adversarial Networks(GAN)</td>
-<td><a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>15</td>
-<td>Adversarial Learning for Semi-Supervised Semantic Segmentation</td>
-<td><a href="https://arxiv.org/pdf/1802.07934" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/hfslyc/AdvSemiSeg" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>16</td>
-<td>Wasserstein GAN</td>
-<td><a href="https://arxiv.org/pdf/1701.07875" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>17</td>
-<td>FVNet: 3D Front-View Proposal Generation for Real-Time Object Detection from Point Clouds</td>
-<td><a href="https://arxiv.org/pdf/1903.10750" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>18</td>
-<td>YOLOv3: An Incremental Improvement</td>
-<td><a href="https://pjreddie.com/media/files/papers/YOLOv3.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/eriklindernoren/PyTorch-YOLOv3" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td></td>
-<td>———- Date: 05-03 ———-</td>
-<td></td>
-</tr>
-<tr>
-<td>19</td>
-<td>TextField: Learning A Deep Direction Field for Irregular Scene Text Detection</td>
-<td><a href="https://arxiv.org/pdf/1812.01393v1" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>20</td>
-<td>PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud</td>
-<td><a href="https://arxiv.org/pdf/1812.04244" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/sshaoshuai/PointRCNN" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>21</td>
-<td>Deep learning on point clouds for 3D scene understanding</td>
-<td><a href="https://searchworks.stanford.edu/view/12741586" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>22</td>
-<td>YOLO9000: Better, faster, stronger</td>
-<td><a href="https://arxiv.org/pdf/1612.08242v1" target="_blank" rel="noopener">PDF</a>/video/<a href="http://pjreddie.com/darknet/yolo/" target="_blank" rel="noopener">code</a></td>
-</tr>
-<tr>
-<td>23</td>
-<td>LaserNet: An Efficient Probabilistic 3D Object Detector for Autonomous Driving</td>
-<td><a href="https://arxiv.org/pdf/1903.08701v1" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>24</td>
-<td>DEEP LEARNING ON POINT CLOUDS FOR 3D SCENE UNDERSTANDING(Ph.D Thesis)</td>
-<td><a href="https://searchworks.stanford.edu/view/12741586" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>25</td>
-<td>Multi-View 3D Object Detection Network for Autonomous Driving</td>
-<td><a href="https://arxiv.org/pdf/1611.07759.pdf" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td>26</td>
-<td>Deep 3d Representation Learning(Ph.D Thesis)</td>
-<td><a href="http://cseweb.ucsd.edu/~haosu/papers/thesis_finalversion.pdf" target="_blank" rel="noopener">PDF</a>/video/code</td>
-</tr>
-<tr>
-<td></td>
-<td>———- Date: 06-29 ———-</td>
-<td>-</td>
-</tr>
-</tbody></table>
 ]]></content>
       <tags>
         <tag>DL</tag>
@@ -702,6 +538,16 @@
       </tags>
   </entry>
   <entry>
+    <title>开篇2017</title>
+    <url>/2017/06/26/%E5%BC%80%E7%AF%872017/</url>
+    <content><![CDATA[<p>欢迎来到<a href="http://zengzeyu.com/">我的个人博客</a>，此博客将用作记录自己的一些技术上的问题和解决方法，借助这一个平台，希望给自己一个记录，让自己多年以后回过头来看看自己也曾经少年过，哈哈！</p>
+]]></content>
+      <tags>
+        <tag>MarkDown Writting</tag>
+        <tag>Personal</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>TensorRT 教程（二）：TensorRT 源码简介</title>
     <url>/2020/07/09/tensorrt_02_introduction/</url>
     <content><![CDATA[<p>NVIDIA TensorRT是一种高性能神经网络推理(Inference)引擎，用于在生产环境中部署深度学习应用程序，应用有图像分类、分割和目标检测等，可提供最大的推理吞吐量和效率。TensorRT是第一款可编程推理加速器，能加速现有和未来的网络架构。 <a id="more"></a></p>
@@ -757,13 +603,167 @@
       </tags>
   </entry>
   <entry>
-    <title>开篇2017</title>
-    <url>/2017/06/26/%E5%BC%80%E7%AF%872017/</url>
-    <content><![CDATA[<p>欢迎来到<a href="http://zengzeyu.com/">我的个人博客</a>，此博客将用作记录自己的一些技术上的问题和解决方法，借助这一个平台，希望给自己一个记录，让自己多年以后回过头来看看自己也曾经少年过，哈哈！</p>
+    <title>My Paper Lib 2019</title>
+    <url>/2019/06/29/My-Paper-Lib-2019/</url>
+    <content><![CDATA[<p>This is my 2019 paper lib. <a id="more"></a></p>
+<table>
+<thead>
+<tr>
+<th>No.</th>
+<th>PAPER</th>
+<th>SOURCE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Visualizing the Loss Landscape of Neural Nets</td>
+<td><a href="https://arxiv.org/pdf/1712.09913" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/tomgoldstein/loss-landscape" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>3D Backbone Network for 3D Object Detection</td>
+<td><a href="https://arxiv.org/pdf/1901.08373" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>3</td>
+<td>PersonLab : Person Pose Estimation and Instance Segmentation with a Bottom-Up , Part-Based , Geometric Embedding Model</td>
+<td><a href="https://eccv2018.org/openaccess/content_ECCV_2018/papers/George_Papandreou_PersonLab_Person_Pose_ECCV_2018_paper.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/octiapp/KerasPersonLab" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>DeeperLab : Single-Shot Image Parser</td>
+<td><a href="https://arxiv.org/pdf/1902.05093" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Multi-Task Learning as Multi-Objective Optimization</td>
+<td><a href="https://arxiv.org/pdf/1810.04650" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/IntelVCL/MultiObjectiveOptimization" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Rethinking on Multi-Stage Networks for Human Pose Estimation</td>
+<td><a href="https://arxiv.org/pdf/1901.00148" target="_blank" rel="noopener">PDF</a>/<a href="">video</a>/<a href="">code</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>RePr: Improved Training of Convolutional Filters</td>
+<td><a href="https://arxiv.org/pdf/1811.07275" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td></td>
+<td>——— Date: 03-24 ———-</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Group Normalization</td>
+<td><a href="https://arxiv.org/pdf/1803.08494" target="_blank" rel="noopener">PDF</a>/video/<a href="https://pytorch.org/docs/stable/nn.html#groupnorm" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Weight Standardization</td>
+<td><a href="https://arxiv.org/pdf/1903.10520" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/joe-siyuan-qiao/WeightStandardization" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Pruning Filters for Efficient ConvNets</td>
+<td><a href="https://arxiv.org/pdf/1608.08710" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>11</td>
+<td>High Performance Convolutional Neural Networks for Document Processing</td>
+<td><a href="https://hal.inria.fr/inria-00112631/document" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Group normalization</td>
+<td><a href="https://arxiv.org/pdf/1803.08494" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks(DCGAN)</td>
+<td><a href="https://arxiv.org/pdf/1511.06434" target="_blank" rel="noopener">PDF</a>/video/<a href="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>14</td>
+<td>Generative Adversarial Networks(GAN)</td>
+<td><a href="https://papers.nips.cc/paper/5423-generative-adversarial-nets.pdf" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Adversarial Learning for Semi-Supervised Semantic Segmentation</td>
+<td><a href="https://arxiv.org/pdf/1802.07934" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/hfslyc/AdvSemiSeg" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>16</td>
+<td>Wasserstein GAN</td>
+<td><a href="https://arxiv.org/pdf/1701.07875" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>17</td>
+<td>FVNet: 3D Front-View Proposal Generation for Real-Time Object Detection from Point Clouds</td>
+<td><a href="https://arxiv.org/pdf/1903.10750" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>18</td>
+<td>YOLOv3: An Incremental Improvement</td>
+<td><a href="https://pjreddie.com/media/files/papers/YOLOv3.pdf" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/eriklindernoren/PyTorch-YOLOv3" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td></td>
+<td>———- Date: 05-03 ———-</td>
+<td></td>
+</tr>
+<tr>
+<td>19</td>
+<td>TextField: Learning A Deep Direction Field for Irregular Scene Text Detection</td>
+<td><a href="https://arxiv.org/pdf/1812.01393v1" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>20</td>
+<td>PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud</td>
+<td><a href="https://arxiv.org/pdf/1812.04244" target="_blank" rel="noopener">PDF</a>/video/<a href="https://github.com/sshaoshuai/PointRCNN" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>21</td>
+<td>Deep learning on point clouds for 3D scene understanding</td>
+<td><a href="https://searchworks.stanford.edu/view/12741586" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>22</td>
+<td>YOLO9000: Better, faster, stronger</td>
+<td><a href="https://arxiv.org/pdf/1612.08242v1" target="_blank" rel="noopener">PDF</a>/video/<a href="http://pjreddie.com/darknet/yolo/" target="_blank" rel="noopener">code</a></td>
+</tr>
+<tr>
+<td>23</td>
+<td>LaserNet: An Efficient Probabilistic 3D Object Detector for Autonomous Driving</td>
+<td><a href="https://arxiv.org/pdf/1903.08701v1" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>24</td>
+<td>DEEP LEARNING ON POINT CLOUDS FOR 3D SCENE UNDERSTANDING(Ph.D Thesis)</td>
+<td><a href="https://searchworks.stanford.edu/view/12741586" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Multi-View 3D Object Detection Network for Autonomous Driving</td>
+<td><a href="https://arxiv.org/pdf/1611.07759.pdf" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Deep 3d Representation Learning(Ph.D Thesis)</td>
+<td><a href="http://cseweb.ucsd.edu/~haosu/papers/thesis_finalversion.pdf" target="_blank" rel="noopener">PDF</a>/video/code</td>
+</tr>
+<tr>
+<td></td>
+<td>———- Date: 06-29 ———-</td>
+<td>-</td>
+</tr>
+</tbody></table>
 ]]></content>
       <tags>
-        <tag>MarkDown Writting</tag>
-        <tag>Personal</tag>
+        <tag>DL</tag>
+        <tag>Paper</tag>
       </tags>
   </entry>
   <entry>
@@ -831,6 +831,86 @@
         <tag>DL</tag>
         <tag>CV</tag>
         <tag>Network</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浅谈PointNet和PointNet++网络及其应用</title>
+    <url>/2019/07/14/PointNet%20and%20PointNet++/</url>
+    <content><![CDATA[<p>PointNet 和 PointNet++ 网络由 Charles R. Qi 于2017年提出，分别发表于CVPR 2017和NIPS 2017会议上。PointNet++ 是 PoinNet 的升级版，也更复杂，两篇论文的现在都可检索，且分别作为一个章节被写入了 Qi 的博士论文中，如果想更加具体地理解各个细节，可从博士论文下手（参考文献会附上资源）。本文预先假设读者已经阅读过这两篇论文，并且对点云特性有一定了解，所以细节方面不过多赘述，更多地是探讨思路。<a id="more"></a></p>
+<h2 id="1-网络结构"><a href="#1-网络结构" class="headerlink" title="1. 网络结构"></a>1. 网络结构</h2><h3 id="1-1-PointNet"><a href="#1-1-PointNet" class="headerlink" title="1.1 PointNet"></a>1.1 PointNet</h3><p><img data-src="/images/19_7_14/PointNet/20190702225201.png"></p>
+<p>PointNet 按照任务划分 classification 和segmentation两种，如上图所示，途中上半部分为classification network（下文以C网络代替），下半部分为 segmentation network（下文以S网络代替）。两个任务的网络输入都是 $ n * 3 $ ，代表 $n$ 个三维坐标点，C网络输出为经过 softmax 之后的 $k$ 个值，而S网络为 $n$ 个点的逐点的score。</p>
+<p>其中一个值得注意的区别是，两个网络中对max pooling层出来之后<em>global feature</em>不同。我的理解为是：C网络由于是简单的输入点云的分类任务，所以只需要得到一个最明显的feature来代表这个点云就可胜任分类任务；而S网络由于是逐点的语义分割，所以将<em>global feature</em> concatenate到每一点后面，作用是使每一个点都同时具有自身点的feature和global feature，更有利于进行逐点的分类。</p>
+<h3 id="1-2-PointNet"><a href="#1-2-PointNet" class="headerlink" title="1.2 PointNet++"></a>1.2 PointNet++</h3><p><img data-src="/images/19_7_14/PointNet/20190702230651.png"></p>
+<p>PointNet++按照任务也分为 classification （C网络）和 segmentation （S网络）两种，输入和输出分别与PointNet中的两个网络一致。首先，比较PointNet++两个任务网络的区别：在得到最高层的 feature 之后，C网络使用了一个小型的 PointNet + FCN 网络提取得到最后的分类 score；S网络通过 skip link connection 操作不断与底层 low-level 信息融合，最终得到逐点分分类语义分割结果。</p>
+<p>PointNet++ 的思路与U-Net很相似：利用encoder-decoder结构，逐层提高feature level，在到达最高层之后通过 skip link connection 操作恢复局部信息，从而达到既能获取 high-level context feature 也能获取 low-level context feature。</p>
+<h2 id="2-应用场景"><a href="#2-应用场景" class="headerlink" title="2. 应用场景"></a>2. 应用场景</h2><p>从PointNet的结构可以看出，由于没有local context信息，因此对复杂的点云没办法处理，也是PointNet结尾总结的future work，即在PointNet++中进行了升级。由于使用了max-pooling这个具有强对偶性和特征筛选的操作，使得PointNet只能处理较为简单的点云，这些点云都有一个特征：<strong>属于同一物体或者处于某个局部空间内</strong>。在点云中属于同一个物体和处于某一局部空间内可看作等价。因此，从PointNet的应用目的角度，使用PointNet的点云分割和检测网络主要有以下两种：</p>
+<ul>
+<li>放在网络前部，作为局部点云特征提取器（feature extractor）</li>
+<li>放在网络后部，作为具体任务的refine或语义分割，如局部点云语义分割或3D BBox等目标的回归</li>
+</ul>
+<p>至于为什么使用PointNet而不是使用PointNet++，从结构上可以看出PointNet++会有一个邻域中心和邻域点云索引的过程，会使速度下降严重，另外从本节第一段话也得知，对于局部点云这些简单的数据组成，使用PointNet也足够胜任。下面将就PointNet和PointNet++作为不同任务，简单罗列下提到的Paper中的使用。</p>
+<h3 id="2-1-特征提取器"><a href="#2-1-特征提取器" class="headerlink" title="2.1 特征提取器"></a>2.1 特征提取器</h3><p>Motivation：特征提取器（feature extractor）有别于人工特征设计，特征提取器的目的是在特征构建层面，使用网络让其自行学习一些人工无法构建的特征，从而提升特征的表达，最终达到提升网络性能的目的。说句题外话，人工构建特征都是基于人的先验知识来构建的特征，比如说点的数目，最大高度等等，这些具有强人类先验知识特征构建便于人类理解，但是对于数据表达来说，在这个过程丢失了很多信息。因此，我们希望送进网络的是raw data，网络能自行的学习特征。</p>
+<p>值得注意的是，特征提取器网络一般采用PointNet而不是PointNet++，除了如上文所说速度考虑以外，作为特征提取器一般会在对整张点云进行栅格化（grid）或体素化（voxel）后的单元内进行，这样就符合了上文另一个条件——<strong>输入点云都处于局部空间内</strong>。相关的论文有如下：VoxelNet，SECOND，PointPillars, PointFusion。</p>
+<p>也有例外，如IPOD，使用PointNet++对整张点云提取特征。</p>
+<p><strong>VoxelNet</strong></p>
+<p>使用PointNet对体素化后的单元提取特征。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173113.png"></p>
+<p><strong>SECOND</strong></p>
+<p>使用PointNet对体素化后的单元提取特征，同VoxelNet。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173302.png"></p>
+<p><strong>PointPillars</strong></p>
+<p>使用PointNet对栅格化后的单元提取特征。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173415.png"></p>
+<p><strong>PointFusion</strong></p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173614.png"></p>
+<p><strong>IPOD</strong>（PointNet++）</p>
+<p>使用PointNet++对整帧点云提取特征。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714175459.png"></p>
+<h3 id="2-2-逐点语义分割-3D-BBox-回归"><a href="#2-2-逐点语义分割-3D-BBox-回归" class="headerlink" title="2.2 逐点语义分割 / 3D BBox 回归"></a>2.2 逐点语义分割 / 3D BBox 回归</h3><p>PointNet或PointNet++作为具体任务网络与论文挂钩，但主要分为逐点语义分割和3D BBox回归两种。当然还有其它任务，后面也会罗列。</p>
+<p><strong>PointRCNN</strong>(PointNet++)</p>
+<p>PointNet++输入整帧点云进行语义分割和3D BBox proposal提取。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714175824.png"></p>
+<p><strong>Frutum-PointNet</strong></p>
+<p>第1个PointNet：对得到的锥形3D proposal进行前景点语义分割</p>
+<p>第2个PointNet：对前景点回归出3D Bbox</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714180316.png"></p>
+<p><strong>RoarNet</strong></p>
+<p>第1个PointNet：对同一个目标筛选出置信度最高的proposal和大致回归出目标3D Bbox的位置</p>
+<p>第2个PointNet：回归出3D Bbox</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714180556.png"></p>
+<p><strong>FVNet</strong></p>
+<p>PointNet 对 proposal 局部点云回归 3D Bbox。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714183205.png"></p>
+<h2 id="3-结论"><a href="#3-结论" class="headerlink" title="3. 结论"></a>3. 结论</h2><ol>
+<li><p>从前文分析可得出，不管点云网络的任务是什么，对于复杂场景点云一般采用PointNet++进行处理，而简单场景点云则采用PointNet。</p>
+</li>
+<li><p>如果只从点云分类和分割两个任务角度分析，分类任务只需要max pooling操作之后的特征信息就可完成，而分割任务则需要更加详细的local context信息。</p>
+</li>
+</ol>
+<p>这篇文章主要从PointNet角度去分析基于点云的目标检测任务，从提取 3D proposal 形式的角度在将来会以另一篇文章继续进行讨论。</p>
+<p>以上。</p>
+<p><strong>参考文献：</strong></p>
+<ol>
+<li><a href="https://searchworks.stanford.edu/view/12741586" target="_blank" rel="noopener">DEEP LEARNING ON POINT CLOUDS FOR 3D SCENE UNDERSTANDING(Ph.D Thesis)</a></li>
+<li><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Qi_PointNet_Deep_Learning_CVPR_2017_paper.pdf" target="_blank" rel="noopener">PointNet : Deep Learning on Point Sets for 3D Classification and Segmentation</a></li>
+<li><a href="https://arxiv.org/pdf/1706.02413.pdf" target="_blank" rel="noopener">PointNet ++ : Deep Hierarchical Feature Learning on Point Sets in a Metric Space</a></li>
+<li><a href="http://openaccess.thecvf.com/content_cvpr_2018/CameraReady/3333.pdf" target="_blank" rel="noopener">VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection</a></li>
+<li><a href="https://www.mdpi.com/1424-8220/18/10/3337/pdf" target="_blank" rel="noopener">SECOND: Sparsely Embedded Convolutional Detection</a></li>
+<li><a href="https://arxiv.org/pdf/1812.05784" target="_blank" rel="noopener">PointPillars: Fast Encoders for Object Detection from Point Clouds</a></li>
+<li><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Xu_PointFusion_Deep_Sensor_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PointFusion : Deep Sensor Fusion for 3D Bounding Box Estimation</a></li>
+<li><a href="https://arxiv.org/pdf/1812.05276" target="_blank" rel="noopener">IPOD: Intensive Point-based Object Detector for Point Cloud</a></li>
+<li><a href="https://arxiv.org/pdf/1812.04244" target="_blank" rel="noopener">PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud</a></li>
+<li><a href="https://arxiv.org/pdf/1711.08488" target="_blank" rel="noopener">Frustum PointNets for 3D Object Detection from RGB-D Data</a></li>
+<li><a href="http://zengzeyu.com/2019/03/24/19_3_24/My-Paper-Lib-2018/">RoarNet: A Robust 3D Object Detection based on RegiOn Approximation Refinement</a></li>
+<li><a href="https://arxiv.org/pdf/1903.10750" target="_blank" rel="noopener">FVNet: 3D Front-View Proposal Generation for Real-Time Object Detection from Point Clouds</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>DL</tag>
+        <tag>CV</tag>
+        <tag>Point Cloud</tag>
+        <tag>PointNet</tag>
+        <tag>3D Perception</tag>
       </tags>
   </entry>
   <entry>
@@ -1173,86 +1253,6 @@
       <tags>
         <tag>DL</tag>
         <tag>Paper</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>浅谈PointNet和PointNet++网络及其应用</title>
-    <url>/2019/07/14/PointNet%20and%20PointNet++/</url>
-    <content><![CDATA[<p>PointNet 和 PointNet++ 网络由 Charles R. Qi 于2017年提出，分别发表于CVPR 2017和NIPS 2017会议上。PointNet++ 是 PoinNet 的升级版，也更复杂，两篇论文的现在都可检索，且分别作为一个章节被写入了 Qi 的博士论文中，如果想更加具体地理解各个细节，可从博士论文下手（参考文献会附上资源）。本文预先假设读者已经阅读过这两篇论文，并且对点云特性有一定了解，所以细节方面不过多赘述，更多地是探讨思路。<a id="more"></a></p>
-<h2 id="1-网络结构"><a href="#1-网络结构" class="headerlink" title="1. 网络结构"></a>1. 网络结构</h2><h3 id="1-1-PointNet"><a href="#1-1-PointNet" class="headerlink" title="1.1 PointNet"></a>1.1 PointNet</h3><p><img data-src="/images/19_7_14/PointNet/20190702225201.png"></p>
-<p>PointNet 按照任务划分 classification 和segmentation两种，如上图所示，途中上半部分为classification network（下文以C网络代替），下半部分为 segmentation network（下文以S网络代替）。两个任务的网络输入都是 $ n * 3 $ ，代表 $n$ 个三维坐标点，C网络输出为经过 softmax 之后的 $k$ 个值，而S网络为 $n$ 个点的逐点的score。</p>
-<p>其中一个值得注意的区别是，两个网络中对max pooling层出来之后<em>global feature</em>不同。我的理解为是：C网络由于是简单的输入点云的分类任务，所以只需要得到一个最明显的feature来代表这个点云就可胜任分类任务；而S网络由于是逐点的语义分割，所以将<em>global feature</em> concatenate到每一点后面，作用是使每一个点都同时具有自身点的feature和global feature，更有利于进行逐点的分类。</p>
-<h3 id="1-2-PointNet"><a href="#1-2-PointNet" class="headerlink" title="1.2 PointNet++"></a>1.2 PointNet++</h3><p><img data-src="/images/19_7_14/PointNet/20190702230651.png"></p>
-<p>PointNet++按照任务也分为 classification （C网络）和 segmentation （S网络）两种，输入和输出分别与PointNet中的两个网络一致。首先，比较PointNet++两个任务网络的区别：在得到最高层的 feature 之后，C网络使用了一个小型的 PointNet + FCN 网络提取得到最后的分类 score；S网络通过 skip link connection 操作不断与底层 low-level 信息融合，最终得到逐点分分类语义分割结果。</p>
-<p>PointNet++ 的思路与U-Net很相似：利用encoder-decoder结构，逐层提高feature level，在到达最高层之后通过 skip link connection 操作恢复局部信息，从而达到既能获取 high-level context feature 也能获取 low-level context feature。</p>
-<h2 id="2-应用场景"><a href="#2-应用场景" class="headerlink" title="2. 应用场景"></a>2. 应用场景</h2><p>从PointNet的结构可以看出，由于没有local context信息，因此对复杂的点云没办法处理，也是PointNet结尾总结的future work，即在PointNet++中进行了升级。由于使用了max-pooling这个具有强对偶性和特征筛选的操作，使得PointNet只能处理较为简单的点云，这些点云都有一个特征：<strong>属于同一物体或者处于某个局部空间内</strong>。在点云中属于同一个物体和处于某一局部空间内可看作等价。因此，从PointNet的应用目的角度，使用PointNet的点云分割和检测网络主要有以下两种：</p>
-<ul>
-<li>放在网络前部，作为局部点云特征提取器（feature extractor）</li>
-<li>放在网络后部，作为具体任务的refine或语义分割，如局部点云语义分割或3D BBox等目标的回归</li>
-</ul>
-<p>至于为什么使用PointNet而不是使用PointNet++，从结构上可以看出PointNet++会有一个邻域中心和邻域点云索引的过程，会使速度下降严重，另外从本节第一段话也得知，对于局部点云这些简单的数据组成，使用PointNet也足够胜任。下面将就PointNet和PointNet++作为不同任务，简单罗列下提到的Paper中的使用。</p>
-<h3 id="2-1-特征提取器"><a href="#2-1-特征提取器" class="headerlink" title="2.1 特征提取器"></a>2.1 特征提取器</h3><p>Motivation：特征提取器（feature extractor）有别于人工特征设计，特征提取器的目的是在特征构建层面，使用网络让其自行学习一些人工无法构建的特征，从而提升特征的表达，最终达到提升网络性能的目的。说句题外话，人工构建特征都是基于人的先验知识来构建的特征，比如说点的数目，最大高度等等，这些具有强人类先验知识特征构建便于人类理解，但是对于数据表达来说，在这个过程丢失了很多信息。因此，我们希望送进网络的是raw data，网络能自行的学习特征。</p>
-<p>值得注意的是，特征提取器网络一般采用PointNet而不是PointNet++，除了如上文所说速度考虑以外，作为特征提取器一般会在对整张点云进行栅格化（grid）或体素化（voxel）后的单元内进行，这样就符合了上文另一个条件——<strong>输入点云都处于局部空间内</strong>。相关的论文有如下：VoxelNet，SECOND，PointPillars, PointFusion。</p>
-<p>也有例外，如IPOD，使用PointNet++对整张点云提取特征。</p>
-<p><strong>VoxelNet</strong></p>
-<p>使用PointNet对体素化后的单元提取特征。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173113.png"></p>
-<p><strong>SECOND</strong></p>
-<p>使用PointNet对体素化后的单元提取特征，同VoxelNet。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173302.png"></p>
-<p><strong>PointPillars</strong></p>
-<p>使用PointNet对栅格化后的单元提取特征。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173415.png"></p>
-<p><strong>PointFusion</strong></p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173614.png"></p>
-<p><strong>IPOD</strong>（PointNet++）</p>
-<p>使用PointNet++对整帧点云提取特征。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714175459.png"></p>
-<h3 id="2-2-逐点语义分割-3D-BBox-回归"><a href="#2-2-逐点语义分割-3D-BBox-回归" class="headerlink" title="2.2 逐点语义分割 / 3D BBox 回归"></a>2.2 逐点语义分割 / 3D BBox 回归</h3><p>PointNet或PointNet++作为具体任务网络与论文挂钩，但主要分为逐点语义分割和3D BBox回归两种。当然还有其它任务，后面也会罗列。</p>
-<p><strong>PointRCNN</strong>(PointNet++)</p>
-<p>PointNet++输入整帧点云进行语义分割和3D BBox proposal提取。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714175824.png"></p>
-<p><strong>Frutum-PointNet</strong></p>
-<p>第1个PointNet：对得到的锥形3D proposal进行前景点语义分割</p>
-<p>第2个PointNet：对前景点回归出3D Bbox</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714180316.png"></p>
-<p><strong>RoarNet</strong></p>
-<p>第1个PointNet：对同一个目标筛选出置信度最高的proposal和大致回归出目标3D Bbox的位置</p>
-<p>第2个PointNet：回归出3D Bbox</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714180556.png"></p>
-<p><strong>FVNet</strong></p>
-<p>PointNet 对 proposal 局部点云回归 3D Bbox。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714183205.png"></p>
-<h2 id="3-结论"><a href="#3-结论" class="headerlink" title="3. 结论"></a>3. 结论</h2><ol>
-<li><p>从前文分析可得出，不管点云网络的任务是什么，对于复杂场景点云一般采用PointNet++进行处理，而简单场景点云则采用PointNet。</p>
-</li>
-<li><p>如果只从点云分类和分割两个任务角度分析，分类任务只需要max pooling操作之后的特征信息就可完成，而分割任务则需要更加详细的local context信息。</p>
-</li>
-</ol>
-<p>这篇文章主要从PointNet角度去分析基于点云的目标检测任务，从提取 3D proposal 形式的角度在将来会以另一篇文章继续进行讨论。</p>
-<p>以上。</p>
-<p><strong>参考文献：</strong></p>
-<ol>
-<li><a href="https://searchworks.stanford.edu/view/12741586" target="_blank" rel="noopener">DEEP LEARNING ON POINT CLOUDS FOR 3D SCENE UNDERSTANDING(Ph.D Thesis)</a></li>
-<li><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Qi_PointNet_Deep_Learning_CVPR_2017_paper.pdf" target="_blank" rel="noopener">PointNet : Deep Learning on Point Sets for 3D Classification and Segmentation</a></li>
-<li><a href="https://arxiv.org/pdf/1706.02413.pdf" target="_blank" rel="noopener">PointNet ++ : Deep Hierarchical Feature Learning on Point Sets in a Metric Space</a></li>
-<li><a href="http://openaccess.thecvf.com/content_cvpr_2018/CameraReady/3333.pdf" target="_blank" rel="noopener">VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection</a></li>
-<li><a href="https://www.mdpi.com/1424-8220/18/10/3337/pdf" target="_blank" rel="noopener">SECOND: Sparsely Embedded Convolutional Detection</a></li>
-<li><a href="https://arxiv.org/pdf/1812.05784" target="_blank" rel="noopener">PointPillars: Fast Encoders for Object Detection from Point Clouds</a></li>
-<li><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Xu_PointFusion_Deep_Sensor_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PointFusion : Deep Sensor Fusion for 3D Bounding Box Estimation</a></li>
-<li><a href="https://arxiv.org/pdf/1812.05276" target="_blank" rel="noopener">IPOD: Intensive Point-based Object Detector for Point Cloud</a></li>
-<li><a href="https://arxiv.org/pdf/1812.04244" target="_blank" rel="noopener">PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud</a></li>
-<li><a href="https://arxiv.org/pdf/1711.08488" target="_blank" rel="noopener">Frustum PointNets for 3D Object Detection from RGB-D Data</a></li>
-<li><a href="http://zengzeyu.com/2019/03/24/19_3_24/My-Paper-Lib-2018/">RoarNet: A Robust 3D Object Detection based on RegiOn Approximation Refinement</a></li>
-<li><a href="https://arxiv.org/pdf/1903.10750" target="_blank" rel="noopener">FVNet: 3D Front-View Proposal Generation for Real-Time Object Detection from Point Clouds</a></li>
-</ol>
-]]></content>
-      <tags>
-        <tag>DL</tag>
-        <tag>CV</tag>
-        <tag>Point Cloud</tag>
-        <tag>PointNet</tag>
-        <tag>3D Perception</tag>
       </tags>
   </entry>
   <entry>
@@ -1705,8 +1705,8 @@
         <category>DL</category>
       </categories>
       <tags>
-        <tag>DL</tag>
         <tag>PCL</tag>
+        <tag>DL</tag>
       </tags>
   </entry>
 </search>
