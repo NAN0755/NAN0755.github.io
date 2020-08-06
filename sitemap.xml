@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://zengzeyu.com/2020/07/09/tensorrt_02_introduction/</loc>
+    
+    <lastmod>2020-08-06T14:18:33.917Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://zengzeyu.com/2020/08/06/tensorrt_03_pytorch2onnx/</loc>
+    
+    <lastmod>2020-08-06T14:16:23.958Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://zengzeyu.com/2018/03/28/kitti_ground_point_seg/</loc>
     
     <lastmod>2020-07-15T05:03:05.753Z</lastmod>
@@ -152,13 +166,6 @@
     <loc>http://zengzeyu.com/2020/07/09/Mask%20R-CNN/</loc>
     
     <lastmod>2020-07-15T04:33:20.424Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://zengzeyu.com/2020/07/09/tensorrt_02_introduction/</loc>
-    
-    <lastmod>2020-07-15T04:12:14.329Z</lastmod>
     
   </url>
   

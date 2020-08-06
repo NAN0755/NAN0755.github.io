@@ -28,7 +28,7 @@
 <meta property="og:image" content="http://zengzeyu.com/images/20_07_09/fit1.png">
 <meta property="og:image" content="http://zengzeyu.com/images/20_07_09/fit2.png">
 <meta property="article:published_time" content="2020-07-09T11:15:02.000Z">
-<meta property="article:modified_time" content="2020-07-15T04:12:14.329Z">
+<meta property="article:modified_time" content="2020-08-06T14:18:33.917Z">
 <meta property="article:author" content="Zeyu">
 <meta property="article:tag" content="DL">
 <meta property="article:tag" content="CV">
@@ -161,7 +161,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">25</span></a>
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">26</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -250,7 +250,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-15 12:12:14" itemprop="dateModified" datetime="2020-07-15T12:12:14+08:00">2020-07-15</time>
+                <time title="修改时间：2020-08-06 22:18:33" itemprop="dateModified" datetime="2020-08-06T22:18:33+08:00">2020-08-06</time>
               </span>
 
           
@@ -322,13 +322,13 @@
 <h2 id="3-TRT是如何工作的？"><a href="#3-TRT是如何工作的？" class="headerlink" title="3. TRT是如何工作的？"></a>3. TRT是如何工作的？</h2><p>TRT 内部有一整套流程来帮助加速 inference，大致内容已经在2.2节中有阐述，有兴趣可看原英文说明。对此，我们并不关心，因为所有这些方法都在未开源的代码中，也没办法自己 hack，所以开始进行 build 之后，我们所有能做的只是等TRT model 的生成。</p>
 <h2 id="4-TRT能做些什么？"><a href="#4-TRT能做些什么？" class="headerlink" title="4. TRT能做些什么？"></a>4. TRT能做些什么？</h2><p>总的来说，TRT 可以在4个方面帮助开发者进行工作：导入，校准，生成和部署（import, calibration, generate and deploy）模型。</p>
 <ol>
-<li>导入模型参数<br>TRT可以直接定义模型，但是我们通常并不这么做，因为对于现有深度学习训练框架，如Pytorch和TensorFlow，我们通常使用对应的parser直接获得所需的模型结构和参数，然后进行下一步。TRT包括的parser有如下：Caffe， UFF，ONNX。</li>
-<li>配置optimization profile<br>例如是否配置layer的动态输入输出。</li>
-<li>builder<br>从我的角度理解，builder更像是一个外部的配置管理，包括模型的运行资源和INT8等配置。</li>
-<li>engine<br>通过builder生成的TRT engine就是我们最终需要的文件，这个文件可以在inference阶段直接载入之后进行运行。</li>
+<li>导入模型参数<br>TRT 可以直接定义模型，但是我们通常并不这么做，因为对于现有深度学习训练框架，如 Pytorch 和 TensorFlow，我们通常使用对应的 parser 直接获得所需的模型结构和参数，然后进行下一步。TRT 包括的 parser 有如下：Caffe， UFF，ONNX。</li>
+<li>配置 optimization profile<br>例如是否配置 layer 的动态输入输出。</li>
+<li>builder<br>从我的角度理解，builder 更像是一个外部的配置管理，包括模型的运行资源和 INT8 等配置。</li>
+<li>engine<br>通过 builder 生成的 TRT engine 就是我们最终需要的文件，这个文件可以在 inference 阶段直接载入之后进行运行。</li>
 </ol>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了TRT库的组成，工作流程和工作原理。</p>
-<p>下一篇文章开始，我们将以Pytorch训练得到的Mask RCNN为例，将TRT的工作流程展开讲解，方便对各个细节进行研究。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了 TRT 库的组成，工作流程和工作原理。</p>
+<p>下一篇文章开始，我们将以Pytorch训练得到的 Faster R-CNN 为例，将 TRT 的工作流程展开讲解，方便对各个细节进行研究。</p>
 
     </div>
 
@@ -353,7 +353,10 @@
     <a href="/2020/07/09/tensorrt_01_installation/" rel="prev" title="TensorRT 教程（一）：安装TensorRT">
       <i class="fa fa-chevron-left"></i> TensorRT 教程（一）：安装TensorRT
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/06/tensorrt_03_pytorch2onnx/" rel="next" title="TensorRT 教程（三）：PyTorch模型转ONNX模型">
+      TensorRT 教程（三）：PyTorch模型转ONNX模型 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -429,7 +432,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

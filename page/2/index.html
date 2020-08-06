@@ -152,7 +152,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">25</span></a>
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">26</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -206,6 +206,96 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/30/pcl_kdtree_and_octree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/bear.jpg">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="Done is better than perfect.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/03/30/pcl_kdtree_and_octree/" class="post-title-link" itemprop="url">PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-03-30 22:55:54" itemprop="dateCreated datePublished" datetime="2018-03-30T22:55:54+08:00">2018-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-15 13:01:39" itemprop="dateModified" datetime="2020-07-15T13:01:39+08:00">2020-07-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/PCL/" itemprop="url" rel="index"><span itemprop="name">PCL</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2018/03/30/pcl_kdtree_and_octree/" class="post-meta-item leancloud_visitors" data-flag-title="PCL 点云索引方法K维树（KD-tree）和八叉树（octree）介绍" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>通过雷达、激光扫描、立体摄像机等三维测量设备获取的点云数据，具有数据量大、分布不均匀等特点。作为三维领域中一个重要的数据来源，点云数据主要是表征目标表面的海量点集合，并不具备传统网格数据的集合拓扑信息。所以点云数据处理中最为核心的问题就是建立离散点间的拓扑关系，实现基于邻域关系的快速查找。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/03/30/pcl_kdtree_and_octree/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -480,96 +570,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/down_sample_for_caffe_data_layer/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/bear.jpg">
-      <meta itemprop="name" content="Zeyu">
-      <meta itemprop="description" content="Done is better than perfect.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zeyu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/03/21/down_sample_for_caffe_data_layer/" class="post-title-link" itemprop="url">点云降采样输入到caffe数据输入层</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-03-21 22:55:54" itemprop="dateCreated datePublished" datetime="2018-03-21T22:55:54+08:00">2018-03-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-15 12:47:27" itemprop="dateModified" datetime="2020-07-15T12:47:27+08:00">2020-07-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ROS/" itemprop="url" rel="index"><span itemprop="name">ROS</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2018/03/21/down_sample_for_caffe_data_layer/" class="post-meta-item leancloud_visitors" data-flag-title="点云降采样输入到caffe数据输入层" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>KITTI 数据根据上篇博文 <strong><em>KITTI unorganised cloud to organised cloud</em></strong> 输出尺寸为 <strong><em>HxW = 64x4500</em></strong>， 本文准备复现论文 <a href="https://arxiv.org/pdf/1709.02128.pdf" target="_blank" rel="noopener">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</a>， 根据论文内CNN网络结构需要对数据尺寸进行调整，调整尺寸为 <strong><em>HxW = 64x360</em></strong>， 相当于读源数据进行了降采样（downsampling），由于无法使用 <strong>pooling</strong> 池化操作来达到此目的，所以进行手工调整。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/03/21/down_sample_for_caffe_data_layer/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/geometry_feature_segmentation_for_ground_point/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -637,6 +637,96 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2018/03/21/geometry_feature_segmentation_for_ground_point/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/21/down_sample_for_caffe_data_layer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/bear.jpg">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="Done is better than perfect.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/03/21/down_sample_for_caffe_data_layer/" class="post-title-link" itemprop="url">点云降采样输入到caffe数据输入层</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-03-21 22:55:54" itemprop="dateCreated datePublished" datetime="2018-03-21T22:55:54+08:00">2018-03-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-15 12:47:27" itemprop="dateModified" datetime="2020-07-15T12:47:27+08:00">2020-07-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ROS/" itemprop="url" rel="index"><span itemprop="name">ROS</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2018/03/21/down_sample_for_caffe_data_layer/" class="post-meta-item leancloud_visitors" data-flag-title="点云降采样输入到caffe数据输入层" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>KITTI 数据根据上篇博文 <strong><em>KITTI unorganised cloud to organised cloud</em></strong> 输出尺寸为 <strong><em>HxW = 64x4500</em></strong>， 本文准备复现论文 <a href="https://arxiv.org/pdf/1709.02128.pdf" target="_blank" rel="noopener">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</a>， 根据论文内CNN网络结构需要对数据尺寸进行调整，调整尺寸为 <strong><em>HxW = 64x360</em></strong>， 相当于读源数据进行了降采样（downsampling），由于无法使用 <strong>pooling</strong> 池化操作来达到此目的，所以进行手工调整。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/03/21/down_sample_for_caffe_data_layer/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -840,186 +930,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/fcn_alexnet_pcl/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/bear.jpg">
-      <meta itemprop="name" content="Zeyu">
-      <meta itemprop="description" content="Done is better than perfect.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zeyu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/03/15/fcn_alexnet_pcl/" class="post-title-link" itemprop="url">FCN-PCL 应用解析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-03-15 23:47:44" itemprop="dateCreated datePublished" datetime="2018-03-15T23:47:44+08:00">2018-03-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-15 12:56:16" itemprop="dateModified" datetime="2020-07-15T12:56:16+08:00">2020-07-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DL/" itemprop="url" rel="index"><span itemprop="name">DL</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2018/03/15/fcn_alexnet_pcl/" class="post-meta-item leancloud_visitors" data-flag-title="FCN-PCL 应用解析" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>FCN(fully convolutional networks，全卷积神经网络)的图片语义分割（semantic segmentation）论文：<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Long_Fully_Convolutional_Networks_2015_CVPR_paper.pdf" target="_blank" rel="noopener">Fully Convolutional Networks for Semantic Segmentation</a>。全卷积网络首现于这篇文章。这篇文章是将CNN结构应用到图像语义分割领域并取得突出结果的开山之作，因而拿到了CVPR 2015年的Best paper honorable mention。图像语义分割，简而言之就是对一张图片上的所有像素点进行分类。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/03/15/fcn_alexnet_pcl/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/kitti_bin_to_pcd/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/bear.jpg">
-      <meta itemprop="name" content="Zeyu">
-      <meta itemprop="description" content="Done is better than perfect.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zeyu's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/03/15/kitti_bin_to_pcd/" class="post-title-link" itemprop="url">KITTI 原始bin格式数据集转PCD格式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-03-15 23:47:44" itemprop="dateCreated datePublished" datetime="2018-03-15T23:47:44+08:00">2018-03-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-15 12:55:40" itemprop="dateModified" datetime="2020-07-15T12:55:40+08:00">2020-07-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ROS/" itemprop="url" rel="index"><span itemprop="name">ROS</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2018/03/15/kitti_bin_to_pcd/" class="post-meta-item leancloud_visitors" data-flag-title="KITTI 原始bin格式数据集转PCD格式" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>官网数据集说明：<a href="http://www.cvlibs.net/datasets/kitti/raw_data.php" target="_blank" rel="noopener">http://www.cvlibs.net/datasets/kitti/raw_data.php</a><br>数据集详细说明论文：<a href="http://www.cvlibs.net/publications/Geiger2013IJRR.pdf" target="_blank" rel="noopener">http://www.cvlibs.net/publications/Geiger2013IJRR.pdf</a><br>KITTI的激光雷达型号为 <strong>Velodyne HDL-64E</strong> ，
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/03/15/kitti_bin_to_pcd/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/cpp_string_operation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1087,6 +997,96 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2018/03/15/cpp_string_operation/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zengzeyu.com/2018/03/15/cnpy_note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/bear.jpg">
+      <meta itemprop="name" content="Zeyu">
+      <meta itemprop="description" content="Done is better than perfect.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zeyu's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/03/15/cnpy_note/" class="post-title-link" itemprop="url">cnpy 库使用笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-03-15 23:47:44" itemprop="dateCreated datePublished" datetime="2018-03-15T23:47:44+08:00">2018-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-15 12:57:50" itemprop="dateModified" datetime="2020-07-15T12:57:50+08:00">2020-07-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2018/03/15/cnpy_note/" class="post-meta-item leancloud_visitors" data-flag-title="cnpy 库使用笔记" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥开发。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/03/15/cnpy_note/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1177,7 +1177,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
