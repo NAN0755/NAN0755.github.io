@@ -1,42 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</title>
-    <url>/2018/03/24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</url>
-    <content><![CDATA[<p>本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。<a id="more"></a></p>
-<h1 id="地面点分割方法"><a href="#地面点分割方法" class="headerlink" title="地面点分割方法"></a>地面点分割方法</h1><hr>
-<h2 id="训练数据说明"><a href="#训练数据说明" class="headerlink" title="训练数据说明"></a>训练数据说明</h2><hr>
-<p>首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 <strong>64x4500</strong>，本文每一帧数据为 <strong>64x360</strong> ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 <strong>1°</strong> 的归类分为 <strong>360</strong> 份，每一份点云的信息提取某一个点或者平均信息作为点代表，代表点的特征和 <strong><em>label</em></strong> 填入格子中生成CNN所需训练数据。每个点 <strong><em>label</em></strong> 进行二分类，分为地面点和分地面点。点特征包括 <strong><em>P = [Px, Py, Pz, Pi, Pr]</em></strong> (<strong><em>[ 坐标x， 坐标y， 坐标z， 反射强度intensity， 距离range ]</em></strong>)。</p>
-<h2 id="A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）"><a href="#A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）" class="headerlink" title="A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）"></a>A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）</h2><hr>
-<p>为了将稀疏的3D点云数据应用的2D的CNN中，本文将其编码为2D的多信号通道数据储存在矩阵 <strong><em>M</em></strong> 中，如下图所示。</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-9f36bdbffa079ed2.png)</p>
-<p>矩阵M尺寸为 <strong><em>64x360</em></strong> ，降采样过程中，对一个格子内多个点进行平均取值作为代表。同时为了简化数据，*<strong>[x,z]*** 计算得到的值代表距离，因为本文默认 *</strong>Y*** 轴为高度方向，所以 <strong><em>x， z</em></strong> 值为对偶，可以采取此种方式进行简化数据。对于空格子，则从临近格子进行线性插值来生成该格子内值。</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-2733dbe408f56512.png)</p>
-<h2 id="B-训练数据集（Training-Dataset）"><a href="#B-训练数据集（Training-Dataset）" class="headerlink" title="B. 训练数据集（Training Dataset）"></a>B. 训练数据集（Training Dataset）</h2><hr>
-<p>训练数据集的重要性不容多说，本文自行开发了基于人工种子点选取的点云分割工具（semiautomatic tool for ground annotation，原理参考图像中的<a href="https://blog.csdn.net/shenziheng1/article/details/50878911" target="_blank" rel="noopener">区域增长算法</a>，只不过此处将点之间距离作为判断条件代替灰度值，同时发现当上下限为*<strong>[0.03, 0.07]米**<em>时分割效果最好。选取了KITTI不同场景下共252帧点云作为人工分割数据，将分割好的数据按照</em></strong>7:3*<strong>比例分为**<em>[训练集，评价集]</em></strong>。<br>由于上面得到的数据量太少，所以本文又通过其他一些方法对剩下的19k帧数据，生成了训练所需数据集，基与点云特征有：最低高度，高度变化值，两线激光点云之间的距离和高度差。本文也尝试过自动生成数据（artificial 3D LiDAR data），但是效果较差。</p>
-<h2 id="C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）"><a href="#C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）" class="headerlink" title="C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）"></a>C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）</h2><hr>
-<p>因为生成的训练数据较少，所以只采用浅层的CNN网络结构（shallow CNN architectures），类型为全卷积（fully convolutional）。卷积层和反卷积层都包含非线性的ReLU神经元（ReLU non-linearities），采用梯度下降方法进行训练。网络结构如下图所示：</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-816d4607cb5d3875.png)</p>
-<p>上文 <strong>A.</strong> 中得到的矩阵 <strong><em>M</em></strong> 作为网络输入，因为是逐点（pixel）进行分类，所以网络的输出尺寸与输入尺寸相同，根据分类： <strong><em>ground = 1</em></strong>，其余点根据softmax函数概率映射进行输出。反卷积层（Deconvolutional<br>layers，广泛应用于语义分割（semantic segmentation）领域）在本文提出的4个网络结构中的中3个都有应用，其中包括效果最好的 <strong><em>L05+deconv</em></strong> （上图中第一个）。</p>
-<p>CNN的输入数据先要进行归一化（normalize）和剪裁（rescale），高度方面KITTI数据集将 <strong>3m</strong> 以上的数据进行了滤波处理，深度 <strong><em>d</em></strong> 通道方面则使用 <strong><em>log</em></strong> 进行归一化处理。</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-5119dbf286402ffb.png)</p>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-6bba27cb72e18258.png)</p>
-<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><hr>
-<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-3875bce36b9f2a46.png)</p>
-<p><strong>以上。</strong></p>
-<hr>
-<p>参考文献：<a href="https://arxiv.org/pdf/1709.02128v1.pdf" target="_blank" rel="noopener">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data.PDF</a></p>
-<p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
-]]></content>
-      <categories>
-        <category>Paper</category>
-      </categories>
-      <tags>
-        <tag>CNN</tag>
-        <tag>PCL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Caffe源代码学习 — AlexNet(Caffenet.py)</title>
     <url>/2018/03/08/Caffe%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0%E4%B9%8BAlexNet_Caffenet_py/</url>
     <content><![CDATA[<p>源码位置：<code>caffe/examples/pycaffe/caffenet.py</code><br>该文件源代码是经典模型AlexNet的Caffe实现，有兴趣的小伙伴去拜读一下论文: <a href="http://xanadu.cs.sjsu.edu/~drtylin/classes/cs267_old/ImageNet%20DNN%20NIPS2012(2).pdf" target="_blank" rel="noopener">ImageNet Classification with Deep Convolutional Neural Networks</a>.<a id="more"></a></p>
@@ -140,6 +104,42 @@
       </tags>
   </entry>
   <entry>
+    <title>CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</title>
+    <url>/2018/03/24/CNN%20for%20Very%20Fast%20Ground%20Segmentation%20in%20Velodyne%20LiDAR%20Data/</url>
+    <content><![CDATA[<p>本文提出了一种新型的去地面点云方法。一种对3D点云数据编码来给CNN进行训练，最后来分割地面点云的方法。<a id="more"></a></p>
+<h1 id="地面点分割方法"><a href="#地面点分割方法" class="headerlink" title="地面点分割方法"></a>地面点分割方法</h1><hr>
+<h2 id="训练数据说明"><a href="#训练数据说明" class="headerlink" title="训练数据说明"></a>训练数据说明</h2><hr>
+<p>首先说明，根据Velodyne HDL-64E 生成的KITTI原始点云数据分析得知，每一帧点云尺寸大概为 <strong>64x4500</strong>，本文每一帧数据为 <strong>64x360</strong> ，所以要对原始数据进行降采样。在每一帧点云中，每一线激光绕中心旋转一圈得到的点云按照 <strong>1°</strong> 的归类分为 <strong>360</strong> 份，每一份点云的信息提取某一个点或者平均信息作为点代表，代表点的特征和 <strong><em>label</em></strong> 填入格子中生成CNN所需训练数据。每个点 <strong><em>label</em></strong> 进行二分类，分为地面点和分地面点。点特征包括 <strong><em>P = [Px, Py, Pz, Pi, Pr]</em></strong> (<strong><em>[ 坐标x， 坐标y， 坐标z， 反射强度intensity， 距离range ]</em></strong>)。</p>
+<h2 id="A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）"><a href="#A-数据准备（Encoding-Sparse-3D-Data-Into-a-Dense-2D-Matrix）" class="headerlink" title="A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）"></a>A. 数据准备（Encoding Sparse 3D Data Into a Dense 2D Matrix）</h2><hr>
+<p>为了将稀疏的3D点云数据应用的2D的CNN中，本文将其编码为2D的多信号通道数据储存在矩阵 <strong><em>M</em></strong> 中，如下图所示。</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-9f36bdbffa079ed2.png)</p>
+<p>矩阵M尺寸为 <strong><em>64x360</em></strong> ，降采样过程中，对一个格子内多个点进行平均取值作为代表。同时为了简化数据，*<strong>[x,z]*** 计算得到的值代表距离，因为本文默认 *</strong>Y*** 轴为高度方向，所以 <strong><em>x， z</em></strong> 值为对偶，可以采取此种方式进行简化数据。对于空格子，则从临近格子进行线性插值来生成该格子内值。</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-2733dbe408f56512.png)</p>
+<h2 id="B-训练数据集（Training-Dataset）"><a href="#B-训练数据集（Training-Dataset）" class="headerlink" title="B. 训练数据集（Training Dataset）"></a>B. 训练数据集（Training Dataset）</h2><hr>
+<p>训练数据集的重要性不容多说，本文自行开发了基于人工种子点选取的点云分割工具（semiautomatic tool for ground annotation，原理参考图像中的<a href="https://blog.csdn.net/shenziheng1/article/details/50878911" target="_blank" rel="noopener">区域增长算法</a>，只不过此处将点之间距离作为判断条件代替灰度值，同时发现当上下限为*<strong>[0.03, 0.07]米**<em>时分割效果最好。选取了KITTI不同场景下共252帧点云作为人工分割数据，将分割好的数据按照</em></strong>7:3*<strong>比例分为**<em>[训练集，评价集]</em></strong>。<br>由于上面得到的数据量太少，所以本文又通过其他一些方法对剩下的19k帧数据，生成了训练所需数据集，基与点云特征有：最低高度，高度变化值，两线激光点云之间的距离和高度差。本文也尝试过自动生成数据（artificial 3D LiDAR data），但是效果较差。</p>
+<h2 id="C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）"><a href="#C-网络结构以及训练方法（Topology-and-Training-of-the-Proposed-Networks）" class="headerlink" title="C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）"></a>C. 网络结构以及训练方法（Topology and Training of the Proposed Networks）</h2><hr>
+<p>因为生成的训练数据较少，所以只采用浅层的CNN网络结构（shallow CNN architectures），类型为全卷积（fully convolutional）。卷积层和反卷积层都包含非线性的ReLU神经元（ReLU non-linearities），采用梯度下降方法进行训练。网络结构如下图所示：</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-816d4607cb5d3875.png)</p>
+<p>上文 <strong>A.</strong> 中得到的矩阵 <strong><em>M</em></strong> 作为网络输入，因为是逐点（pixel）进行分类，所以网络的输出尺寸与输入尺寸相同，根据分类： <strong><em>ground = 1</em></strong>，其余点根据softmax函数概率映射进行输出。反卷积层（Deconvolutional<br>layers，广泛应用于语义分割（semantic segmentation）领域）在本文提出的4个网络结构中的中3个都有应用，其中包括效果最好的 <strong><em>L05+deconv</em></strong> （上图中第一个）。</p>
+<p>CNN的输入数据先要进行归一化（normalize）和剪裁（rescale），高度方面KITTI数据集将 <strong>3m</strong> 以上的数据进行了滤波处理，深度 <strong><em>d</em></strong> 通道方面则使用 <strong><em>log</em></strong> 进行归一化处理。</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-5119dbf286402ffb.png)</p>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-6bba27cb72e18258.png)</p>
+<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><hr>
+<p>![image.png](/images/18_3_24/CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data/10028058-3875bce36b9f2a46.png)</p>
+<p><strong>以上。</strong></p>
+<hr>
+<p>参考文献：<a href="https://arxiv.org/pdf/1709.02128v1.pdf" target="_blank" rel="noopener">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data.PDF</a></p>
+<p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong></p>
+]]></content>
+      <categories>
+        <category>Paper</category>
+      </categories>
+      <tags>
+        <tag>CNN</tag>
+        <tag>PCL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Effective c++ 1.0</title>
     <url>/2018/03/21/Effective-c++-1.0/</url>
     <content><![CDATA[<p><strong>欢迎访问我的个人博客： <a href="http://zengzeyu.com/">zengzeyu.com</a></strong> <a id="more"></a></p>
@@ -189,44 +189,6 @@
       </tags>
   </entry>
   <entry>
-    <title>NumPy学习笔记</title>
-    <url>/2018/03/08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p><strong>新建Numpy结构型数据：</strong> <a id="more"></a></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np student &#x3D; np.dtype([(&#39;name&#39;,&#39;S20&#39;), (&#39;age&#39;,np.int8), (&#39;marks&#39;, np.float4)]) </span><br><span class="line">a &#x3D; np.array([(&#39;abc&#39;, 21, 50),(&#39;xyz&#39;, 18, 75)], dtype &#x3D; student) </span><br><span class="line">print a</span><br><span class="line">#输出</span><br><span class="line">[(&#39;abc&#39;, 21, 50.0), (&#39;xyz&#39;, 18, 75.0)]</span><br></pre></td></tr></table></figure>
-<p>其中，<code>string</code>类型数据用<code>S20</code>表示（<code>20</code>可更改），其余数据类型如<code>np.int8</code>和<code>np.float4</code>均有内建数据表示。</p>
-<p><strong>Numpy数组属性：</strong><br>调整数组大小</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">a &#x3D; np.array([[1,2,3],[4,5,6]]) </span><br><span class="line">b &#x3D; a.reshape(3,2)  </span><br><span class="line">print b</span><br><span class="line">#输出</span><br><span class="line">[[1, 2] </span><br><span class="line"> [3, 4] </span><br><span class="line"> [5, 6]]</span><br></pre></td></tr></table></figure>
-<p>三维数组</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 一维数组  </span><br><span class="line">import numpy as np </span><br><span class="line">a &#x3D; np.arange(24) a.ndim </span><br><span class="line"># 现在调整其大小</span><br><span class="line"># 2*4*3： 2个二维数组，每个数组大小4*3</span><br><span class="line">b &#x3D; a.reshape(2,4,3)  </span><br><span class="line">print b </span><br><span class="line">#输出</span><br><span class="line"># b 现在拥有三个维度</span><br><span class="line">[[[ 0,  1,  2] </span><br><span class="line">  [ 3,  4,  5] </span><br><span class="line">  [ 6,  7,  8] </span><br><span class="line">  [ 9, 10, 11]]  </span><br><span class="line">  [[12, 13, 14] </span><br><span class="line">   [15, 16, 17]</span><br><span class="line">   [18, 19, 20] </span><br><span class="line">   [21, 22, 23]]]</span><br></pre></td></tr></table></figure>
-<p><strong>Numpy 来自现有数据的数组</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 将列表转换为 ndarray </span><br><span class="line">import numpy as np </span><br><span class="line"></span><br><span class="line">x &#x3D;  [1,2,3] </span><br><span class="line">a &#x3D; np.asarray(x)  </span><br><span class="line">print a</span><br><span class="line">#输出</span><br><span class="line">[1  2  3]</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 来自元组的 ndarray  </span><br><span class="line">import numpy as np </span><br><span class="line"></span><br><span class="line">x &#x3D;  (1,2,3) </span><br><span class="line">a &#x3D; np.asarray(x)  </span><br><span class="line">print a</span><br><span class="line">#输出</span><br><span class="line">[1  2  3]</span><br></pre></td></tr></table></figure>
-<p><strong>Numpy-frombuffer</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">s &#x3D;  &#39;Hello World&#39; </span><br><span class="line">a &#x3D; np.frombuffer(s, dtype &#x3D;  &#39;S1&#39;)  </span><br><span class="line">print a</span><br><span class="line">#输出</span><br><span class="line">[&#39;H&#39;  &#39;e&#39;  &#39;l&#39;  &#39;l&#39;  &#39;o&#39;  &#39; &#39;  &#39;W&#39;  &#39;o&#39;  &#39;r&#39;  &#39;l&#39;  &#39;d&#39;]</span><br></pre></td></tr></table></figure>
-<p><strong>Numpy-切片和索引</strong><br>基本切片是 Python 中基本切片概念到 n 维的扩展。 通过将<code>start</code>，<code>stop</code>和<code>step</code>参数提供给内置的<code>slice</code>函数来构造一个 Python <code>slice</code>对象。 此<code>slice</code>对象被传递给数组来提取数组的一部分。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">a &#x3D; np.arange(10)</span><br><span class="line">s &#x3D; slice(2,7,1)  # 2返回值为2的索引，7返回值为7的索引，1为步长</span><br><span class="line">print a[s]</span><br><span class="line">#输出</span><br><span class="line">[2 3 4 5 6]</span><br></pre></td></tr></table></figure>
-<p>在上面的例子中，<code>ndarray</code>对象由<code>arange()</code>函数创建。 然后，分别用起始，终止和步长值<code>2</code>，<code>7</code>和<code>2</code>定义切片对象。 当这个切片对象传递给<code>ndarray</code>时，会对它的一部分进行切片，从索引<code>2</code>到<code>7</code>，步长为<code>2</code>。</p>
-<p><strong>NumPy - 数组上的迭代</strong></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">a &#x3D; np.arange(0,60,5) </span><br><span class="line">a &#x3D; a.reshape(3,4)  </span><br><span class="line">print  &#39;原始数组是：&#39;  </span><br><span class="line">print a print  &#39;\n&#39;  </span><br><span class="line">print  &#39;修改后的数组是：&#39;  </span><br><span class="line">for x in np.nditer(a): </span><br><span class="line">  print x</span><br><span class="line">#输出</span><br><span class="line">原始数组是：</span><br><span class="line">[[ 0 5 10 15]</span><br><span class="line"> [20 25 30 35]</span><br><span class="line"> [40 45 50 55]]</span><br><span class="line"></span><br><span class="line">修改后的数组是：</span><br><span class="line">0 5 10 15 20 25 30 35 40 45 50 55</span><br></pre></td></tr></table></figure>
-<p><strong>注意：</strong>迭代的顺序匹配数组的内容布局，而不考虑特定的排序。 这可以通过迭代上述数组的转置来看到。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">a &#x3D; np.arange(0,60,5) </span><br><span class="line">a &#x3D; a.reshape(3,4) </span><br><span class="line">print &#39;原始数组是：&#39; </span><br><span class="line">print a print &#39;\n&#39; </span><br><span class="line">print &#39;原始数组的转置是：&#39; </span><br><span class="line">b &#x3D; a.T</span><br><span class="line">print b</span><br><span class="line">print &#39;\n&#39; print &#39;修改后的数组是：&#39; </span><br><span class="line">for x in np.nditer(b): </span><br><span class="line">      print x,</span><br><span class="line">#输出</span><br><span class="line">原始数组是： </span><br><span class="line">[[ 0 5 10 15] </span><br><span class="line">[20 25 30 35] </span><br><span class="line">[40 45 50 55]] </span><br><span class="line">原始数组的转置是： </span><br><span class="line">[[ 0 20 40] </span><br><span class="line">[ 5 25 45] </span><br><span class="line">[10 30 50] </span><br><span class="line">[15 35 55]] </span><br><span class="line">修改后的数组是： </span><br><span class="line">0 5 10 15 20 25 30 35 40 45 50 55</span><br></pre></td></tr></table></figure>
-<p><code>numpy.ndarray.flatten</code></p>
-<p>该函数返回折叠为一维的数组副本，函数接受下列参数：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ndarray.flatten(order)</span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li>order：<code>C</code> – 按行，<code>F</code>– 按列，<code>A</code> – 原顺序，<code>k</code> – 元素在内存中的出现顺序。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Python</category>
-      </categories>
-      <tags>
-        <tag>Python</tag>
-        <tag>DL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ROS Node 之间通信打断操作实例</title>
     <url>/2018/03/08/ROS_Node%E4%B9%8B%E9%97%B4%E9%80%9A%E4%BF%A1%E6%89%93%E6%96%AD%E6%93%8D%E4%BD%9C%E5%AE%9E%E4%BE%8B/</url>
     <content><![CDATA[<p>最近开发小工具，对文件夹下点云PCD文件进行读取和相应操作，目标功能：</p>
@@ -272,6 +234,44 @@
       </tags>
   </entry>
   <entry>
+    <title>NumPy学习笔记</title>
+    <url>/2018/03/08/Numpy%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p><strong>新建Numpy结构型数据：</strong> <a id="more"></a></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np student &#x3D; np.dtype([(&#39;name&#39;,&#39;S20&#39;), (&#39;age&#39;,np.int8), (&#39;marks&#39;, np.float4)]) </span><br><span class="line">a &#x3D; np.array([(&#39;abc&#39;, 21, 50),(&#39;xyz&#39;, 18, 75)], dtype &#x3D; student) </span><br><span class="line">print a</span><br><span class="line">#输出</span><br><span class="line">[(&#39;abc&#39;, 21, 50.0), (&#39;xyz&#39;, 18, 75.0)]</span><br></pre></td></tr></table></figure>
+<p>其中，<code>string</code>类型数据用<code>S20</code>表示（<code>20</code>可更改），其余数据类型如<code>np.int8</code>和<code>np.float4</code>均有内建数据表示。</p>
+<p><strong>Numpy数组属性：</strong><br>调整数组大小</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">a &#x3D; np.array([[1,2,3],[4,5,6]]) </span><br><span class="line">b &#x3D; a.reshape(3,2)  </span><br><span class="line">print b</span><br><span class="line">#输出</span><br><span class="line">[[1, 2] </span><br><span class="line"> [3, 4] </span><br><span class="line"> [5, 6]]</span><br></pre></td></tr></table></figure>
+<p>三维数组</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 一维数组  </span><br><span class="line">import numpy as np </span><br><span class="line">a &#x3D; np.arange(24) a.ndim </span><br><span class="line"># 现在调整其大小</span><br><span class="line"># 2*4*3： 2个二维数组，每个数组大小4*3</span><br><span class="line">b &#x3D; a.reshape(2,4,3)  </span><br><span class="line">print b </span><br><span class="line">#输出</span><br><span class="line"># b 现在拥有三个维度</span><br><span class="line">[[[ 0,  1,  2] </span><br><span class="line">  [ 3,  4,  5] </span><br><span class="line">  [ 6,  7,  8] </span><br><span class="line">  [ 9, 10, 11]]  </span><br><span class="line">  [[12, 13, 14] </span><br><span class="line">   [15, 16, 17]</span><br><span class="line">   [18, 19, 20] </span><br><span class="line">   [21, 22, 23]]]</span><br></pre></td></tr></table></figure>
+<p><strong>Numpy 来自现有数据的数组</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 将列表转换为 ndarray </span><br><span class="line">import numpy as np </span><br><span class="line"></span><br><span class="line">x &#x3D;  [1,2,3] </span><br><span class="line">a &#x3D; np.asarray(x)  </span><br><span class="line">print a</span><br><span class="line">#输出</span><br><span class="line">[1  2  3]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 来自元组的 ndarray  </span><br><span class="line">import numpy as np </span><br><span class="line"></span><br><span class="line">x &#x3D;  (1,2,3) </span><br><span class="line">a &#x3D; np.asarray(x)  </span><br><span class="line">print a</span><br><span class="line">#输出</span><br><span class="line">[1  2  3]</span><br></pre></td></tr></table></figure>
+<p><strong>Numpy-frombuffer</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">s &#x3D;  &#39;Hello World&#39; </span><br><span class="line">a &#x3D; np.frombuffer(s, dtype &#x3D;  &#39;S1&#39;)  </span><br><span class="line">print a</span><br><span class="line">#输出</span><br><span class="line">[&#39;H&#39;  &#39;e&#39;  &#39;l&#39;  &#39;l&#39;  &#39;o&#39;  &#39; &#39;  &#39;W&#39;  &#39;o&#39;  &#39;r&#39;  &#39;l&#39;  &#39;d&#39;]</span><br></pre></td></tr></table></figure>
+<p><strong>Numpy-切片和索引</strong><br>基本切片是 Python 中基本切片概念到 n 维的扩展。 通过将<code>start</code>，<code>stop</code>和<code>step</code>参数提供给内置的<code>slice</code>函数来构造一个 Python <code>slice</code>对象。 此<code>slice</code>对象被传递给数组来提取数组的一部分。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">a &#x3D; np.arange(10)</span><br><span class="line">s &#x3D; slice(2,7,1)  # 2返回值为2的索引，7返回值为7的索引，1为步长</span><br><span class="line">print a[s]</span><br><span class="line">#输出</span><br><span class="line">[2 3 4 5 6]</span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，<code>ndarray</code>对象由<code>arange()</code>函数创建。 然后，分别用起始，终止和步长值<code>2</code>，<code>7</code>和<code>2</code>定义切片对象。 当这个切片对象传递给<code>ndarray</code>时，会对它的一部分进行切片，从索引<code>2</code>到<code>7</code>，步长为<code>2</code>。</p>
+<p><strong>NumPy - 数组上的迭代</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">a &#x3D; np.arange(0,60,5) </span><br><span class="line">a &#x3D; a.reshape(3,4)  </span><br><span class="line">print  &#39;原始数组是：&#39;  </span><br><span class="line">print a print  &#39;\n&#39;  </span><br><span class="line">print  &#39;修改后的数组是：&#39;  </span><br><span class="line">for x in np.nditer(a): </span><br><span class="line">  print x</span><br><span class="line">#输出</span><br><span class="line">原始数组是：</span><br><span class="line">[[ 0 5 10 15]</span><br><span class="line"> [20 25 30 35]</span><br><span class="line"> [40 45 50 55]]</span><br><span class="line"></span><br><span class="line">修改后的数组是：</span><br><span class="line">0 5 10 15 20 25 30 35 40 45 50 55</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong>迭代的顺序匹配数组的内容布局，而不考虑特定的排序。 这可以通过迭代上述数组的转置来看到。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import numpy as np </span><br><span class="line">a &#x3D; np.arange(0,60,5) </span><br><span class="line">a &#x3D; a.reshape(3,4) </span><br><span class="line">print &#39;原始数组是：&#39; </span><br><span class="line">print a print &#39;\n&#39; </span><br><span class="line">print &#39;原始数组的转置是：&#39; </span><br><span class="line">b &#x3D; a.T</span><br><span class="line">print b</span><br><span class="line">print &#39;\n&#39; print &#39;修改后的数组是：&#39; </span><br><span class="line">for x in np.nditer(b): </span><br><span class="line">      print x,</span><br><span class="line">#输出</span><br><span class="line">原始数组是： </span><br><span class="line">[[ 0 5 10 15] </span><br><span class="line">[20 25 30 35] </span><br><span class="line">[40 45 50 55]] </span><br><span class="line">原始数组的转置是： </span><br><span class="line">[[ 0 20 40] </span><br><span class="line">[ 5 25 45] </span><br><span class="line">[10 30 50] </span><br><span class="line">[15 35 55]] </span><br><span class="line">修改后的数组是： </span><br><span class="line">0 5 10 15 20 25 30 35 40 45 50 55</span><br></pre></td></tr></table></figure>
+<p><code>numpy.ndarray.flatten</code></p>
+<p>该函数返回折叠为一维的数组副本，函数接受下列参数：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ndarray.flatten(order)</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li>order：<code>C</code> – 按行，<code>F</code>– 按列，<code>A</code> – 原顺序，<code>k</code> – 元素在内存中的出现顺序。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Python</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>DL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>cnpy 库使用笔记</title>
     <url>/2018/03/15/cnpy_note/</url>
     <content><![CDATA[<p>在进行网络训练过程中，在生成训练数据时，一般会使用比较底层的传感器来生成数据，如摄像头或雷达，所以大部分使用C++进行开发。为了将数据转为Numpy Array格式供Python调用，cnpy库就是供C++生成这种格式数据的开源库，由国外一名小哥开发。<a id="more"></a><br>cnpy地址：<a href="https://github.com/rogersce/cnpy" target="_blank" rel="noopener">https://github.com/rogersce/cnpy</a><br>官方例子：<a href="https://github.com/rogersce/cnpy/blob/master/example1.cpp" target="_blank" rel="noopener">https://github.com/rogersce/cnpy/blob/master/example1.cpp</a></p>
@@ -302,6 +302,40 @@
       </categories>
       <tags>
         <tag>NumPy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>点云降采样输入到caffe数据输入层</title>
+    <url>/2018/03/21/down_sample_for_caffe_data_layer/</url>
+    <content><![CDATA[<p>KITTI 数据根据上篇博文 <strong><em>KITTI unorganised cloud to organised cloud</em></strong> 输出尺寸为 <strong><em>HxW = 64x4500</em></strong>， 本文准备复现论文 <a href="https://arxiv.org/pdf/1709.02128.pdf" target="_blank" rel="noopener">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</a>， 根据论文内CNN网络结构需要对数据尺寸进行调整，调整尺寸为 <strong><em>HxW = 64x360</em></strong>， 相当于读源数据进行了降采样（downsampling），由于无法使用 <strong>pooling</strong> 池化操作来达到此目的，所以进行手工调整。<a id="more"></a></p>
+<h1 id="点云数据调整"><a href="#点云数据调整" class="headerlink" title="点云数据调整"></a>点云数据调整</h1><hr>
+<h2 id="调整规则"><a href="#调整规则" class="headerlink" title="调整规则"></a>调整规则</h2><hr>
+<h3 id="尺寸调整规则"><a href="#尺寸调整规则" class="headerlink" title="尺寸调整规则"></a>尺寸调整规则</h3><p>将点云数据由 <strong><em>HxW = 64x4500</em></strong> 调整为 <strong><em>HxW = 64x360</em></strong>，可见数据在 <strong><em>H</em></strong> 高度方向上不发生改变， <strong><em>W</em></strong> 水平方向上由 <strong>4500</strong> 调整为 <strong>360</strong>，本文依据以下规则进行调整：</p>
+<blockquote>
+<p>调整前尺寸：  |- - - - - - - - - - - - - - - - - - - - . . .  4500 . . . - - - - - - - - - - - - - - - - - - - - - - |<br>调整后尺寸：  | - 12 - | - 13 - | - 12 - | - 13 - | . . . . . . . . . . . . .| - 12 - | - 13 - | - 12 - | - 13 - | </p>
+</blockquote>
+<p>将 <strong>12</strong> 与 <strong>13</strong> 个与卷积 <strong><em>kernel</em></strong> 类似的结构定义为卷积容器，上述两个尺寸的卷积容器交替进行采样，得到最终结构输出尺寸为 <strong>4500 / 25 x 2 = 360</strong>。</p>
+<h3 id="数据调整"><a href="#数据调整" class="headerlink" title="数据调整"></a>数据调整</h3><hr>
+<p><strong>对每一个卷积容器内的数据进行提取操作，依据不同的数据使用不同的数据提取规则。以一个卷积容器为例，假设已经得到了容器内的数据，下面将对卷积容器内不同情况进行讨论。</strong></p>
+<h5 id="1-明确提取代表点的原则，目标"><a href="#1-明确提取代表点的原则，目标" class="headerlink" title="1. 明确提取代表点的原则，目标"></a>1. 明确提取代表点的原则，目标</h5><p>假设要提取的点为 <strong>A = [ r, c, h, w, l ]</strong> 点提取代表点不是为了正确反应卷积容器内的所有点的特征分布，而是，<strong>A</strong>点自身的特征能和容器内最相近的数据点label能一一对应，这样才能保证训练网络时的数据准确性。<br>因为我们的目标是，最后训练得到网络之后，通过网络来进行预测，那么，对于测试数据，也要进行尺寸 rescale 为 <strong>4500 / 25 x 2 = 360</strong> 操作，最后，根据对代表点 <strong><em>label</em></strong> 的预测，将 <strong><em>label</em></strong> 赋值到同卷积容器内的其他点。</p>
+<h5 id="2-当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考："><a href="#2-当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考：" class="headerlink" title="2. 当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考："></a>2. 当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考：</h5><ul>
+<li>采用平均值方法： 依据容器内数据个数取 <strong><em>[range, height]</em></strong> 平均值，并根据二者数据的权重方向思考寻找容器内与计算得出的平均值特征最近的点，用作代替，但是，用哪个做代表值作为寻找代替点的依据，需要仔细考量！</li>
+<li>采用最近距离方法： 一次迭代就可查找出结果，直接用最近距离点作为代表点</li>
+<li>采用高度方法： 考虑到高度方向的作为障碍物与地面区分的重要特征，可用此方法</li>
+</ul>
+<h3 id="数据调整输出"><a href="#数据调整输出" class="headerlink" title="数据调整输出"></a>数据调整输出</h3><hr>
+<p><strong>以 label data 为例输出显示，使用matplot进行绘图，python代码如下：</strong><br>​```<br>import matplotlib.pyplot as plt</p>
+<p>in_label = in_file[:,:,0]<br>fig = plt.figure()<br>origin_label = fig.add_subplot(121)<br>origin_label.imshow(in_label)<br>rescale_label =<br>plt.show(fig)<br>​```</p>
+<h3 id="调整前后数据（源数据）"><a href="#调整前后数据（源数据）" class="headerlink" title="调整前后数据（源数据）"></a>调整前后数据（源数据）</h3><p>由下图可看出，点颜色有三种，分别是代表三个 <strong><em>label</em></strong> 值： [ -1, 0, 1 ]</p>
+<p>调整尺寸后点颜色有二种，分别代表两个 <strong><em>label</em></strong> 值： [ 0, 1 ]</p>
+<p><img data-src="/images/18_3_30/down_sample_for_caffe_data_layer/10028058-5caa1c5c8af2546d.png" alt="Screenshot from 2018-03-29 16:04:32.png"></p>
+]]></content>
+      <categories>
+        <category>ROS</category>
+      </categories>
+      <tags>
+        <tag>PCL</tag>
+        <tag>ROS</tag>
       </tags>
   </entry>
   <entry>
@@ -346,40 +380,6 @@
       </categories>
       <tags>
         <tag>c++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>点云降采样输入到caffe数据输入层</title>
-    <url>/2018/03/21/down_sample_for_caffe_data_layer/</url>
-    <content><![CDATA[<p>KITTI 数据根据上篇博文 <strong><em>KITTI unorganised cloud to organised cloud</em></strong> 输出尺寸为 <strong><em>HxW = 64x4500</em></strong>， 本文准备复现论文 <a href="https://arxiv.org/pdf/1709.02128.pdf" target="_blank" rel="noopener">CNN for Very Fast Ground Segmentation in Velodyne LiDAR Data</a>， 根据论文内CNN网络结构需要对数据尺寸进行调整，调整尺寸为 <strong><em>HxW = 64x360</em></strong>， 相当于读源数据进行了降采样（downsampling），由于无法使用 <strong>pooling</strong> 池化操作来达到此目的，所以进行手工调整。<a id="more"></a></p>
-<h1 id="点云数据调整"><a href="#点云数据调整" class="headerlink" title="点云数据调整"></a>点云数据调整</h1><hr>
-<h2 id="调整规则"><a href="#调整规则" class="headerlink" title="调整规则"></a>调整规则</h2><hr>
-<h3 id="尺寸调整规则"><a href="#尺寸调整规则" class="headerlink" title="尺寸调整规则"></a>尺寸调整规则</h3><p>将点云数据由 <strong><em>HxW = 64x4500</em></strong> 调整为 <strong><em>HxW = 64x360</em></strong>，可见数据在 <strong><em>H</em></strong> 高度方向上不发生改变， <strong><em>W</em></strong> 水平方向上由 <strong>4500</strong> 调整为 <strong>360</strong>，本文依据以下规则进行调整：</p>
-<blockquote>
-<p>调整前尺寸：  |- - - - - - - - - - - - - - - - - - - - . . .  4500 . . . - - - - - - - - - - - - - - - - - - - - - - |<br>调整后尺寸：  | - 12 - | - 13 - | - 12 - | - 13 - | . . . . . . . . . . . . .| - 12 - | - 13 - | - 12 - | - 13 - | </p>
-</blockquote>
-<p>将 <strong>12</strong> 与 <strong>13</strong> 个与卷积 <strong><em>kernel</em></strong> 类似的结构定义为卷积容器，上述两个尺寸的卷积容器交替进行采样，得到最终结构输出尺寸为 <strong>4500 / 25 x 2 = 360</strong>。</p>
-<h3 id="数据调整"><a href="#数据调整" class="headerlink" title="数据调整"></a>数据调整</h3><hr>
-<p><strong>对每一个卷积容器内的数据进行提取操作，依据不同的数据使用不同的数据提取规则。以一个卷积容器为例，假设已经得到了容器内的数据，下面将对卷积容器内不同情况进行讨论。</strong></p>
-<h5 id="1-明确提取代表点的原则，目标"><a href="#1-明确提取代表点的原则，目标" class="headerlink" title="1. 明确提取代表点的原则，目标"></a>1. 明确提取代表点的原则，目标</h5><p>假设要提取的点为 <strong>A = [ r, c, h, w, l ]</strong> 点提取代表点不是为了正确反应卷积容器内的所有点的特征分布，而是，<strong>A</strong>点自身的特征能和容器内最相近的数据点label能一一对应，这样才能保证训练网络时的数据准确性。<br>因为我们的目标是，最后训练得到网络之后，通过网络来进行预测，那么，对于测试数据，也要进行尺寸 rescale 为 <strong>4500 / 25 x 2 = 360</strong> 操作，最后，根据对代表点 <strong><em>label</em></strong> 的预测，将 <strong><em>label</em></strong> 赋值到同卷积容器内的其他点。</p>
-<h5 id="2-当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考："><a href="#2-当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考：" class="headerlink" title="2. 当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考："></a>2. 当容器内数据不为空，选取代表数据规则可进行下面三个方向的思考：</h5><ul>
-<li>采用平均值方法： 依据容器内数据个数取 <strong><em>[range, height]</em></strong> 平均值，并根据二者数据的权重方向思考寻找容器内与计算得出的平均值特征最近的点，用作代替，但是，用哪个做代表值作为寻找代替点的依据，需要仔细考量！</li>
-<li>采用最近距离方法： 一次迭代就可查找出结果，直接用最近距离点作为代表点</li>
-<li>采用高度方法： 考虑到高度方向的作为障碍物与地面区分的重要特征，可用此方法</li>
-</ul>
-<h3 id="数据调整输出"><a href="#数据调整输出" class="headerlink" title="数据调整输出"></a>数据调整输出</h3><hr>
-<p><strong>以 label data 为例输出显示，使用matplot进行绘图，python代码如下：</strong><br>​```<br>import matplotlib.pyplot as plt</p>
-<p>in_label = in_file[:,:,0]<br>fig = plt.figure()<br>origin_label = fig.add_subplot(121)<br>origin_label.imshow(in_label)<br>rescale_label =<br>plt.show(fig)<br>​```</p>
-<h3 id="调整前后数据（源数据）"><a href="#调整前后数据（源数据）" class="headerlink" title="调整前后数据（源数据）"></a>调整前后数据（源数据）</h3><p>由下图可看出，点颜色有三种，分别是代表三个 <strong><em>label</em></strong> 值： [ -1, 0, 1 ]</p>
-<p>调整尺寸后点颜色有二种，分别代表两个 <strong><em>label</em></strong> 值： [ 0, 1 ]</p>
-<p><img data-src="/images/18_3_30/down_sample_for_caffe_data_layer/10028058-5caa1c5c8af2546d.png" alt="Screenshot from 2018-03-29 16:04:32.png"></p>
-]]></content>
-      <categories>
-        <category>ROS</category>
-      </categories>
-      <tags>
-        <tag>PCL</tag>
-        <tag>ROS</tag>
       </tags>
   </entry>
   <entry>
@@ -451,103 +451,6 @@
       </tags>
   </entry>
   <entry>
-    <title>KITTI 原始点云数据（PCL）地面点分割</title>
-    <url>/2018/03/28/kitti_ground_point_seg/</url>
-    <content><![CDATA[<p>自动驾驶系统中，对激光雷达获取的点云数据进行地面点分割是第一步，地面点分割结果的好坏直接影响聚类，识别和追踪效果。在对地面点分割过程中，前人尝试了许多方法，部分方法结果请参考本人博文<strong>《基于几何特征的地面点云分割》</strong>。所以，地面点分割是自动驾驶激光雷达点云处理永恒的话题。目前，基于几何特征的地面点分割都基于各自的前提假设，大多数的原理是根据地面点与非地面点的特征不同而进行区分，如法向量、高度、高度差等。<a id="more"></a></p>
-<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-f14bf66059d90048.gif" alt="点运数据"></p>
-<p>本文利用现有的<a href="http://www.cvlibs.net/datasets/kitti/eval_depth.php?benchmark=depth_completion" target="_blank" rel="noopener">KITTI点云数据</a>进行地面点分割，通过不同方法组合，试验出结果相对较好的方法，并予以结果显示。</p>
-<h2 id="地面点分割"><a href="#地面点分割" class="headerlink" title="地面点分割"></a>地面点分割</h2><h3 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h3><p>本文相关的一些工作，请参考本博客前博文：</p>
-<pre><code>1.  《KITTI 原始bin数据转pcd数据》
-2.  《KITTI 无序点云数据转有序点云数据》
-3.  《基于几何特征的地面点云分割》</code></pre>
-<h3 id="地面点分割流程"><a href="#地面点分割流程" class="headerlink" title="地面点分割流程"></a>地面点分割流程</h3><h4 id="算法流程："><a href="#算法流程：" class="headerlink" title="算法流程："></a>算法流程：</h4><pre><code>1. 法向量分割
-2. 平均高度分割
-3. 校准平面
-4. 栅格内高度差分割
-5. 平均高度分割</code></pre>
-<h5 id="部分代码："><a href="#部分代码：" class="headerlink" title="部分代码："></a>部分代码：</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void KittiPCL::generateGroundCloud(PointCloudXYZI::Ptr &amp;out_cloud, visualization_msgs::MarkerPtr &amp;plane_marker)</span><br><span class="line">&#123;</span><br><span class="line">    PointCloudXYZI::Ptr temp_cloud_1 ( new PointCloudXYZI );</span><br><span class="line">    PointCloudXYZI::Ptr temp_cloud_2 ( new PointCloudXYZI );</span><br><span class="line">    *temp_cloud_1 &#x3D; *kitti_organised_cloud_ptr_;</span><br><span class="line">    &#x2F;&#x2F; calibration</span><br><span class="line">    this-&gt;filtCloudWithNormalZ( temp_cloud_1, temp_cloud_2 );</span><br><span class="line">    this-&gt;filtWithAverageHeight( temp_cloud_2, kitti_organised_cloud_ptr_, temp_cloud_1 );</span><br><span class="line">    this-&gt;estimateGroundPlane( temp_cloud_1, transform_cloud_ptr_, plane_marker );</span><br><span class="line">    &#x2F;&#x2F; grid</span><br><span class="line">    this-&gt;generateGridMap( transform_cloud_ptr_, temp_cloud_2, 75.0f, 0.2f );</span><br><span class="line">    this-&gt;computePtsCloudFeature(transform_cloud_ptr_);</span><br><span class="line">    *out_cloud &#x3D; *temp_cloud_2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="试验结果"><a href="#试验结果" class="headerlink" title="试验结果"></a>试验结果</h2><hr>
-<p>为了客观合理展示试验结果，S选取了直道路和十字路口的点云进行分割结果展示。<br>同时，统计时间，在 <em>Release</em> 模式下，处理一帧平均耗时 <strong>130ms</strong>。 </p>
-<blockquote>
-<p>平台配置：<br>CPU: Intel® Xeon(R) CPU E3-1230 v3 @ 3.30GHz × 8<br>GPU: GeForce GT 730/PCIe/SSE2<br>System: 64-bit</p>
-</blockquote>
-<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-1616a85fc81e6b83.png" alt="Screenshot from 2018-03-28 16:02:53.png"></p>
-<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-c02548c179e73e41.png" alt="Screenshot from 2018-03-28 16:04:27.png"></p>
-<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-5388648e2db90935.png" alt="Screenshot from 2018-03-28 16:05:02.png"></p>
-<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-a7d779ef26a1b105.png" alt="Screenshot from 2018-03-28 16:05:52.png"></p>
-<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-53efb931098d3835.png" alt="Screenshot from 2018-03-28 16:08:50.png"></p>
-<p><strong>最后一张图片右上方，可发现有大块地面点未被分割出来，原因是该十字路口地面不平，本文算法还无法适用于这种情况，后续需要改进。</strong></p>
-<p>以上。</p>
-<hr>
-]]></content>
-      <categories>
-        <category>ROS</category>
-      </categories>
-      <tags>
-        <tag>PCL</tag>
-        <tag>ROS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>TensorRT 教程（一）：安装TensorRT</title>
-    <url>/2020/07/09/tensorrt_01_installation/</url>
-    <content><![CDATA[<p>TensorRT 是一个用于在 NVIDIA GPU 上进行高性能计算的 C++ 库。TensorRT 在运行时，加载一个已经训练好的神经网络，创建一个经过内部高度优化的引擎（engine），来进行快速计算。TensorRT 同时提供 C++ 和 Python API 接口。TensorRT 同时支持 Windows/Ubuntu/iOS 系统，本教程将基于 Ubuntu 进行讲解。<a id="more"></a></p>
-<h2 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h2><p>TensorRT 具有以下依赖，请先安装：</p>
-<ul>
-<li>CUDA 9.0， 10.0 ，或者 10.2</li>
-<li>cuDNN 7.6.5</li>
-<li>Python 2 / Python 3 （可选）</li>
-</ul>
-<h2 id="2-下载TensorRT"><a href="#2-下载TensorRT" class="headerlink" title="2. 下载TensorRT"></a>2. 下载TensorRT</h2><p>根据 TensorRT 官网介绍，使用压缩包安装可方便后续开发，当然也可选择 <strong>Debian/NPM</strong> 安装方式。本文将按照 <strong>tar</strong> 压缩包方式进行安装。按照下面流程即可快速安装，记得先注册一个 NVIDIA 账号：</p>
-<blockquote>
-<ol>
-<li>进入官网：<a href="https://developer.nvidia.com/tensorrt" target="_blank" rel="noopener">https://developer.nvidia.com/tensorrt</a></li>
-<li>点击 <strong>Download Now</strong>，然后登录NVIDIA账号</li>
-<li>选择需要安装的TensorRT版本（此处选择 7.0）</li>
-<li>同意软件安装许可</li>
-<li>点击软件包下载链接，随后开始下载</li>
-</ol>
-</blockquote>
-<h2 id="3-安装-TensorRT"><a href="#3-安装-TensorRT" class="headerlink" title="3. 安装 TensorRT"></a>3. 安装 TensorRT</h2><h3 id="3-1-安装-TensorRT-源码"><a href="#3-1-安装-TensorRT-源码" class="headerlink" title="3.1 安装 TensorRT 源码"></a>3.1 安装 TensorRT 源码</h3><p>将下载好的压缩包，放在一个路径下，比如在我的电脑：<code>/home/TensorRT-7</code>。然后将 TensorRT 的 <code>lib</code> 文件路径加入系统环境变量:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gedit ~&#x2F;.bashrc&#96;  # sudo vi ~&#x2F;.bashrc</span><br><span class="line">export LD_LIBRARY_PATH&#x3D;$LD_LIBRARY_PATH:&lt;TensorRT-$&#123;version&#125;&#x2F;lib&gt;</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-2-安装-Python-接口"><a href="#3-2-安装-Python-接口" class="headerlink" title="3.2 安装 Python 接口"></a>3.2 安装 Python 接口</h3><p>如果需要用 Python API 进行编程，按照如下进行：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd TensorRT-$&#123;version&#125;&#x2F;python</span><br><span class="line">sudo pip2 install tensorrt-*-cp27-none-linux_x86_64.whl  # python2</span><br><span class="line"># sudo pip3 install tensorrt-*-cp3x-none-linux_x86_64.whl  # python3</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-3-安装UFF转换库"><a href="#3-3-安装UFF转换库" class="headerlink" title="3.3 安装UFF转换库"></a>3.3 安装UFF转换库</h3><p>如果你想将 TensorFlow 训练后的网络通过 UFF 编码方式转换给 TensorRT 进行运行：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd TensorRT-$&#123;version&#125;&#x2F;uff</span><br><span class="line">sudo pip2 install uff-0.6.5-py2.py3-none-any.whl   # python2</span><br><span class="line"># sudo pip3 install uff-0.6.5-py2.py3-none-any.whl  # python3</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-4-安装-graphsurgeon"><a href="#3-4-安装-graphsurgeon" class="headerlink" title="3.4 安装 graphsurgeon"></a>3.4 安装 graphsurgeon</h3><p><strong>graphsurgeon</strong> 是对UFF编码网络进行定制化操作的库，比如插入或删除神经网络某一层<code>layer</code>:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd TensorRT-$&#123;version&#125;&#x2F;graphsurgeon</span><br><span class="line">sudo pip2 install graphsurgeon-0.4.1-py2.py3-none-any.whl  # python2</span><br><span class="line"># sudo pip3 install graphsurgeon-0.4.1-py2.py3-none-any.whl  # python3</span><br></pre></td></tr></table></figure>
-
-<h2 id="4-验证安装"><a href="#4-验证安装" class="headerlink" title="4. 验证安装"></a>4. 验证安装</h2><ol>
-<li>查看TensorRT的安装目录下文件是否齐全，可使用命令<code>tree -d</code>，会看到包含以下文件夹：<code>lib</code>，<code>include</code>，<code>data</code>…</li>
-<li>运行例子<code>sampleMNIST</code>:<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd &lt;TensorRT root directory&gt;&#x2F;samples&#x2F;sampleMNIST</span><br><span class="line">make</span><br><span class="line">.&#x2F;sample_mnist</span><br></pre></td></tr></table></figure>
-如果上述命令无ERROR输出,则证明安装成功。</li>
-</ol>
-<p>至此，TensorRT安装成功！</p>
-]]></content>
-      <tags>
-        <tag>DL</tag>
-        <tag>CV</tag>
-        <tag>TensorRT</tag>
-        <tag>Model Deployment</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>开篇2017</title>
-    <url>/2017/06/26/%E5%BC%80%E7%AF%872017/</url>
-    <content><![CDATA[<p>欢迎来到<a href="http://zengzeyu.com/">我的个人博客</a>，此博客将用作记录自己的一些技术上的问题和解决方法，借助这一个平台，希望给自己一个记录，让自己多年以后回过头来看看自己也曾经少年过，哈哈！</p>
-]]></content>
-      <tags>
-        <tag>MarkDown Writting</tag>
-        <tag>Personal</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>TensorRT 教程（二）：TensorRT 源码简介</title>
     <url>/2020/07/09/tensorrt_02_introduction/</url>
     <content><![CDATA[<p>NVIDIA TensorRT是一种高性能神经网络推理(Inference)引擎，用于在生产环境中部署深度学习应用程序，应用有图像分类、分割和目标检测等，可提供最大的推理吞吐量和效率。TensorRT是第一款可编程推理加速器，能加速现有和未来的网络架构。 <a id="more"></a></p>
@@ -600,6 +503,103 @@
         <tag>CV</tag>
         <tag>TensorRT</tag>
         <tag>Model Deployment</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>开篇2017</title>
+    <url>/2017/06/26/%E5%BC%80%E7%AF%872017/</url>
+    <content><![CDATA[<p>欢迎来到<a href="http://zengzeyu.com/">我的个人博客</a>，此博客将用作记录自己的一些技术上的问题和解决方法，借助这一个平台，希望给自己一个记录，让自己多年以后回过头来看看自己也曾经少年过，哈哈！</p>
+]]></content>
+      <tags>
+        <tag>MarkDown Writting</tag>
+        <tag>Personal</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>TensorRT 教程（一）：安装TensorRT</title>
+    <url>/2020/07/09/tensorrt_01_installation/</url>
+    <content><![CDATA[<p>TensorRT 是一个用于在 NVIDIA GPU 上进行高性能计算的 C++ 库。TensorRT 在运行时，加载一个已经训练好的神经网络，创建一个经过内部高度优化的引擎（engine），来进行快速计算。TensorRT 同时提供 C++ 和 Python API 接口。TensorRT 同时支持 Windows/Ubuntu/iOS 系统，本教程将基于 Ubuntu 进行讲解。<a id="more"></a></p>
+<h2 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h2><p>TensorRT 具有以下依赖，请先安装：</p>
+<ul>
+<li>CUDA 9.0， 10.0 ，或者 10.2</li>
+<li>cuDNN 7.6.5</li>
+<li>Python 2 / Python 3 （可选）</li>
+</ul>
+<h2 id="2-下载TensorRT"><a href="#2-下载TensorRT" class="headerlink" title="2. 下载TensorRT"></a>2. 下载TensorRT</h2><p>根据 TensorRT 官网介绍，使用压缩包安装可方便后续开发，当然也可选择 <strong>Debian/NPM</strong> 安装方式。本文将按照 <strong>tar</strong> 压缩包方式进行安装。按照下面流程即可快速安装，记得先注册一个 NVIDIA 账号：</p>
+<blockquote>
+<ol>
+<li>进入官网：<a href="https://developer.nvidia.com/tensorrt" target="_blank" rel="noopener">https://developer.nvidia.com/tensorrt</a></li>
+<li>点击 <strong>Download Now</strong>，然后登录NVIDIA账号</li>
+<li>选择需要安装的TensorRT版本（此处选择 7.0）</li>
+<li>同意软件安装许可</li>
+<li>点击软件包下载链接，随后开始下载</li>
+</ol>
+</blockquote>
+<h2 id="3-安装-TensorRT"><a href="#3-安装-TensorRT" class="headerlink" title="3. 安装 TensorRT"></a>3. 安装 TensorRT</h2><h3 id="3-1-安装-TensorRT-源码"><a href="#3-1-安装-TensorRT-源码" class="headerlink" title="3.1 安装 TensorRT 源码"></a>3.1 安装 TensorRT 源码</h3><p>将下载好的压缩包，放在一个路径下，比如在我的电脑：<code>/home/TensorRT-7</code>。然后将 TensorRT 的 <code>lib</code> 文件路径加入系统环境变量:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo gedit ~&#x2F;.bashrc&#96;  # sudo vi ~&#x2F;.bashrc</span><br><span class="line">export LD_LIBRARY_PATH&#x3D;$LD_LIBRARY_PATH:&lt;TensorRT-$&#123;version&#125;&#x2F;lib&gt;</span><br><span class="line">source ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-安装-Python-接口"><a href="#3-2-安装-Python-接口" class="headerlink" title="3.2 安装 Python 接口"></a>3.2 安装 Python 接口</h3><p>如果需要用 Python API 进行编程，按照如下进行：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd TensorRT-$&#123;version&#125;&#x2F;python</span><br><span class="line">sudo pip2 install tensorrt-*-cp27-none-linux_x86_64.whl  # python2</span><br><span class="line"># sudo pip3 install tensorrt-*-cp3x-none-linux_x86_64.whl  # python3</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-安装UFF转换库"><a href="#3-3-安装UFF转换库" class="headerlink" title="3.3 安装UFF转换库"></a>3.3 安装UFF转换库</h3><p>如果你想将 TensorFlow 训练后的网络通过 UFF 编码方式转换给 TensorRT 进行运行：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd TensorRT-$&#123;version&#125;&#x2F;uff</span><br><span class="line">sudo pip2 install uff-0.6.5-py2.py3-none-any.whl   # python2</span><br><span class="line"># sudo pip3 install uff-0.6.5-py2.py3-none-any.whl  # python3</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-安装-graphsurgeon"><a href="#3-4-安装-graphsurgeon" class="headerlink" title="3.4 安装 graphsurgeon"></a>3.4 安装 graphsurgeon</h3><p><strong>graphsurgeon</strong> 是对UFF编码网络进行定制化操作的库，比如插入或删除神经网络某一层<code>layer</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd TensorRT-$&#123;version&#125;&#x2F;graphsurgeon</span><br><span class="line">sudo pip2 install graphsurgeon-0.4.1-py2.py3-none-any.whl  # python2</span><br><span class="line"># sudo pip3 install graphsurgeon-0.4.1-py2.py3-none-any.whl  # python3</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-验证安装"><a href="#4-验证安装" class="headerlink" title="4. 验证安装"></a>4. 验证安装</h2><ol>
+<li>查看TensorRT的安装目录下文件是否齐全，可使用命令<code>tree -d</code>，会看到包含以下文件夹：<code>lib</code>，<code>include</code>，<code>data</code>…</li>
+<li>运行例子<code>sampleMNIST</code>:<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd &lt;TensorRT root directory&gt;&#x2F;samples&#x2F;sampleMNIST</span><br><span class="line">make</span><br><span class="line">.&#x2F;sample_mnist</span><br></pre></td></tr></table></figure>
+如果上述命令无ERROR输出,则证明安装成功。</li>
+</ol>
+<p>至此，TensorRT安装成功！</p>
+]]></content>
+      <tags>
+        <tag>DL</tag>
+        <tag>CV</tag>
+        <tag>TensorRT</tag>
+        <tag>Model Deployment</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>KITTI 原始点云数据（PCL）地面点分割</title>
+    <url>/2018/03/28/kitti_ground_point_seg/</url>
+    <content><![CDATA[<p>自动驾驶系统中，对激光雷达获取的点云数据进行地面点分割是第一步，地面点分割结果的好坏直接影响聚类，识别和追踪效果。在对地面点分割过程中，前人尝试了许多方法，部分方法结果请参考本人博文<strong>《基于几何特征的地面点云分割》</strong>。所以，地面点分割是自动驾驶激光雷达点云处理永恒的话题。目前，基于几何特征的地面点分割都基于各自的前提假设，大多数的原理是根据地面点与非地面点的特征不同而进行区分，如法向量、高度、高度差等。<a id="more"></a></p>
+<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-f14bf66059d90048.gif" alt="点运数据"></p>
+<p>本文利用现有的<a href="http://www.cvlibs.net/datasets/kitti/eval_depth.php?benchmark=depth_completion" target="_blank" rel="noopener">KITTI点云数据</a>进行地面点分割，通过不同方法组合，试验出结果相对较好的方法，并予以结果显示。</p>
+<h2 id="地面点分割"><a href="#地面点分割" class="headerlink" title="地面点分割"></a>地面点分割</h2><h3 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h3><p>本文相关的一些工作，请参考本博客前博文：</p>
+<pre><code>1.  《KITTI 原始bin数据转pcd数据》
+2.  《KITTI 无序点云数据转有序点云数据》
+3.  《基于几何特征的地面点云分割》</code></pre>
+<h3 id="地面点分割流程"><a href="#地面点分割流程" class="headerlink" title="地面点分割流程"></a>地面点分割流程</h3><h4 id="算法流程："><a href="#算法流程：" class="headerlink" title="算法流程："></a>算法流程：</h4><pre><code>1. 法向量分割
+2. 平均高度分割
+3. 校准平面
+4. 栅格内高度差分割
+5. 平均高度分割</code></pre>
+<h5 id="部分代码："><a href="#部分代码：" class="headerlink" title="部分代码："></a>部分代码：</h5><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void KittiPCL::generateGroundCloud(PointCloudXYZI::Ptr &amp;out_cloud, visualization_msgs::MarkerPtr &amp;plane_marker)</span><br><span class="line">&#123;</span><br><span class="line">    PointCloudXYZI::Ptr temp_cloud_1 ( new PointCloudXYZI );</span><br><span class="line">    PointCloudXYZI::Ptr temp_cloud_2 ( new PointCloudXYZI );</span><br><span class="line">    *temp_cloud_1 &#x3D; *kitti_organised_cloud_ptr_;</span><br><span class="line">    &#x2F;&#x2F; calibration</span><br><span class="line">    this-&gt;filtCloudWithNormalZ( temp_cloud_1, temp_cloud_2 );</span><br><span class="line">    this-&gt;filtWithAverageHeight( temp_cloud_2, kitti_organised_cloud_ptr_, temp_cloud_1 );</span><br><span class="line">    this-&gt;estimateGroundPlane( temp_cloud_1, transform_cloud_ptr_, plane_marker );</span><br><span class="line">    &#x2F;&#x2F; grid</span><br><span class="line">    this-&gt;generateGridMap( transform_cloud_ptr_, temp_cloud_2, 75.0f, 0.2f );</span><br><span class="line">    this-&gt;computePtsCloudFeature(transform_cloud_ptr_);</span><br><span class="line">    *out_cloud &#x3D; *temp_cloud_2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="试验结果"><a href="#试验结果" class="headerlink" title="试验结果"></a>试验结果</h2><hr>
+<p>为了客观合理展示试验结果，S选取了直道路和十字路口的点云进行分割结果展示。<br>同时，统计时间，在 <em>Release</em> 模式下，处理一帧平均耗时 <strong>130ms</strong>。 </p>
+<blockquote>
+<p>平台配置：<br>CPU: Intel® Xeon(R) CPU E3-1230 v3 @ 3.30GHz × 8<br>GPU: GeForce GT 730/PCIe/SSE2<br>System: 64-bit</p>
+</blockquote>
+<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-1616a85fc81e6b83.png" alt="Screenshot from 2018-03-28 16:02:53.png"></p>
+<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-c02548c179e73e41.png" alt="Screenshot from 2018-03-28 16:04:27.png"></p>
+<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-5388648e2db90935.png" alt="Screenshot from 2018-03-28 16:05:02.png"></p>
+<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-a7d779ef26a1b105.png" alt="Screenshot from 2018-03-28 16:05:52.png"></p>
+<p><img data-src="/images/18_3_30/kitti_ground_point_seg/10028058-53efb931098d3835.png" alt="Screenshot from 2018-03-28 16:08:50.png"></p>
+<p><strong>最后一张图片右上方，可发现有大块地面点未被分割出来，原因是该十字路口地面不平，本文算法还无法适用于这种情况，后续需要改进。</strong></p>
+<p>以上。</p>
+<hr>
+]]></content>
+      <categories>
+        <category>ROS</category>
+      </categories>
+      <tags>
+        <tag>PCL</tag>
+        <tag>ROS</tag>
       </tags>
   </entry>
   <entry>
@@ -831,86 +831,6 @@
         <tag>DL</tag>
         <tag>CV</tag>
         <tag>Network</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>浅谈PointNet和PointNet++网络及其应用</title>
-    <url>/2019/07/14/PointNet%20and%20PointNet++/</url>
-    <content><![CDATA[<p>PointNet 和 PointNet++ 网络由 Charles R. Qi 于2017年提出，分别发表于CVPR 2017和NIPS 2017会议上。PointNet++ 是 PoinNet 的升级版，也更复杂，两篇论文的现在都可检索，且分别作为一个章节被写入了 Qi 的博士论文中，如果想更加具体地理解各个细节，可从博士论文下手（参考文献会附上资源）。本文预先假设读者已经阅读过这两篇论文，并且对点云特性有一定了解，所以细节方面不过多赘述，更多地是探讨思路。<a id="more"></a></p>
-<h2 id="1-网络结构"><a href="#1-网络结构" class="headerlink" title="1. 网络结构"></a>1. 网络结构</h2><h3 id="1-1-PointNet"><a href="#1-1-PointNet" class="headerlink" title="1.1 PointNet"></a>1.1 PointNet</h3><p><img data-src="/images/19_7_14/PointNet/20190702225201.png"></p>
-<p>PointNet 按照任务划分 classification 和segmentation两种，如上图所示，途中上半部分为classification network（下文以C网络代替），下半部分为 segmentation network（下文以S网络代替）。两个任务的网络输入都是 $ n * 3 $ ，代表 $n$ 个三维坐标点，C网络输出为经过 softmax 之后的 $k$ 个值，而S网络为 $n$ 个点的逐点的score。</p>
-<p>其中一个值得注意的区别是，两个网络中对max pooling层出来之后<em>global feature</em>不同。我的理解为是：C网络由于是简单的输入点云的分类任务，所以只需要得到一个最明显的feature来代表这个点云就可胜任分类任务；而S网络由于是逐点的语义分割，所以将<em>global feature</em> concatenate到每一点后面，作用是使每一个点都同时具有自身点的feature和global feature，更有利于进行逐点的分类。</p>
-<h3 id="1-2-PointNet"><a href="#1-2-PointNet" class="headerlink" title="1.2 PointNet++"></a>1.2 PointNet++</h3><p><img data-src="/images/19_7_14/PointNet/20190702230651.png"></p>
-<p>PointNet++按照任务也分为 classification （C网络）和 segmentation （S网络）两种，输入和输出分别与PointNet中的两个网络一致。首先，比较PointNet++两个任务网络的区别：在得到最高层的 feature 之后，C网络使用了一个小型的 PointNet + FCN 网络提取得到最后的分类 score；S网络通过 skip link connection 操作不断与底层 low-level 信息融合，最终得到逐点分分类语义分割结果。</p>
-<p>PointNet++ 的思路与U-Net很相似：利用encoder-decoder结构，逐层提高feature level，在到达最高层之后通过 skip link connection 操作恢复局部信息，从而达到既能获取 high-level context feature 也能获取 low-level context feature。</p>
-<h2 id="2-应用场景"><a href="#2-应用场景" class="headerlink" title="2. 应用场景"></a>2. 应用场景</h2><p>从PointNet的结构可以看出，由于没有local context信息，因此对复杂的点云没办法处理，也是PointNet结尾总结的future work，即在PointNet++中进行了升级。由于使用了max-pooling这个具有强对偶性和特征筛选的操作，使得PointNet只能处理较为简单的点云，这些点云都有一个特征：<strong>属于同一物体或者处于某个局部空间内</strong>。在点云中属于同一个物体和处于某一局部空间内可看作等价。因此，从PointNet的应用目的角度，使用PointNet的点云分割和检测网络主要有以下两种：</p>
-<ul>
-<li>放在网络前部，作为局部点云特征提取器（feature extractor）</li>
-<li>放在网络后部，作为具体任务的refine或语义分割，如局部点云语义分割或3D BBox等目标的回归</li>
-</ul>
-<p>至于为什么使用PointNet而不是使用PointNet++，从结构上可以看出PointNet++会有一个邻域中心和邻域点云索引的过程，会使速度下降严重，另外从本节第一段话也得知，对于局部点云这些简单的数据组成，使用PointNet也足够胜任。下面将就PointNet和PointNet++作为不同任务，简单罗列下提到的Paper中的使用。</p>
-<h3 id="2-1-特征提取器"><a href="#2-1-特征提取器" class="headerlink" title="2.1 特征提取器"></a>2.1 特征提取器</h3><p>Motivation：特征提取器（feature extractor）有别于人工特征设计，特征提取器的目的是在特征构建层面，使用网络让其自行学习一些人工无法构建的特征，从而提升特征的表达，最终达到提升网络性能的目的。说句题外话，人工构建特征都是基于人的先验知识来构建的特征，比如说点的数目，最大高度等等，这些具有强人类先验知识特征构建便于人类理解，但是对于数据表达来说，在这个过程丢失了很多信息。因此，我们希望送进网络的是raw data，网络能自行的学习特征。</p>
-<p>值得注意的是，特征提取器网络一般采用PointNet而不是PointNet++，除了如上文所说速度考虑以外，作为特征提取器一般会在对整张点云进行栅格化（grid）或体素化（voxel）后的单元内进行，这样就符合了上文另一个条件——<strong>输入点云都处于局部空间内</strong>。相关的论文有如下：VoxelNet，SECOND，PointPillars, PointFusion。</p>
-<p>也有例外，如IPOD，使用PointNet++对整张点云提取特征。</p>
-<p><strong>VoxelNet</strong></p>
-<p>使用PointNet对体素化后的单元提取特征。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173113.png"></p>
-<p><strong>SECOND</strong></p>
-<p>使用PointNet对体素化后的单元提取特征，同VoxelNet。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173302.png"></p>
-<p><strong>PointPillars</strong></p>
-<p>使用PointNet对栅格化后的单元提取特征。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173415.png"></p>
-<p><strong>PointFusion</strong></p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173614.png"></p>
-<p><strong>IPOD</strong>（PointNet++）</p>
-<p>使用PointNet++对整帧点云提取特征。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714175459.png"></p>
-<h3 id="2-2-逐点语义分割-3D-BBox-回归"><a href="#2-2-逐点语义分割-3D-BBox-回归" class="headerlink" title="2.2 逐点语义分割 / 3D BBox 回归"></a>2.2 逐点语义分割 / 3D BBox 回归</h3><p>PointNet或PointNet++作为具体任务网络与论文挂钩，但主要分为逐点语义分割和3D BBox回归两种。当然还有其它任务，后面也会罗列。</p>
-<p><strong>PointRCNN</strong>(PointNet++)</p>
-<p>PointNet++输入整帧点云进行语义分割和3D BBox proposal提取。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714175824.png"></p>
-<p><strong>Frutum-PointNet</strong></p>
-<p>第1个PointNet：对得到的锥形3D proposal进行前景点语义分割</p>
-<p>第2个PointNet：对前景点回归出3D Bbox</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714180316.png"></p>
-<p><strong>RoarNet</strong></p>
-<p>第1个PointNet：对同一个目标筛选出置信度最高的proposal和大致回归出目标3D Bbox的位置</p>
-<p>第2个PointNet：回归出3D Bbox</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714180556.png"></p>
-<p><strong>FVNet</strong></p>
-<p>PointNet 对 proposal 局部点云回归 3D Bbox。</p>
-<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714183205.png"></p>
-<h2 id="3-结论"><a href="#3-结论" class="headerlink" title="3. 结论"></a>3. 结论</h2><ol>
-<li><p>从前文分析可得出，不管点云网络的任务是什么，对于复杂场景点云一般采用PointNet++进行处理，而简单场景点云则采用PointNet。</p>
-</li>
-<li><p>如果只从点云分类和分割两个任务角度分析，分类任务只需要max pooling操作之后的特征信息就可完成，而分割任务则需要更加详细的local context信息。</p>
-</li>
-</ol>
-<p>这篇文章主要从PointNet角度去分析基于点云的目标检测任务，从提取 3D proposal 形式的角度在将来会以另一篇文章继续进行讨论。</p>
-<p>以上。</p>
-<p><strong>参考文献：</strong></p>
-<ol>
-<li><a href="https://searchworks.stanford.edu/view/12741586" target="_blank" rel="noopener">DEEP LEARNING ON POINT CLOUDS FOR 3D SCENE UNDERSTANDING(Ph.D Thesis)</a></li>
-<li><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Qi_PointNet_Deep_Learning_CVPR_2017_paper.pdf" target="_blank" rel="noopener">PointNet : Deep Learning on Point Sets for 3D Classification and Segmentation</a></li>
-<li><a href="https://arxiv.org/pdf/1706.02413.pdf" target="_blank" rel="noopener">PointNet ++ : Deep Hierarchical Feature Learning on Point Sets in a Metric Space</a></li>
-<li><a href="http://openaccess.thecvf.com/content_cvpr_2018/CameraReady/3333.pdf" target="_blank" rel="noopener">VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection</a></li>
-<li><a href="https://www.mdpi.com/1424-8220/18/10/3337/pdf" target="_blank" rel="noopener">SECOND: Sparsely Embedded Convolutional Detection</a></li>
-<li><a href="https://arxiv.org/pdf/1812.05784" target="_blank" rel="noopener">PointPillars: Fast Encoders for Object Detection from Point Clouds</a></li>
-<li><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Xu_PointFusion_Deep_Sensor_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PointFusion : Deep Sensor Fusion for 3D Bounding Box Estimation</a></li>
-<li><a href="https://arxiv.org/pdf/1812.05276" target="_blank" rel="noopener">IPOD: Intensive Point-based Object Detector for Point Cloud</a></li>
-<li><a href="https://arxiv.org/pdf/1812.04244" target="_blank" rel="noopener">PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud</a></li>
-<li><a href="https://arxiv.org/pdf/1711.08488" target="_blank" rel="noopener">Frustum PointNets for 3D Object Detection from RGB-D Data</a></li>
-<li><a href="http://zengzeyu.com/2019/03/24/19_3_24/My-Paper-Lib-2018/">RoarNet: A Robust 3D Object Detection based on RegiOn Approximation Refinement</a></li>
-<li><a href="https://arxiv.org/pdf/1903.10750" target="_blank" rel="noopener">FVNet: 3D Front-View Proposal Generation for Real-Time Object Detection from Point Clouds</a></li>
-</ol>
-]]></content>
-      <tags>
-        <tag>DL</tag>
-        <tag>CV</tag>
-        <tag>Point Cloud</tag>
-        <tag>PointNet</tag>
-        <tag>3D Perception</tag>
       </tags>
   </entry>
   <entry>
@@ -1256,6 +1176,86 @@
       </tags>
   </entry>
   <entry>
+    <title>浅谈PointNet和PointNet++网络及其应用</title>
+    <url>/2019/07/14/PointNet%20and%20PointNet++/</url>
+    <content><![CDATA[<p>PointNet 和 PointNet++ 网络由 Charles R. Qi 于2017年提出，分别发表于CVPR 2017和NIPS 2017会议上。PointNet++ 是 PoinNet 的升级版，也更复杂，两篇论文的现在都可检索，且分别作为一个章节被写入了 Qi 的博士论文中，如果想更加具体地理解各个细节，可从博士论文下手（参考文献会附上资源）。本文预先假设读者已经阅读过这两篇论文，并且对点云特性有一定了解，所以细节方面不过多赘述，更多地是探讨思路。<a id="more"></a></p>
+<h2 id="1-网络结构"><a href="#1-网络结构" class="headerlink" title="1. 网络结构"></a>1. 网络结构</h2><h3 id="1-1-PointNet"><a href="#1-1-PointNet" class="headerlink" title="1.1 PointNet"></a>1.1 PointNet</h3><p><img data-src="/images/19_7_14/PointNet/20190702225201.png"></p>
+<p>PointNet 按照任务划分 classification 和segmentation两种，如上图所示，途中上半部分为classification network（下文以C网络代替），下半部分为 segmentation network（下文以S网络代替）。两个任务的网络输入都是 $ n * 3 $ ，代表 $n$ 个三维坐标点，C网络输出为经过 softmax 之后的 $k$ 个值，而S网络为 $n$ 个点的逐点的score。</p>
+<p>其中一个值得注意的区别是，两个网络中对max pooling层出来之后<em>global feature</em>不同。我的理解为是：C网络由于是简单的输入点云的分类任务，所以只需要得到一个最明显的feature来代表这个点云就可胜任分类任务；而S网络由于是逐点的语义分割，所以将<em>global feature</em> concatenate到每一点后面，作用是使每一个点都同时具有自身点的feature和global feature，更有利于进行逐点的分类。</p>
+<h3 id="1-2-PointNet"><a href="#1-2-PointNet" class="headerlink" title="1.2 PointNet++"></a>1.2 PointNet++</h3><p><img data-src="/images/19_7_14/PointNet/20190702230651.png"></p>
+<p>PointNet++按照任务也分为 classification （C网络）和 segmentation （S网络）两种，输入和输出分别与PointNet中的两个网络一致。首先，比较PointNet++两个任务网络的区别：在得到最高层的 feature 之后，C网络使用了一个小型的 PointNet + FCN 网络提取得到最后的分类 score；S网络通过 skip link connection 操作不断与底层 low-level 信息融合，最终得到逐点分分类语义分割结果。</p>
+<p>PointNet++ 的思路与U-Net很相似：利用encoder-decoder结构，逐层提高feature level，在到达最高层之后通过 skip link connection 操作恢复局部信息，从而达到既能获取 high-level context feature 也能获取 low-level context feature。</p>
+<h2 id="2-应用场景"><a href="#2-应用场景" class="headerlink" title="2. 应用场景"></a>2. 应用场景</h2><p>从PointNet的结构可以看出，由于没有local context信息，因此对复杂的点云没办法处理，也是PointNet结尾总结的future work，即在PointNet++中进行了升级。由于使用了max-pooling这个具有强对偶性和特征筛选的操作，使得PointNet只能处理较为简单的点云，这些点云都有一个特征：<strong>属于同一物体或者处于某个局部空间内</strong>。在点云中属于同一个物体和处于某一局部空间内可看作等价。因此，从PointNet的应用目的角度，使用PointNet的点云分割和检测网络主要有以下两种：</p>
+<ul>
+<li>放在网络前部，作为局部点云特征提取器（feature extractor）</li>
+<li>放在网络后部，作为具体任务的refine或语义分割，如局部点云语义分割或3D BBox等目标的回归</li>
+</ul>
+<p>至于为什么使用PointNet而不是使用PointNet++，从结构上可以看出PointNet++会有一个邻域中心和邻域点云索引的过程，会使速度下降严重，另外从本节第一段话也得知，对于局部点云这些简单的数据组成，使用PointNet也足够胜任。下面将就PointNet和PointNet++作为不同任务，简单罗列下提到的Paper中的使用。</p>
+<h3 id="2-1-特征提取器"><a href="#2-1-特征提取器" class="headerlink" title="2.1 特征提取器"></a>2.1 特征提取器</h3><p>Motivation：特征提取器（feature extractor）有别于人工特征设计，特征提取器的目的是在特征构建层面，使用网络让其自行学习一些人工无法构建的特征，从而提升特征的表达，最终达到提升网络性能的目的。说句题外话，人工构建特征都是基于人的先验知识来构建的特征，比如说点的数目，最大高度等等，这些具有强人类先验知识特征构建便于人类理解，但是对于数据表达来说，在这个过程丢失了很多信息。因此，我们希望送进网络的是raw data，网络能自行的学习特征。</p>
+<p>值得注意的是，特征提取器网络一般采用PointNet而不是PointNet++，除了如上文所说速度考虑以外，作为特征提取器一般会在对整张点云进行栅格化（grid）或体素化（voxel）后的单元内进行，这样就符合了上文另一个条件——<strong>输入点云都处于局部空间内</strong>。相关的论文有如下：VoxelNet，SECOND，PointPillars, PointFusion。</p>
+<p>也有例外，如IPOD，使用PointNet++对整张点云提取特征。</p>
+<p><strong>VoxelNet</strong></p>
+<p>使用PointNet对体素化后的单元提取特征。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173113.png"></p>
+<p><strong>SECOND</strong></p>
+<p>使用PointNet对体素化后的单元提取特征，同VoxelNet。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173302.png"></p>
+<p><strong>PointPillars</strong></p>
+<p>使用PointNet对栅格化后的单元提取特征。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173415.png"></p>
+<p><strong>PointFusion</strong></p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714173614.png"></p>
+<p><strong>IPOD</strong>（PointNet++）</p>
+<p>使用PointNet++对整帧点云提取特征。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714175459.png"></p>
+<h3 id="2-2-逐点语义分割-3D-BBox-回归"><a href="#2-2-逐点语义分割-3D-BBox-回归" class="headerlink" title="2.2 逐点语义分割 / 3D BBox 回归"></a>2.2 逐点语义分割 / 3D BBox 回归</h3><p>PointNet或PointNet++作为具体任务网络与论文挂钩，但主要分为逐点语义分割和3D BBox回归两种。当然还有其它任务，后面也会罗列。</p>
+<p><strong>PointRCNN</strong>(PointNet++)</p>
+<p>PointNet++输入整帧点云进行语义分割和3D BBox proposal提取。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714175824.png"></p>
+<p><strong>Frutum-PointNet</strong></p>
+<p>第1个PointNet：对得到的锥形3D proposal进行前景点语义分割</p>
+<p>第2个PointNet：对前景点回归出3D Bbox</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714180316.png"></p>
+<p><strong>RoarNet</strong></p>
+<p>第1个PointNet：对同一个目标筛选出置信度最高的proposal和大致回归出目标3D Bbox的位置</p>
+<p>第2个PointNet：回归出3D Bbox</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714180556.png"></p>
+<p><strong>FVNet</strong></p>
+<p>PointNet 对 proposal 局部点云回归 3D Bbox。</p>
+<p><img data-src="/images/19_7_14/PointNet//QQ%E6%88%AA%E5%9B%BE20190714183205.png"></p>
+<h2 id="3-结论"><a href="#3-结论" class="headerlink" title="3. 结论"></a>3. 结论</h2><ol>
+<li><p>从前文分析可得出，不管点云网络的任务是什么，对于复杂场景点云一般采用PointNet++进行处理，而简单场景点云则采用PointNet。</p>
+</li>
+<li><p>如果只从点云分类和分割两个任务角度分析，分类任务只需要max pooling操作之后的特征信息就可完成，而分割任务则需要更加详细的local context信息。</p>
+</li>
+</ol>
+<p>这篇文章主要从PointNet角度去分析基于点云的目标检测任务，从提取 3D proposal 形式的角度在将来会以另一篇文章继续进行讨论。</p>
+<p>以上。</p>
+<p><strong>参考文献：</strong></p>
+<ol>
+<li><a href="https://searchworks.stanford.edu/view/12741586" target="_blank" rel="noopener">DEEP LEARNING ON POINT CLOUDS FOR 3D SCENE UNDERSTANDING(Ph.D Thesis)</a></li>
+<li><a href="http://openaccess.thecvf.com/content_cvpr_2017/papers/Qi_PointNet_Deep_Learning_CVPR_2017_paper.pdf" target="_blank" rel="noopener">PointNet : Deep Learning on Point Sets for 3D Classification and Segmentation</a></li>
+<li><a href="https://arxiv.org/pdf/1706.02413.pdf" target="_blank" rel="noopener">PointNet ++ : Deep Hierarchical Feature Learning on Point Sets in a Metric Space</a></li>
+<li><a href="http://openaccess.thecvf.com/content_cvpr_2018/CameraReady/3333.pdf" target="_blank" rel="noopener">VoxelNet: End-to-End Learning for Point Cloud Based 3D Object Detection</a></li>
+<li><a href="https://www.mdpi.com/1424-8220/18/10/3337/pdf" target="_blank" rel="noopener">SECOND: Sparsely Embedded Convolutional Detection</a></li>
+<li><a href="https://arxiv.org/pdf/1812.05784" target="_blank" rel="noopener">PointPillars: Fast Encoders for Object Detection from Point Clouds</a></li>
+<li><a href="http://openaccess.thecvf.com/content_cvpr_2018/papers/Xu_PointFusion_Deep_Sensor_CVPR_2018_paper.pdf" target="_blank" rel="noopener">PointFusion : Deep Sensor Fusion for 3D Bounding Box Estimation</a></li>
+<li><a href="https://arxiv.org/pdf/1812.05276" target="_blank" rel="noopener">IPOD: Intensive Point-based Object Detector for Point Cloud</a></li>
+<li><a href="https://arxiv.org/pdf/1812.04244" target="_blank" rel="noopener">PointRCNN: 3D Object Proposal Generation and Detection from Point Cloud</a></li>
+<li><a href="https://arxiv.org/pdf/1711.08488" target="_blank" rel="noopener">Frustum PointNets for 3D Object Detection from RGB-D Data</a></li>
+<li><a href="http://zengzeyu.com/2019/03/24/19_3_24/My-Paper-Lib-2018/">RoarNet: A Robust 3D Object Detection based on RegiOn Approximation Refinement</a></li>
+<li><a href="https://arxiv.org/pdf/1903.10750" target="_blank" rel="noopener">FVNet: 3D Front-View Proposal Generation for Real-Time Object Detection from Point Clouds</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>DL</tag>
+        <tag>CV</tag>
+        <tag>Point Cloud</tag>
+        <tag>PointNet</tag>
+        <tag>3D Perception</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>boost serialize(序列化)和boost deserialize(反序列化)类对象型数据并通过socket网络传输</title>
     <url>/2019/06/29/boostserialize(%E5%BA%8F%E5%88%97%E5%8C%96)%E5%92%8Cboostdeserialize(%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96)%E7%B1%BB%E5%AF%B9%E8%B1%A1%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%B9%B6%E9%80%9A%E8%BF%87socket%E7%BD%91%E7%BB%9C%E4%BC%A0%E8%BE%93/</url>
     <content><![CDATA[<p>在自动驾驶领域，传感器与主机通过网线连接，实现二者的实时通信。同时，在接收到雷达数据之后，后台处理系统到前端用户显示界面，也需要通过上述方法进行通信，因为后台处理系统一般都不自带显示器，例如PX-2，TX2等平台就提供网线接口。<br>本文以<a href="http://robosense.cn/rslidar/RS-LiDAR-16" target="_blank" rel="noopener">16线激光雷达</a>生成数据，处理后台系统处理后点云为例，进行分割分类数据传输到前端用户界面进行显示。<a id="more"></a><br>主要用到了以下两个方面：</p>
@@ -1507,6 +1507,65 @@
       </tags>
   </entry>
   <entry>
+    <title>TensorRT 教程（三）：PyTorch模型转ONNX模型</title>
+    <url>/2020/08/06/tensorrt_03_pytorch2onnx/</url>
+    <content><![CDATA[<p><em>此系列为 PyTorch model 转 TRT engine 系列第三章。</em></p>
+<p>至于为什么选 PyTorch 而不是 TensorFlow，是因为笔者对 PyTorch 最为熟悉，另外 PyTorch 的易用性和动态图特点，使得在学术界也广泛采用，新的模型更新也 release 较快。本文所用的开源项目包含：<a href="https://github.com/facebookresearch/detectron2" target="_blank" rel="noopener">detectron2</a>，<a href="https://github.com/onnx/onnx" target="_blank" rel="noopener">ONNX</a>，<a href="https://github.com/daquexian/onnx-simplifier" target="_blank" rel="noopener">ONNX-simplifier</a>，<a href="https://github.com/NVIDIA/TensorRT" target="_blank" rel="noopener">TensorRT</a>。<a id="more"></a></p>
+<h2 id="1-安装-ONNX"><a href="#1-安装-ONNX" class="headerlink" title="1. 安装 ONNX"></a>1. 安装 ONNX</h2><p>关于<a href="https://github.com/onnx/onnx" target="_blank" rel="noopener">ONNX</a>的介绍，请参见其官网。简单来说，ONNX 是一种充作中间转换的角色，将训练时候的不同开源库训练得到的model 转换成为不同的另一种 model 的表示方法。最常见的就是本文即将提到的 PyTorch 转 ONNX 再转 TensorRT 的工作方式。ONNX 本身还带有可运行的底层库 <a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener">ONNX runtime</a>，不过一般不使用。</p>
+<p>考虑到我们后面对 ONNX 需要做一些自定义操作，因此建议源码安装，方便进行修改。在 <code>detectron2</code> 文件夹下新建文件夹 <code>thirdlibs</code>，进入文件夹运行如下命令：</p>
+<ol>
+<li>下载 ONNX： <code>git clone https://github.com/onnx/onnx.git</code></li>
+<li>更新子模块： <code>cd onnx &amp;&amp; git submodule update --init --recursive</code></li>
+<li>安装： <code>python setup.py develop  # 由于频繁更改，所以建议使用 develop，不使用 install</code></li>
+<li>测试： <code>python -c &quot;import onnx&quot;</code></li>
+</ol>
+<p>如果不报错即安装成功。</p>
+<h2 id="2-ResNet50-的-PyTorch-模型"><a href="#2-ResNet50-的-PyTorch-模型" class="headerlink" title="2. ResNet50 的 PyTorch 模型"></a>2. ResNet50 的 PyTorch 模型</h2><p>使用 detectron2 训练 Faster R-CNN 教程可参考<a href="https://github.com/facebookresearch/detectron2/blob/master/GETTING_STARTED.md#training--evaluation-in-command-line" target="_blank" rel="noopener">官网教程</a>，此处我们使用 detectron2  <a href="https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md" target="_blank" rel="noopener">MODEL_ZOO</a> 中的已经训练好的 Faster R-CNN 模型，其Backbone 即为 ResNet50，<code>config</code> 文件为 detectron2 默认配置：<code>../configs/PascalVOC-Detection/faster_rcnn_R_50_FPN.yaml</code>。关于 Faster R-CNN 的网络结构可参看本站前一篇博文：Mask R-CNN 模型结构详解 。当然，我们也可以先不考虑数值的正确性，即我们只随机初始化模型之后并不训练网络，这样可以快速的测试 ONNX 和 TRT 对 op 的支持情况。通常在训练自己的数据期间，进行模型部署的开发，提高效率。</p>
+<h2 id="3-PyTorch-模型转-ONNX-模型"><a href="#3-PyTorch-模型转-ONNX-模型" class="headerlink" title="3. PyTorch 模型转 ONNX 模型"></a>3. PyTorch 模型转 ONNX 模型</h2><p>Detectron2 在早先版本并不支持 Faster R-CNN 的转换，而且只支持转到 caffe2 模型。Caffe2 模型的转换也是通过 ONNX 作为媒介进行，这里使用 detectron2 转到 Caffe2 的中间ONNX模型，是因为 Caffe2 的中间转换做了很多 ONNX 的 model 图优化，对某些 op 进行了 merge。当然也可不使用该方式进行，使用 ONNX 源生的 op ，但是转换得到的 ONNX 模型可视化出来会有 op 没有进行优化。</p>
+<h3 id="3-1-利用-Detectron2-自带-Caffe2-模型转换模块"><a href="#3-1-利用-Detectron2-自带-Caffe2-模型转换模块" class="headerlink" title="3.1 利用 Detectron2 自带 Caffe2 模型转换模块"></a>3.1 利用 Detectron2 自带 Caffe2 模型转换模块</h3><p>在 <code>detectron2/projects</code> 路径下新建文件夹命名为 <code>fasterrcnn_trt</code>，然后新建 python 文件<code>convert_fasterrcnn_onnx.py</code>，拷贝<code>detectron2/tools/deploy/caffe2_converter.py</code> 内容到该文件中，并对函数稍作修改如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">"Convert a model to Caffe2"</span>)</span><br><span class="line">    parser.add_argument(<span class="string">"--config-file"</span>, default=<span class="string">""</span>, metavar=<span class="string">"FILE"</span>, help=<span class="string">"path to config file"</span>)</span><br><span class="line">    parser.add_argument(<span class="string">"--run-eval"</span>, action=<span class="string">"store_true"</span>)</span><br><span class="line">    parser.add_argument(<span class="string">"--output"</span>, help=<span class="string">"output directory for the converted caffe2 model"</span>)</span><br><span class="line">    parser.add_argument(</span><br><span class="line">        <span class="string">"opts"</span>,</span><br><span class="line">        help=<span class="string">"Modify config options using the command-line"</span>,</span><br><span class="line">        default=<span class="literal">None</span>,</span><br><span class="line">        nargs=argparse.REMAINDER,</span><br><span class="line">    )</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    logger = setup_logger()</span><br><span class="line">    logger.info(<span class="string">"Command line arguments: "</span> + str(args))</span><br><span class="line"></span><br><span class="line">    cfg = setup_cfg(args)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># create a torch model</span></span><br><span class="line">    torch_model = build_model(cfg)</span><br><span class="line">    DetectionCheckpointer(torch_model).resume_or_load(cfg.MODEL.WEIGHTS)</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>在<code>faster_rcnn_trt</code> 文件夹中运行如下命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python convert_fasterrcnn_onnx.py --config-file ../../configs/PascalVOC-Detection/faster_rcnn_R_50_FPN.yaml --output ./onnx_model --run-eval MODEL.WEIGHTS detectron2://COCO-Detection/faster_rcnn_R_50_FPN_1x/137257794/model_final_b275ba.pkl MODEL.DEVICE cpu</span><br></pre></td></tr></table></figure>
+
+<p>首先会从 MODEL_ZOO 中下载已经训练好的 Faster R-CNN 模型。然后进行 parse ，会看到输出的 log 信息，大致如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="meta">%</span><span class="bash">318 : Float(1, 3, 800, 1216) = onnx::Cast[to=1](%316)</span></span><br><span class="line"><span class="meta"> %</span><span class="bash">319 : Float(1, 3, 800, 1216) = onnx::Sub(%318, %_wrapped_model.pixel_mean) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">320 : Float(1, 3, 800, 1216) = onnx::Div(%319, %_wrapped_model.pixel_std) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">input.1 : Float(1, 3, 800, 1216) = _caffe2::AliasWithName[name=<span class="string">"normalized_data"</span>, is_backward=0](%320) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">322 : Float(1, 64, 400, 608) = onnx::Conv[dilations=[1, 1], group=1, kernel_shape=[7, 7], pads=[3, 3, 3, 3], strides=[2, 2]](%input.1, %_wrapped_model.backbone.bottom_up.stem.conv1.weight) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">323 : Float(1, 64, 400, 608) = onnx::BatchNormalization[epsilon=1.0000000000000001e-05, momentum=0.90000000000000002](%322, %_wrapped_model.backbone.bottom_up.stem.conv1.norm.weight, %_wrapped_model.backbone.bottom_up.stem.conv1.norm.bias, %_wrapped_model.backbone.bottom_up.stem.conv1.norm.running_mean, %_wrapped_model.backbone.bottom_up.stem.conv1.norm.running_var) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">324 : Float(1, 64, 400, 608) = onnx::Relu(%323)</span></span><br><span class="line"><span class="meta"> %</span><span class="bash">325 : Float(1, 64, 200, 304) = onnx::MaxPool[kernel_shape=[3, 3], pads=[1, 1, 1, 1], strides=[2, 2]](%324) </span></span><br><span class="line"> ......</span><br></pre></td></tr></table></figure>
+
+<p>我们可以用 <a href="https://github.com/lutzroeder/netron" target="_blank" rel="noopener">netron</a> 对生成的 ONNX 模型进行可视化：</p>
+<p><img data-src="/images/20_08_06/Screenshot-from-2020-07-21-17-49-57.png"></p>
+<h3 id="3-2-使用源生-ONNX-进行转换"><a href="#3-2-使用源生-ONNX-进行转换" class="headerlink" title="3.2 使用源生 ONNX 进行转换"></a>3.2 使用源生 ONNX 进行转换</h3><p>为了达到训练过程的友好，detectron2 在<code>forward</code>时对输入数据进行了封装，以其中一张图为例：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[&#123;<span class="string">'file_name'</span>: <span class="string">'coco/val2017/000000000139.jpg'</span>, <span class="string">'height'</span>: <span class="number">426</span>, <span class="string">'width'</span>: <span class="number">640</span>, <span class="string">'image_id'</span>: <span class="number">139</span>, <span class="string">'image'</span>: tensor([[[ <span class="number">73</span>,  <span class="number">74</span>,  <span class="number">76</span>,  ...,  <span class="number">39</span>,  <span class="number">38</span>,  <span class="number">37</span>],</span><br><span class="line">         [ <span class="number">74</span>,  <span class="number">75</span>,  <span class="number">77</span>,  ...,  <span class="number">40</span>,  <span class="number">39</span>,  <span class="number">38</span>],</span><br><span class="line">         [ <span class="number">76</span>,  <span class="number">77</span>,  <span class="number">78</span>,  ...,  <span class="number">41</span>,  <span class="number">40</span>,  <span class="number">39</span>],</span><br><span class="line">         ...,</span><br><span class="line">         [<span class="number">152</span>, <span class="number">152</span>, <span class="number">153</span>,  ..., <span class="number">109</span>,  <span class="number">98</span>,  <span class="number">92</span>],</span><br><span class="line">         [<span class="number">151</span>, <span class="number">151</span>, <span class="number">152</span>,  ...,  <span class="number">76</span>,  <span class="number">67</span>,  <span class="number">62</span>],</span><br><span class="line">         [<span class="number">150</span>, <span class="number">150</span>, <span class="number">151</span>,  ...,  <span class="number">57</span>,  <span class="number">49</span>,  <span class="number">45</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">136</span>, <span class="number">138</span>, <span class="number">141</span>,  ...,  <span class="number">75</span>,  <span class="number">72</span>,  <span class="number">71</span>],</span><br><span class="line">         [<span class="number">137</span>, <span class="number">139</span>, <span class="number">142</span>,  ...,  <span class="number">76</span>,  <span class="number">73</span>,  <span class="number">72</span>],</span><br><span class="line">         [<span class="number">140</span>, <span class="number">141</span>, <span class="number">143</span>,  ...,  <span class="number">78</span>,  <span class="number">75</span>,  <span class="number">74</span>],</span><br><span class="line">         ...,</span><br><span class="line">         [<span class="number">183</span>, <span class="number">183</span>, <span class="number">184</span>,  ..., <span class="number">105</span>,  <span class="number">89</span>,  <span class="number">80</span>],</span><br><span class="line">         [<span class="number">183</span>, <span class="number">183</span>, <span class="number">184</span>,  ...,  <span class="number">72</span>,  <span class="number">62</span>,  <span class="number">55</span>],</span><br><span class="line">         [<span class="number">183</span>, <span class="number">183</span>, <span class="number">184</span>,  ...,  <span class="number">54</span>,  <span class="number">46</span>,  <span class="number">41</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">170</span>, <span class="number">171</span>, <span class="number">172</span>,  ...,  <span class="number">68</span>,  <span class="number">69</span>,  <span class="number">70</span>],</span><br><span class="line">         [<span class="number">171</span>, <span class="number">172</span>, <span class="number">173</span>,  ...,  <span class="number">69</span>,  <span class="number">70</span>,  <span class="number">70</span>],</span><br><span class="line">         [<span class="number">172</span>, <span class="number">173</span>, <span class="number">174</span>,  ...,  <span class="number">71</span>,  <span class="number">71</span>,  <span class="number">71</span>],</span><br><span class="line">         ...,</span><br><span class="line">         [<span class="number">186</span>, <span class="number">186</span>, <span class="number">187</span>,  ..., <span class="number">181</span>, <span class="number">176</span>, <span class="number">173</span>],</span><br><span class="line">         [<span class="number">186</span>, <span class="number">186</span>, <span class="number">187</span>,  ..., <span class="number">144</span>, <span class="number">136</span>, <span class="number">131</span>],</span><br><span class="line">         [<span class="number">186</span>, <span class="number">186</span>, <span class="number">187</span>,  ..., <span class="number">123</span>, <span class="number">113</span>, <span class="number">107</span>]]], dtype=torch.uint8)&#125;]</span><br></pre></td></tr></table></figure>
+
+<p>如果直接使用上面输出导出 ONNX 模型，会遇到如下错误：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">RuntimeError: Only tuples, lists <span class="keyword">and</span> Variables supported <span class="keyword">as</span> JIT inputs/outputs. Dictionaries <span class="keyword">and</span> strings are also accepted but their usage <span class="keyword">is</span> <span class="keyword">not</span> recommended. But got unsupported type int</span><br></pre></td></tr></table></figure>
+
+<p>因此，需要对 detectron2 进行定制化修改，使其适应 ONNX 模型的导出要求。</p>
+<p>需要做的工作：</p>
+<ol>
+<li>修改 detectron2 build 模型时的接口，使 <code>forward</code>过程输入不需要支持输入 image 的 <code>filename</code>等值</li>
+<li>修改 input ，使 input 为列表或字典，包括以下信息： feature map，image size，缩放比例信息</li>
+</ol>
+<p>以 backbone ResNet50 为例：</p>
+<p>首先新建 class ：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ResNet50</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, cfg, torch_model)</span>:</span></span><br><span class="line">        selfcfg = cfg</span><br><span class="line">        self.model = torch_model</span><br><span class="line">        self.eval()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, input)</span>:</span></span><br><span class="line">        images = input[<span class="string">"images"</span>]</span><br><span class="line">        features = self.model.backbone(images)</span><br><span class="line">        <span class="keyword">return</span> features</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">convert_input</span><span class="params">(self, inputs)</span>:</span></span><br><span class="line">        images = self.model.preprocess_image(batched_inputs)</span><br><span class="line">        min_size = <span class="number">800</span></span><br><span class="line">        max_size = <span class="number">1333</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(batched_inputs)):</span><br><span class="line">            s = max(batched_inputs[i][<span class="string">"height"</span>] * <span class="number">1.0</span> / min_size,</span><br><span class="line">                    batched_inputs[i][<span class="string">"width"</span>] * <span class="number">1.0</span> / max_size)</span><br><span class="line">            scales.append((s,))</span><br><span class="line">        im_info = []</span><br><span class="line">        <span class="keyword">for</span> image_size, scale <span class="keyword">in</span> zip(images.image_sizes, scales):</span><br><span class="line">            im_info.append([*image_size, *scale])</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">"images"</span>: images.tensor,</span><br><span class="line">            <span class="string">"image_sizes"</span>: torch.tensor(images.image_sizes),</span><br><span class="line">            <span class="string">"im_info"</span>: torch.tensor(im_info, device=images.tensor.device),</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>经过以上修改，即可导出 ONNX 源生 model。或者更改 ONNX 默认输入方式，使其支持 detectron2 的输入类型。</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>本文介绍了 ONNX 和在 detectron2 框架下导出 Faster R-CNN ONNX 模型的两种方式。</p>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><ol>
+<li><a href="https://github.com/onnx/onnx" target="_blank" rel="noopener">ONNX</a></li>
+<li><a href="https://github.com/pytorch/pytorch" target="_blank" rel="noopener">PyTorch</a></li>
+<li><a href="%5Bhttp://lierhua.top/2018/01/15/%E5%BD%92%E6%A1%A3/Python%E5%8F%91%E5%B8%83%E5%B7%A5%E5%85%B7setuptools%E7%9A%84%E7%94%A8%E6%B3%95/%5D(http://lierhua.top/2018/01/15/%E5%BD%92%E6%A1%A3/Python%E5%8F%91%E5%B8%83%E5%B7%A5%E5%85%B7setuptools%E7%9A%84%E7%94%A8%E6%B3%95/)">Python发布工具setuptools的用法</a></li>
+<li><a href="https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md" target="_blank" rel="noopener">detectron2 MODEL_ZOO</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>DL</tag>
+        <tag>CV</tag>
+        <tag>TensorRT</tag>
+        <tag>Model Deployment</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>YOLO系列论文翻译</title>
     <url>/2019/06/29/YOLO/</url>
     <content><![CDATA[<p>YOLO为一种新的目标检测方法，该方法的特点是实现快速检测的同时还达到较高的准确率。作者将目标检测任务看作目标区域预测和类别预测的回归问题。该方法采用单个神经网络直接预测物品边界和类别概率，实现端到端的物品检测。同时，该方法检测速非常快，基础版可以达到45帧/s的实时检测；FastYOLO可以达到155帧/s。与当前最好系统相比，YOLO目标区域定位误差更大，但是背景预测的假阳性优于当前最好的方法。<a id="more"></a></p>
@@ -1705,67 +1764,8 @@
         <category>DL</category>
       </categories>
       <tags>
+        <tag>DL</tag>
         <tag>PCL</tag>
-        <tag>DL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>TensorRT 教程（三）：PyTorch模型转ONNX模型</title>
-    <url>/2020/08/06/tensorrt_03_pytorch2onnx/</url>
-    <content><![CDATA[<p><em>此系列为 PyTorch model 转 TRT engine 系列第三章。</em></p>
-<p>至于为什么选 PyTorch 而不是 TensorFlow，是因为笔者对 PyTorch 最为熟悉，另外 PyTorch 的易用性和动态图特点，使得在学术界也广泛采用，新的模型更新也 release 较快。本文所用的开源项目包含：<a href="https://github.com/facebookresearch/detectron2" target="_blank" rel="noopener">detectron2</a>，<a href="https://github.com/onnx/onnx" target="_blank" rel="noopener">ONNX</a>，<a href="https://github.com/daquexian/onnx-simplifier" target="_blank" rel="noopener">ONNX-simplifier</a>，<a href="https://github.com/NVIDIA/TensorRT" target="_blank" rel="noopener">TensorRT</a>。<a id="more"></a></p>
-<h2 id="1-安装-ONNX"><a href="#1-安装-ONNX" class="headerlink" title="1. 安装 ONNX"></a>1. 安装 ONNX</h2><p>关于<a href="https://github.com/onnx/onnx" target="_blank" rel="noopener">ONNX</a>的介绍，请参见其官网。简单来说，ONNX 是一种充作中间转换的角色，将训练时候的不同开源库训练得到的model 转换成为不同的另一种 model 的表示方法。最常见的就是本文即将提到的 PyTorch 转 ONNX 再转 TensorRT 的工作方式。ONNX 本身还带有可运行的底层库 <a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener">ONNX runtime</a>，不过一般不使用。</p>
-<p>考虑到我们后面对 ONNX 需要做一些自定义操作，因此建议源码安装，方便进行修改。在 <code>detectron2</code> 文件夹下新建文件夹 <code>thirdlibs</code>，进入文件夹运行如下命令：</p>
-<ol>
-<li>下载 ONNX： <code>git clone https://github.com/onnx/onnx.git</code></li>
-<li>更新子模块： <code>cd onnx &amp;&amp; git submodule update --init --recursive</code></li>
-<li>安装： <code>python setup.py develop  # 由于频繁更改，所以建议使用 develop，不使用 install</code></li>
-<li>测试： <code>python -c &quot;import onnx&quot;</code></li>
-</ol>
-<p>如果不报错即安装成功。</p>
-<h2 id="2-ResNet50-的-PyTorch-模型"><a href="#2-ResNet50-的-PyTorch-模型" class="headerlink" title="2. ResNet50 的 PyTorch 模型"></a>2. ResNet50 的 PyTorch 模型</h2><p>使用 detectron2 训练 Faster R-CNN 教程可参考<a href="https://github.com/facebookresearch/detectron2/blob/master/GETTING_STARTED.md#training--evaluation-in-command-line" target="_blank" rel="noopener">官网教程</a>，此处我们使用 detectron2  <a href="https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md" target="_blank" rel="noopener">MODEL_ZOO</a> 中的已经训练好的 Faster R-CNN 模型，其Backbone 即为 ResNet50，<code>config</code> 文件为 detectron2 默认配置：<code>../configs/PascalVOC-Detection/faster_rcnn_R_50_FPN.yaml</code>。关于 Faster R-CNN 的网络结构可参看本站前一篇博文：Mask R-CNN 模型结构详解 。当然，我们也可以先不考虑数值的正确性，即我们只随机初始化模型之后并不训练网络，这样可以快速的测试 ONNX 和 TRT 对 op 的支持情况。通常在训练自己的数据期间，进行模型部署的开发，提高效率。</p>
-<h2 id="3-PyTorch-模型转-ONNX-模型"><a href="#3-PyTorch-模型转-ONNX-模型" class="headerlink" title="3. PyTorch 模型转 ONNX 模型"></a>3. PyTorch 模型转 ONNX 模型</h2><p>Detectron2 在早先版本并不支持 Faster R-CNN 的转换，而且只支持转到 caffe2 模型。Caffe2 模型的转换也是通过 ONNX 作为媒介进行，这里使用 detectron2 转到 Caffe2 的中间ONNX模型，是因为 Caffe2 的中间转换做了很多 ONNX 的 model 图优化，对某些 op 进行了 merge。当然也可不使用该方式进行，使用 ONNX 源生的 op ，但是转换得到的 ONNX 模型可视化出来会有 op 没有进行优化。</p>
-<h3 id="3-1-利用-Detectron2-自带-Caffe2-模型转换模块"><a href="#3-1-利用-Detectron2-自带-Caffe2-模型转换模块" class="headerlink" title="3.1 利用 Detectron2 自带 Caffe2 模型转换模块"></a>3.1 利用 Detectron2 自带 Caffe2 模型转换模块</h3><p>在 <code>detectron2/projects</code> 路径下新建文件夹命名为 <code>fasterrcnn_trt</code>，然后新建 python 文件<code>convert_fasterrcnn_onnx.py</code>，拷贝<code>detectron2/tools/deploy/caffe2_converter.py</code> 内容到该文件中，并对函数稍作修改如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">"Convert a model to Caffe2"</span>)</span><br><span class="line">    parser.add_argument(<span class="string">"--config-file"</span>, default=<span class="string">""</span>, metavar=<span class="string">"FILE"</span>, help=<span class="string">"path to config file"</span>)</span><br><span class="line">    parser.add_argument(<span class="string">"--run-eval"</span>, action=<span class="string">"store_true"</span>)</span><br><span class="line">    parser.add_argument(<span class="string">"--output"</span>, help=<span class="string">"output directory for the converted caffe2 model"</span>)</span><br><span class="line">    parser.add_argument(</span><br><span class="line">        <span class="string">"opts"</span>,</span><br><span class="line">        help=<span class="string">"Modify config options using the command-line"</span>,</span><br><span class="line">        default=<span class="literal">None</span>,</span><br><span class="line">        nargs=argparse.REMAINDER,</span><br><span class="line">    )</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    logger = setup_logger()</span><br><span class="line">    logger.info(<span class="string">"Command line arguments: "</span> + str(args))</span><br><span class="line"></span><br><span class="line">    cfg = setup_cfg(args)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># create a torch model</span></span><br><span class="line">    torch_model = build_model(cfg)</span><br><span class="line">    DetectionCheckpointer(torch_model).resume_or_load(cfg.MODEL.WEIGHTS)</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>在<code>faster_rcnn_trt</code> 文件夹中运行如下命令：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python convert_fasterrcnn_onnx.py --config-file ../../configs/PascalVOC-Detection/faster_rcnn_R_50_FPN.yaml --output ./onnx_model --run-eval MODEL.WEIGHTS detectron2://COCO-Detection/faster_rcnn_R_50_FPN_1x/137257794/model_final_b275ba.pkl MODEL.DEVICE cpu</span><br></pre></td></tr></table></figure>
-
-<p>首先会从 MODEL_ZOO 中下载已经训练好的 Faster R-CNN 模型。然后进行 parse ，会看到输出的 log 信息，大致如下：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="meta">%</span><span class="bash">318 : Float(1, 3, 800, 1216) = onnx::Cast[to=1](%316)</span></span><br><span class="line"><span class="meta"> %</span><span class="bash">319 : Float(1, 3, 800, 1216) = onnx::Sub(%318, %_wrapped_model.pixel_mean) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">320 : Float(1, 3, 800, 1216) = onnx::Div(%319, %_wrapped_model.pixel_std) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">input.1 : Float(1, 3, 800, 1216) = _caffe2::AliasWithName[name=<span class="string">"normalized_data"</span>, is_backward=0](%320) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">322 : Float(1, 64, 400, 608) = onnx::Conv[dilations=[1, 1], group=1, kernel_shape=[7, 7], pads=[3, 3, 3, 3], strides=[2, 2]](%input.1, %_wrapped_model.backbone.bottom_up.stem.conv1.weight) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">323 : Float(1, 64, 400, 608) = onnx::BatchNormalization[epsilon=1.0000000000000001e-05, momentum=0.90000000000000002](%322, %_wrapped_model.backbone.bottom_up.stem.conv1.norm.weight, %_wrapped_model.backbone.bottom_up.stem.conv1.norm.bias, %_wrapped_model.backbone.bottom_up.stem.conv1.norm.running_mean, %_wrapped_model.backbone.bottom_up.stem.conv1.norm.running_var) </span></span><br><span class="line"><span class="meta"> %</span><span class="bash">324 : Float(1, 64, 400, 608) = onnx::Relu(%323)</span></span><br><span class="line"><span class="meta"> %</span><span class="bash">325 : Float(1, 64, 200, 304) = onnx::MaxPool[kernel_shape=[3, 3], pads=[1, 1, 1, 1], strides=[2, 2]](%324) </span></span><br><span class="line"> ......</span><br></pre></td></tr></table></figure>
-
-<p>我们可以用 <a href="https://github.com/lutzroeder/netron" target="_blank" rel="noopener">netron</a> 对生成的 ONNX 模型进行可视化：</p>
-<p><img data-src="/images/20_08_06/Screenshot-from-2020-07-21-17-49-57.png"></p>
-<h3 id="3-2-使用源生-ONNX-进行转换"><a href="#3-2-使用源生-ONNX-进行转换" class="headerlink" title="3.2 使用源生 ONNX 进行转换"></a>3.2 使用源生 ONNX 进行转换</h3><p>为了达到训练过程的友好，detectron2 在<code>forward</code>时对输入数据进行了封装，以其中一张图为例：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[&#123;<span class="string">'file_name'</span>: <span class="string">'coco/val2017/000000000139.jpg'</span>, <span class="string">'height'</span>: <span class="number">426</span>, <span class="string">'width'</span>: <span class="number">640</span>, <span class="string">'image_id'</span>: <span class="number">139</span>, <span class="string">'image'</span>: tensor([[[ <span class="number">73</span>,  <span class="number">74</span>,  <span class="number">76</span>,  ...,  <span class="number">39</span>,  <span class="number">38</span>,  <span class="number">37</span>],</span><br><span class="line">         [ <span class="number">74</span>,  <span class="number">75</span>,  <span class="number">77</span>,  ...,  <span class="number">40</span>,  <span class="number">39</span>,  <span class="number">38</span>],</span><br><span class="line">         [ <span class="number">76</span>,  <span class="number">77</span>,  <span class="number">78</span>,  ...,  <span class="number">41</span>,  <span class="number">40</span>,  <span class="number">39</span>],</span><br><span class="line">         ...,</span><br><span class="line">         [<span class="number">152</span>, <span class="number">152</span>, <span class="number">153</span>,  ..., <span class="number">109</span>,  <span class="number">98</span>,  <span class="number">92</span>],</span><br><span class="line">         [<span class="number">151</span>, <span class="number">151</span>, <span class="number">152</span>,  ...,  <span class="number">76</span>,  <span class="number">67</span>,  <span class="number">62</span>],</span><br><span class="line">         [<span class="number">150</span>, <span class="number">150</span>, <span class="number">151</span>,  ...,  <span class="number">57</span>,  <span class="number">49</span>,  <span class="number">45</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">136</span>, <span class="number">138</span>, <span class="number">141</span>,  ...,  <span class="number">75</span>,  <span class="number">72</span>,  <span class="number">71</span>],</span><br><span class="line">         [<span class="number">137</span>, <span class="number">139</span>, <span class="number">142</span>,  ...,  <span class="number">76</span>,  <span class="number">73</span>,  <span class="number">72</span>],</span><br><span class="line">         [<span class="number">140</span>, <span class="number">141</span>, <span class="number">143</span>,  ...,  <span class="number">78</span>,  <span class="number">75</span>,  <span class="number">74</span>],</span><br><span class="line">         ...,</span><br><span class="line">         [<span class="number">183</span>, <span class="number">183</span>, <span class="number">184</span>,  ..., <span class="number">105</span>,  <span class="number">89</span>,  <span class="number">80</span>],</span><br><span class="line">         [<span class="number">183</span>, <span class="number">183</span>, <span class="number">184</span>,  ...,  <span class="number">72</span>,  <span class="number">62</span>,  <span class="number">55</span>],</span><br><span class="line">         [<span class="number">183</span>, <span class="number">183</span>, <span class="number">184</span>,  ...,  <span class="number">54</span>,  <span class="number">46</span>,  <span class="number">41</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">170</span>, <span class="number">171</span>, <span class="number">172</span>,  ...,  <span class="number">68</span>,  <span class="number">69</span>,  <span class="number">70</span>],</span><br><span class="line">         [<span class="number">171</span>, <span class="number">172</span>, <span class="number">173</span>,  ...,  <span class="number">69</span>,  <span class="number">70</span>,  <span class="number">70</span>],</span><br><span class="line">         [<span class="number">172</span>, <span class="number">173</span>, <span class="number">174</span>,  ...,  <span class="number">71</span>,  <span class="number">71</span>,  <span class="number">71</span>],</span><br><span class="line">         ...,</span><br><span class="line">         [<span class="number">186</span>, <span class="number">186</span>, <span class="number">187</span>,  ..., <span class="number">181</span>, <span class="number">176</span>, <span class="number">173</span>],</span><br><span class="line">         [<span class="number">186</span>, <span class="number">186</span>, <span class="number">187</span>,  ..., <span class="number">144</span>, <span class="number">136</span>, <span class="number">131</span>],</span><br><span class="line">         [<span class="number">186</span>, <span class="number">186</span>, <span class="number">187</span>,  ..., <span class="number">123</span>, <span class="number">113</span>, <span class="number">107</span>]]], dtype=torch.uint8)&#125;]</span><br></pre></td></tr></table></figure>
-
-<p>如果直接使用上面输出导出 ONNX 模型，会遇到如下错误：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">RuntimeError: Only tuples, lists <span class="keyword">and</span> Variables supported <span class="keyword">as</span> JIT inputs/outputs. Dictionaries <span class="keyword">and</span> strings are also accepted but their usage <span class="keyword">is</span> <span class="keyword">not</span> recommended. But got unsupported type int</span><br></pre></td></tr></table></figure>
-
-<p>因此，需要对 detectron2 进行定制化修改，使其适应 ONNX 模型的导出要求。</p>
-<p>需要做的工作：</p>
-<ol>
-<li>修改 detectron2 build 模型时的接口，使 <code>forward</code>过程输入不需要支持输入 image 的 <code>filename</code>等值</li>
-<li>修改 input ，使 input 为列表或字典，包括以下信息： feature map，image size，缩放比例信息</li>
-</ol>
-<p>以 backbone ResNet50 为例：</p>
-<p>首先新建 class ：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ResNet50</span><span class="params">(torch.nn.Module)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, cfg, torch_model)</span>:</span></span><br><span class="line">        selfcfg = cfg</span><br><span class="line">        self.model = torch_model</span><br><span class="line">        self.eval()</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, input)</span>:</span></span><br><span class="line">        images = input[<span class="string">"images"</span>]</span><br><span class="line">        features = self.model.backbone(images)</span><br><span class="line">        <span class="keyword">return</span> features</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">convert_input</span><span class="params">(self, inputs)</span>:</span></span><br><span class="line">        images = self.model.preprocess_image(batched_inputs)</span><br><span class="line">        min_size = <span class="number">800</span></span><br><span class="line">        max_size = <span class="number">1333</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(batched_inputs)):</span><br><span class="line">            s = max(batched_inputs[i][<span class="string">"height"</span>] * <span class="number">1.0</span> / min_size,</span><br><span class="line">                    batched_inputs[i][<span class="string">"width"</span>] * <span class="number">1.0</span> / max_size)</span><br><span class="line">            scales.append((s,))</span><br><span class="line">        im_info = []</span><br><span class="line">        <span class="keyword">for</span> image_size, scale <span class="keyword">in</span> zip(images.image_sizes, scales):</span><br><span class="line">            im_info.append([*image_size, *scale])</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">"images"</span>: images.tensor,</span><br><span class="line">            <span class="string">"image_sizes"</span>: torch.tensor(images.image_sizes),</span><br><span class="line">            <span class="string">"im_info"</span>: torch.tensor(im_info, device=images.tensor.device),</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
-
-<p>经过以上修改，即可导出 ONNX 源生 model。或者更改 ONNX 默认输入方式，使其支持 detectron2 的输入类型。</p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>本文介绍了 ONNX 和在 detectron2 框架下导出 Faster R-CNN ONNX 模型的两种方式。</p>
-<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><ol>
-<li><a href="https://github.com/onnx/onnx" target="_blank" rel="noopener">ONNX</a></li>
-<li><a href="https://github.com/pytorch/pytorch" target="_blank" rel="noopener">PyTorch</a></li>
-<li><a href="%5Bhttp://lierhua.top/2018/01/15/%E5%BD%92%E6%A1%A3/Python%E5%8F%91%E5%B8%83%E5%B7%A5%E5%85%B7setuptools%E7%9A%84%E7%94%A8%E6%B3%95/%5D(http://lierhua.top/2018/01/15/%E5%BD%92%E6%A1%A3/Python%E5%8F%91%E5%B8%83%E5%B7%A5%E5%85%B7setuptools%E7%9A%84%E7%94%A8%E6%B3%95/)">Python发布工具setuptools的用法</a></li>
-<li><a href="https://github.com/facebookresearch/detectron2/blob/master/MODEL_ZOO.md" target="_blank" rel="noopener">detectron2 MODEL_ZOO</a></li>
-</ol>
-]]></content>
-      <tags>
-        <tag>DL</tag>
-        <tag>CV</tag>
-        <tag>TensorRT</tag>
-        <tag>Model Deployment</tag>
       </tags>
   </entry>
 </search>
