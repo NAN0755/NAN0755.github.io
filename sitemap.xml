@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://zengzeyu.com/2020/07/09/tensorrt_02_introduction/</loc>
+    <loc>http://zengzeyu.com/2020/10/30/distiller_pruning_doc/</loc>
     
-    <lastmod>2020-08-06T14:18:33.917Z</lastmod>
+    <lastmod>2020-10-30T09:41:51.661Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://zengzeyu.com/2020/08/06/tensorrt_03_pytorch2onnx/</loc>
     
-    <lastmod>2020-08-06T14:16:23.958Z</lastmod>
+    <lastmod>2020-10-30T09:40:53.648Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://zengzeyu.com/2020/07/09/tensorrt_02_introduction/</loc>
+    
+    <lastmod>2020-08-06T14:18:33.917Z</lastmod>
     
   </url>
   
